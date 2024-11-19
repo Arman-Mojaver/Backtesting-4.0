@@ -1,0 +1,45 @@
+[tool.ruff]
+line-length = 90
+
+lint.select = ["ALL"]
+lint.ignore = [
+    "ANN101",  # Missing type annotation for `self` in method
+    "ANN102",  # Missing type annotation for `cls` in classmethod
+    "ANN202",  # Missing return type annotation for private function
+    "ANN204",  # Missing return type annotation for special method `__init__`
+
+    "D100",    # Missing docstring in public module
+    "D101",    # Missing docstring in public class
+    "D102",    # Missing docstring in public method
+    "D103",    # Missing docstring in public function
+    "D104",    # Missing docstring in public package
+    "D105",    # Missing docstring in magic method
+    "D107",    # Missing docstring in __init__
+    "D203",    # "1 blank line required before class docstring"
+    "D205",    # "1 blank line required between summary line and description"
+    "D212",    # "Multi-line docstring summary should start at the first line" We want D213, start on second line
+
+
+    "RET503",  # Missing explicit `return` at the end of function able to return non-`None` value
+
+    "S105",    # Possible hardcoded password assigned to argument
+
+    "TRY302",  # Remove exception handler; error is immediately re-raised
+]
+
+exclude = [
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+]
+
+[tool.ruff.format]
+quote-style = "double"
