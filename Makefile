@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov up down clean ps status ruff ruff-f mypy freeze pyupgrade
+.PHONY: bash run logs cov up down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
 
 # Dev tools
 
@@ -41,6 +41,23 @@ ps:
 	docker compose ps
 
 status: ps
+
+
+
+# Docker image commands
+
+build:
+	docker image build -t armanmojaver/backtesting:latest .
+
+
+push:
+	cat .docker_password | docker login --username armanmojaver --password-stdin
+	docker push armanmojaver/backtesting:latest
+
+
+pull:
+	cat .docker_password | docker login --username armanmojaver --password-stdin
+	docker pull armanmojaver/backtesting:latest
 
 
 
