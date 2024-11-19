@@ -6,6 +6,9 @@ SHELL = /bin/bash
 bash:
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api bash
 
+run:
+	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api /bin/bash -c "python run_script.py"
+
 logs:
 	docker compose logs --tail=100 -f
 
