@@ -49,3 +49,25 @@ exclude = [
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "./.venv/*",
+    "tests/*",
+    "migrations/versions/*",
+    "cli/*",
+]
+data_file = "coverage/.coverage"
+
+[tool.coverage.report]
+omit = [
+    "./.venv/*",
+    "tests/*",
+    "migrations/versions/*",
+    "cli/*",
+]
+exclude_lines = [
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]
