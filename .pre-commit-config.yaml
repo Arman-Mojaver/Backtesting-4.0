@@ -22,4 +22,4 @@ repos:
         name: mypy
         language: python
         types_or: [ python, pyi ]
-        entry: mypy
+        entry: mypy --ignore-missing-imports

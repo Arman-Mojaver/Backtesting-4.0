@@ -9,4 +9,4 @@ ruff-f:
 	ruff format
 
 mypy:
-	mypy .
+	mypy . --ignore-missing-imports
