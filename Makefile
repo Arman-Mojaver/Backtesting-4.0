@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov up down clean ps status ruff ruff-f mypy freeze
+.PHONY: bash run logs cov up down clean ps status ruff ruff-f mypy freeze pyupgrade
 
 # Dev tools
 
@@ -59,3 +59,6 @@ mypy:
 # Other commands
 freeze:
 	pip freeze | grep -v "bt_cli" > requirements.txt
+
+pyupgrade:
+	pyup_dirs . --py313-plus --recursive
