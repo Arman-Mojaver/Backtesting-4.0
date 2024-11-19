@@ -30,7 +30,7 @@ lint.ignore = [
 
     "S105",    # Possible hardcoded password assigned to argument
 
-    "TRY302",  # Remove exception handler; error is immediately re-raised
+    "TRY203",  # Remove exception handler; error is immediately re-raised
 ]
 
 exclude = [
