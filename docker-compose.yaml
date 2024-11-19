@@ -1,0 +1,8 @@
+name: backtesting
+services:
+  api:
+    container_name: api
+    build: .
+    tty: true
+    volumes:
+      - ./:/app
