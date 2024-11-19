@@ -1,5 +1,6 @@
 SHELL = /bin/bash
 
+.PHONY: bash run logs cov up down clean ps status ruff ruff-f mypy freeze
 
 # Dev tools
 
