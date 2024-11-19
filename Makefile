@@ -41,3 +41,8 @@ ruff-f:
 
 mypy:
 	mypy . --ignore-missing-imports
+
+
+# Other commands
+freeze:
+	pip freeze | grep -v "bt_cli" > requirements.txt
