@@ -11,6 +11,8 @@ lint.ignore = [
     "ANN202",  # Missing return type annotation for private function
     "ANN204",  # Missing return type annotation for special method `__init__`
 
+    "COM812",  # Conflicts with ruff formatter
+
     "D100",    # Missing docstring in public module
     "D101",    # Missing docstring in public class
     "D102",    # Missing docstring in public method
@@ -22,6 +24,7 @@ lint.ignore = [
     "D205",    # "1 blank line required between summary line and description"
     "D212",    # "Multi-line docstring summary should start at the first line" We want D213, start on second line
 
+    "ISC001",  # Conflicts with ruff formatter
 
     "RET503",  # Missing explicit `return` at the end of function able to return non-`None` value
 
