@@ -23,3 +23,9 @@ repos:
         language: python
         types_or: [ python, pyi ]
         entry: mypy --ignore-missing-imports
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.0.1
+    hooks:
+      - id: pyupgrade
+        args: [--py37-plus]
