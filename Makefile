@@ -70,7 +70,7 @@ ruff-f:
 	ruff format
 
 mypy:
-	mypy . --ignore-missing-imports
+	mypy . --ignore-missing-imports --implicit-reexport
 
 
 # Other commands
