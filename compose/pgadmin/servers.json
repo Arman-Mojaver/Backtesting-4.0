@@ -1,0 +1,34 @@
+{
+  "Servers": {
+    "1": {
+      "Group": "Servers",
+      "Host": "db-development",
+      "MaintenanceDB": "postgres",
+      "Name": "Development Server",
+      "PassFile": "/.pgpass",
+      "Port": 54320,
+      "SSLMode": "prefer",
+      "Username": "postgres"
+    },
+    "2": {
+      "Group": "Servers",
+      "Host": "db-production",
+      "MaintenanceDB": "postgres",
+      "Name": "Production Server",
+      "PassFile": "/.pgpass",
+      "Port": 5432,
+      "SSLMode": "prefer",
+      "Username": "postgres"
+    },
+    "3": {
+      "Group": "Servers",
+      "Host": "db-testing",
+      "MaintenanceDB": "postgres",
+      "Name": "Testing Server",
+      "PassFile": "/.pgpass",
+      "Port": 54321,
+      "SSLMode": "prefer",
+      "Username": "postgres"
+    }
+  }
+}

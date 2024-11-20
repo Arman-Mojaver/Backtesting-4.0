@@ -2,4 +2,10 @@ from config.base import BaseConfig
 
 
 class TestingConfig(BaseConfig):
-    pass
+    POSTGRES_HOST = "db-testing"
+    POSTGRES_PORT = 54321
+    POSTGRES_USER = "postgres"
+    POSTGRES_PASS = "postgres"
+    POSTGRES_DB = "db-testing"
+
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"

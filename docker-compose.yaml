@@ -8,3 +8,80 @@ services:
       - ./:/app
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - db-development
+      - db-production
+      - db-testing
+
+  db-development:
+    container_name: db-development
+    image: postgres:16.1
+    ports:
+      - "54320:54320"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db-development
+      - PGPORT=54320
+    volumes:
+      - ./compose/db_development/db_development_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  db-production:
+    container_name: db-production
+    image: postgres:16.1
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=db-production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./compose/db_production/db_production_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  db-testing:
+    container_name: db-testing
+    image: postgres:16.1
+    ports:
+      - "54321:54321"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db-testing
+      - PGPORT=54321
+    volumes:
+      - ./compose/db_testing/db_testing_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.13.0
+    ports:
+      - 8082:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=postgres@example.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    user: root
+    volumes:
+      - ./compose/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./compose/pgadmin/.pgpass:/.pgpass
+      - ./compose/pgadmin/pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db-development
+      - db-production
+      - db-testing
