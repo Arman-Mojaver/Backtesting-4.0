@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov pytest up down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
+.PHONY: bash run logs cov pytest up in down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
 
 
 
@@ -35,7 +35,9 @@ pytest:
 # Docker commands
 
 up:
-	docker compose -f docker-compose.yaml up -d && \
+	docker compose -f docker-compose.yaml up -d
+
+in:
 	docker compose -f docker-compose.yaml exec -it api /bin/bash
 
 down:
