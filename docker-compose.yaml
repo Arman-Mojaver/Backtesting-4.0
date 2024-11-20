@@ -6,3 +6,5 @@ services:
     tty: true
     volumes:
       - ./:/app
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
