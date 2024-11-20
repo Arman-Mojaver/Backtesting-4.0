@@ -1,6 +1,8 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov up down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
+.PHONY: bash run logs cov pytest up down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
+
+
 
 # Dev tools
 
@@ -16,6 +18,7 @@ logs:
 	docker compose logs --tail=100 -f
 
 
+
 # Tests
 
 cov:
@@ -23,6 +26,9 @@ cov:
 	"pytest --cov --cov-report html:coverage/html" \
 	&& open coverage/html/index.html
 
+pytest:
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
+	"python -m pytest"
 
 
 
@@ -71,6 +77,7 @@ ruff-f:
 
 mypy:
 	mypy . --ignore-missing-imports --implicit-reexport
+
 
 
 # Other commands
