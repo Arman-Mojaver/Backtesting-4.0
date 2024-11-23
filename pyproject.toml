@@ -67,6 +67,7 @@ quote-style = "double"
 
     "PLR2004",  # Ignore magic values in tests
 
+    "PT001",    # Use `@pytest.fixture()` over `@pytest.fixture
     "PT011",    # `pytest.raises(ValueError)` is too broad
     "PT023",    # Ignore use of parenthesis in @pytest.mark.<marker>
 
