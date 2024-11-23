@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov pytest up in down clean ps status build push pull ruff ruff-f mypy freeze pyupgrade
+.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy freeze pyupgrade
 
 
 
@@ -56,6 +56,9 @@ status: ps
 
 build:
 	docker image build -t armanmojaver/backtesting:latest .
+
+build-no-cache:
+	docker image build --no-cache -t armanmojaver/backtesting:latest .
 
 
 push:
