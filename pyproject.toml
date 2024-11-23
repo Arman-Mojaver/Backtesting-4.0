@@ -90,9 +90,11 @@ data_file = "coverage/.coverage"
 [tool.coverage.report]
 omit = [
     "./.venv/*",
-    "tests/*",
-    "migrations/versions/*",
     "cli/*",
+    "conftest.py",
+    "migrations/*",
+    "testing_utils/*",
+    "tests/*",
 ]
 exclude_lines = [
     "if TYPE_CHECKING:",
