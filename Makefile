@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy freeze pyupgrade
+.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade
 
 
 
@@ -82,6 +82,29 @@ ruff-f:
 
 mypy:
 	mypy . --ignore-missing-imports --implicit-reexport
+
+
+
+# Alembic
+
+alembic-upgrade:
+	export ENVIRONMENT=development && \
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
+	"alembic upgrade head"
+
+	export ENVIRONMENT=production && \
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
+	"alembic upgrade head"
+
+
+alembic-downgrade:
+	export ENVIRONMENT=development && \
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
+	"alembic downgrade -1"
+
+	export ENVIRONMENT=production && \
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
+	"alembic downgrade -1"
 
 
 
