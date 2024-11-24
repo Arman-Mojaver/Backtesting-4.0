@@ -6,6 +6,7 @@ Revises: 28703852942a
 Create Date: 2024-11-24 12:08:13.275822
 
 """
+
 from __future__ import annotations
 
 from typing import Sequence

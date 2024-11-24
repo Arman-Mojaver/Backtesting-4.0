@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 from sqlalchemy import MetaData, create_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, scoped_session, sessionmaker
 from sqlalchemy_serializer import SerializerMixin
 
 from config import config
@@ -22,6 +22,7 @@ class Base(DeclarativeBase):
 
 
 engine = create_engine(config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
+session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 
 class CRUDMixin(SerializerMixin):
