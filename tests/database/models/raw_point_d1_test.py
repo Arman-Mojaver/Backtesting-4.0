@@ -23,6 +23,9 @@ def test_create_point(session):
     assert point.id
     assert point.to_dict() == point_data
 
+    session.delete(point)
+    session.commit()
+
 
 def test_instrument_datetime_unique_constraint(session):
     point_data_1 = {
