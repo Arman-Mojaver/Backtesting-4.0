@@ -5,8 +5,7 @@ from typing import Any
 
 def lists_are_equal(list_1: list[Any], list_2: list[Any]) -> bool:
     return all(
-        any(item1.to_dict() == item2.to_dict() for item2 in list_2)
-        for item1 in list_1
+        any(item1.to_dict() == item2.to_dict() for item2 in list_2) for item1 in list_1
     )
 
 

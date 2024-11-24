@@ -45,6 +45,7 @@ exclude = [
     "_build",
     "build",
     "dist",
+    "run_script.py",
 ]
 
 [tool.ruff.format]
