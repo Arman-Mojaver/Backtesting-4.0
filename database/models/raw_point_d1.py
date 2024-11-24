@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Float, Integer, String
+from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
 
 from database import Base, CRUDMixin
 
@@ -16,3 +16,7 @@ class RawPointD1(Base, CRUDMixin):
     low = Column(Float, nullable=False)
     close = Column(Float, nullable=False)
     volume = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument"),
+    )
