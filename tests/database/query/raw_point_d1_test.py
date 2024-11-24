@@ -2,7 +2,7 @@ import pytest
 
 from database.models import RawPointD1
 from database.models.raw_point_d1 import MultipleValuesError
-from testing_utils.dict_utils import dicts_by_key_are_equal
+from testing_utils.dict_utils import dicts_by_key_are_equal, dicts_multi_by_key_are_equal
 
 
 @pytest.fixture
@@ -68,3 +68,24 @@ def test_dict_by_key_with_key(session, points):
 def test_dict_by_key_with_non_unique_key_raises_error(session):
     with pytest.raises(MultipleValuesError):
         RawPointD1.query.dict_by_key("instrument")
+
+
+def test_dict_multi_by_key_with_multiple_items_per_key(session, points):
+    point_1, point_2 = points
+
+    result = RawPointD1.query.dict_multi_by_key("instrument")
+    expected_result = {"EURUSD": [point_1, point_2]}
+
+    assert dicts_multi_by_key_are_equal(result, expected_result)
+
+
+def test_dict_multi_by_key_with_single_item_per_key(session, points):
+    point_1, point_2 = points
+
+    result = RawPointD1.query.dict_multi_by_key("id")
+    expected_result = {
+        point_1.id: [point_1],
+        point_2.id: [point_2],
+    }
+
+    assert dicts_multi_by_key_are_equal(result, expected_result)

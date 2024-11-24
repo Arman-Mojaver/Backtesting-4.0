@@ -30,6 +30,14 @@ class RawPointD1Query:
 
         return dictionary
 
+    @staticmethod
+    def dict_multi_by_key(key: str) -> dict[str, list[Any]]:
+        dictionary = defaultdict(list)
+        for obj in session.query(RawPointD1).all():
+            dictionary[getattr(obj, key)].append(obj)
+
+        return dictionary
+
 
 class RawPointD1(Base, CRUDMixin):
     __tablename__ = "raw_point_d1"
