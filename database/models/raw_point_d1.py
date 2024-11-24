@@ -1,12 +1,42 @@
+from __future__ import annotations
+
+from collections import defaultdict
+from typing import Any
+
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
 
-from database import Base, CRUDMixin
+from database import Base, CRUDMixin, session
+
+
+class MultipleValuesError(Exception):
+    """Error raised when there are multiple values for the same key."""
+
+
+class RawPointD1Query:
+    @staticmethod
+    def dict_by_key(key: str = "id") -> dict[Any, Any]:
+        values = [
+            getattr(obj, key)
+            for obj in session.query(RawPointD1).all()
+            if getattr(obj, key)
+        ]
+        if len(values) != len(set(values)):
+            err = f"There where duplicated keys: {values}"
+            raise MultipleValuesError(err)
+
+        dictionary: dict[Any, Any] = defaultdict()
+        for obj in session.query(RawPointD1).all():
+            dictionary[getattr(obj, key)] = obj
+
+        return dictionary
 
 
 class RawPointD1(Base, CRUDMixin):
     __tablename__ = "raw_point_d1"
     __repr_fields__ = ("instrument", "datetime")
     serialize_rules = ("-id",)
+
+    query = RawPointD1Query
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(Date, nullable=False)
