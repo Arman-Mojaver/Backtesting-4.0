@@ -14,6 +14,10 @@ class MultipleValuesError(Exception):
 
 class RawPointD1Query:
     @staticmethod
+    def all() -> list[Any]:
+        return list(session.query(RawPointD1).all())
+
+    @staticmethod
     def dict_by_key(key: str = "id") -> dict[Any, Any]:
         values = [
             getattr(obj, key)

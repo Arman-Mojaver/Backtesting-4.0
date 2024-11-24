@@ -2,7 +2,11 @@ import pytest
 
 from database.models import RawPointD1
 from database.models.raw_point_d1 import MultipleValuesError
-from testing_utils.dict_utils import dicts_by_key_are_equal, dicts_multi_by_key_are_equal
+from testing_utils.dict_utils import (
+    dicts_by_key_are_equal,
+    dicts_multi_by_key_are_equal,
+    lists_are_equal,
+)
 
 
 @pytest.fixture
@@ -38,6 +42,10 @@ def points(session):
     session.delete(point_1)
     session.delete(point_2)
     session.commit()
+
+
+def test_all(session, points):
+    assert lists_are_equal(RawPointD1.query.all(), points)
 
 
 def test_dict_by_key_default(session, points):
