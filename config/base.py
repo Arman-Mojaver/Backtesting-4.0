@@ -4,6 +4,10 @@ from __future__ import annotations
 class BaseConfig:
     ENVIRONMENT: str | None = None
 
+    # Dates
+    DATE_FORMAT: str = "%Y-%m-%d"
+    DATETIME_FORMAT: str = "%Y-%m-%d %H:%M"
+
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"
 
