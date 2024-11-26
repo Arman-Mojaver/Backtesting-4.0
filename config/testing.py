@@ -9,3 +9,5 @@ class TestingConfig(BaseConfig):
     POSTGRES_DB = "db-testing"
 
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+    INSTRUMENT_DATA_PATH = "instrument_data/testing"

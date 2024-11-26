@@ -163,3 +163,7 @@ compose/db_testing/db_testing_data
 compose/pgadmin/pgadmin_data/
 
 arman*
+
+instrument_data/development/
+instrument_data/production/
+instrument_data/testing/
