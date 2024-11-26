@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from config import config
+from config import config  # type: ignore[attr-defined]
 
 
 class DateError(Exception):

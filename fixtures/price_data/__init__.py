@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from config import config
+from config import config  # type: ignore[attr-defined]
 from utils.date_utils import string_to_datetime
 from utils.enums import TimeFrame
 

@@ -1,4 +1,7 @@
+# type: ignore  # noqa: PGH003
+
 import os
+from typing import TypeVar
 
 from config.base import BaseConfig
 from config.development import DevelopmentConfig
@@ -23,14 +26,17 @@ def get_environment() -> str:
     return environment
 
 
-def get_config() -> BaseConfig:
+ConfigType = TypeVar("ConfigType", bound=BaseConfig)
+
+
+def get_config() -> ConfigType:
     environment = get_environment()
     config_class = CONFIG_MAPPER[environment]()
     config_class.ENVIRONMENT = environment
     return config_class
 
 
-config: BaseConfig = get_config()
+config: ConfigType = get_config()
 
 
 __all__ = ["config", "get_config"]

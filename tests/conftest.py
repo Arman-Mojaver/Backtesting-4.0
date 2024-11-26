@@ -10,8 +10,7 @@ from sqlalchemy_utils import create_database, database_exists, drop_database
 
 os.environ["ENVIRONMENT"] = "testing"
 
-from config import config as project_config  # noqa: I001
-
+from config import config as project_config  # type: ignore[attr-defined]
 
 if not project_config.is_testing():
     err = f"Invalid testing environment: {project_config}"
@@ -26,9 +25,9 @@ def debug(request) -> bool:  # noqa: ANN001
 @pytest.fixture(scope="session", autouse=True)
 def _setup_test_database(*, debug: bool) -> Generator[None, None, None]:
     """Create the test database, runs migrations, and tear it down afterward."""
-    if database_exists(project_config.SQLALCHEMY_DATABASE_URI):  # type: ignore[attr-defined]
-        drop_database(project_config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
-    create_database(project_config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
+    if database_exists(project_config.SQLALCHEMY_DATABASE_URI):
+        drop_database(project_config.SQLALCHEMY_DATABASE_URI)
+    create_database(project_config.SQLALCHEMY_DATABASE_URI)
 
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
@@ -36,13 +35,13 @@ def _setup_test_database(*, debug: bool) -> Generator[None, None, None]:
     yield
 
     if not debug:
-        drop_database(project_config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
+        drop_database(project_config.SQLALCHEMY_DATABASE_URI)
 
 
 @pytest.fixture
 def session() -> Session:
     """Provide a SQLAlchemy session for tests."""
-    engine = create_engine(project_config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
+    engine = create_engine(project_config.SQLALCHEMY_DATABASE_URI)
     Session = sessionmaker(bind=engine)  # noqa: N806
     session = Session()
 

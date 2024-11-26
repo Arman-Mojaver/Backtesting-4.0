@@ -6,7 +6,7 @@ from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import DeclarativeBase, scoped_session, sessionmaker
 from sqlalchemy_serializer import SerializerMixin
 
-from config import config
+from config import config  # type: ignore[attr-defined]
 
 
 class Base(DeclarativeBase):
@@ -21,7 +21,7 @@ class Base(DeclarativeBase):
     )
 
 
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI)  # type: ignore[attr-defined]
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 

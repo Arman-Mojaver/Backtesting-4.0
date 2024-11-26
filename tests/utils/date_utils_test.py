@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from config import config
+from config import config  # type: ignore[attr-defined]
 from utils.date_utils import DateError, datetime_to_string, string_to_datetime
 
 args__expected_result__datetime_from_string_is_valid = [

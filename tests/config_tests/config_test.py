@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from config import get_config
+from config import get_config  # type: ignore[attr-defined]
 from testing_utils import temporary_disable_os_environ_is_test
 
 
