@@ -18,7 +18,7 @@ if not project_config.is_testing():
 
 
 @pytest.fixture(scope="session")
-def debug(request) -> bool:  # noqa: ANN001
+def debug(request) -> bool:
     return request.config.getoption("--d")
 
 
