@@ -1,6 +1,8 @@
+import json
 import os
 from collections.abc import Generator
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 from alembic import command
@@ -181,3 +183,19 @@ DATA = {
 @pytest.fixture()
 def file_data():
     return deepcopy(DATA)
+
+
+@pytest.fixture
+def generate_file():
+    def _generate_file(filename, data):
+        path = Path(project_config.INSTRUMENT_DATA_PATH) / filename
+
+        with path.open("w") as f:
+            json.dump(data, f)
+
+    yield _generate_file
+
+    folder = Path(project_config.INSTRUMENT_DATA_PATH)
+    for file_path in folder.glob("*"):
+        if file_path.is_file() and not str(file_path).endswith(".gitkeep"):
+            file_path.unlink()
