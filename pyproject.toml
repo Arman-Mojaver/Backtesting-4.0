@@ -31,6 +31,8 @@ lint.ignore = [
     "RET503",  # Missing explicit `return` at the end of function able to return non-`None` value
 
     "S105",    # Possible hardcoded password assigned to argument
+
+    "TRY203",   # Remove exception handler; error is immediately re-raise
 ]
 
 exclude = [
