@@ -10,6 +10,32 @@ def test_valid_instruments_schema(file_data):
 
 
 @pytest.fixture
+def file_data_with_extra_raw_points_d1_field(file_data):
+    file_data["data"]["EURUSD"]["raw_points_d1"][0]["extra_key"] = "extra_value"
+    return file_data
+
+
+def test_extra_raw_points_d1_fields_return_error(
+    file_data_with_extra_raw_points_d1_field,
+):
+    with pytest.raises(ValueError):
+        InstrumentsSchema(**file_data_with_extra_raw_points_d1_field)
+
+
+@pytest.fixture
+def file_data_with_extra_raw_points_h1_field(file_data):
+    file_data["data"]["EURUSD"]["raw_points_h1"][0]["extra_key"] = "extra_value"
+    return file_data
+
+
+def test_extra_raw_points_h1_fields_return_error(
+    file_data_with_extra_raw_points_h1_field,
+):
+    with pytest.raises(ValueError):
+        InstrumentsSchema(**file_data_with_extra_raw_points_h1_field)
+
+
+@pytest.fixture
 def file_data_with_mismatched_instruments(file_data):
     file_data["data"]["EURUSD"]["raw_points_d1"][0]["instrument"] = "USDCAD"
     return file_data
