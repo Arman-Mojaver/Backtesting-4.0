@@ -4,7 +4,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 from config import config  # type: ignore[attr-defined]
+from schemas.instruments_schema import InstrumentsSchema
 
 
 class RawPointsCreateMultipleView:
@@ -12,10 +15,18 @@ class RawPointsCreateMultipleView:
         self.directory: Path = Path(Path.cwd()) / config.INSTRUMENT_DATA_PATH
         self.file_names: list[Path] = self._get_file_names()
         self.data: dict[str, Any] = {}
+        self.instruments_data: InstrumentsSchema | None = None
 
     def run(self) -> None:
         self._validate_file_names()
         self.data = self._get_file_data()
+        self.instruments_data = self._get_instrument_data()
+
+    def _get_instrument_data(self):
+        try:
+            return InstrumentsSchema(**self.data)
+        except ValidationError:
+            raise
 
     def _get_file_data(self) -> dict[str, Any]:
         file = self.file_names[0]
