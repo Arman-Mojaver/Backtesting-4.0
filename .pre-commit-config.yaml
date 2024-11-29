@@ -22,7 +22,7 @@ repos:
         name: mypy
         language: python
         types_or: [ python, pyi ]
-        entry: mypy --ignore-missing-imports --implicit-reexport
+        entry: mypy --ignore-missing-imports --implicit-reexport --check-untyped-defs
         exclude: "/migrations/.*\\.py"
 
   - repo: https://github.com/asottile/pyupgrade

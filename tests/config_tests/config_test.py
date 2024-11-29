@@ -7,7 +7,7 @@ from testing_utils import temporary_disable_os_environ_is_test
 
 
 def test_default_test_environment_is_test():
-    from config import config
+    from config import config  # type: ignore[attr-defined]
 
     assert config.is_testing()
 

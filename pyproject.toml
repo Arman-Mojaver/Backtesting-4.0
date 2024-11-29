@@ -105,3 +105,4 @@ exclude_lines = [
 [tool.mypy]
 exclude = ["migrations"]
 follow_imports = "skip"
+disable_error_code = ["annotation-unchecked"]

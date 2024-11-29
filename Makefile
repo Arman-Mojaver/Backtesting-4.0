@@ -81,7 +81,7 @@ ruff-f:
 	ruff format
 
 mypy:
-	mypy . --ignore-missing-imports --implicit-reexport
+	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
 
 
 
