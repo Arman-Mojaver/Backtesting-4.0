@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, field_validator
 
 from schemas.raw_points_schema import (
     RawPointsSchema,  # noqa: TCH001 (used by pydantic schema)
 )
 from utils.list_utils import list_items_are_equal
+
+if TYPE_CHECKING:
+    from schemas.raw_point_d1_schema import RawPointD1Schema
+    from schemas.raw_point_h1_schema import RawPointH1Schema
 
 
 class EnabledInstrumentsMismatchError(Exception):
@@ -53,3 +59,17 @@ class InstrumentsSchema(BaseModel):
                 f"{enabled_instruments=}, {self.data.keys()=}"
             )
             raise EnabledInstrumentsMismatchError(err)
+
+    def raw_points_d1(self) -> list[RawPointD1Schema]:
+        return [
+            raw_point_d1
+            for raw_points_schema in self.data.values()
+            for raw_point_d1 in raw_points_schema.raw_points_d1
+        ]
+
+    def raw_points_h1(self) -> list[RawPointH1Schema]:
+        return [
+            raw_point_h1
+            for raw_points_schema in self.data.values()
+            for raw_point_h1 in raw_points_schema.raw_points_h1
+        ]

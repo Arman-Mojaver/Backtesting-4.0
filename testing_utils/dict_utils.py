@@ -24,3 +24,12 @@ def dicts_multi_by_key_are_equal(
         return False
 
     return all(lists_are_equal(dict_1[key], dict_2[key]) for key in dict_1)
+
+
+def list_of_dicts_are_equal(
+    list_1: list[dict[str, Any]],
+    list_2: list[dict[str, Any]],
+) -> bool:
+    return {frozenset(i.items()) for i in list_1} == {
+        frozenset(i.items()) for i in list_2
+    }

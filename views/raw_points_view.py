@@ -7,6 +7,8 @@ from typing import Any
 from pydantic import ValidationError
 
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.models import RawPointD1, RawPointH1
 from schemas.instruments_schema import InstrumentsSchema
 
 
@@ -24,6 +26,9 @@ class RawPointsCreateMultipleView:
         self.instruments_data.validate_instruments_enabled(
             enabled_instruments=config.ENABLED_INSTRUMENTS,
         )
+        self._create_raw_d1_points()
+        self._create_raw_h1_points()
+        session.commit()
 
     def _get_file_names(self) -> list[Path]:
         files_names = [
@@ -48,3 +53,13 @@ class RawPointsCreateMultipleView:
             return InstrumentsSchema(**self.data)
         except ValidationError:
             raise
+
+    def _create_raw_d1_points(self):
+        for raw_point_d1_data in self.instruments_data.raw_points_d1():
+            raw_point_d1 = RawPointD1(**raw_point_d1_data.model_dump())
+            session.add(raw_point_d1)
+
+    def _create_raw_h1_points(self):
+        for raw_point_h1_data in self.instruments_data.raw_points_h1():
+            raw_point_h1 = RawPointH1(**raw_point_h1_data.model_dump())
+            session.add(raw_point_h1)

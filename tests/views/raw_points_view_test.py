@@ -3,7 +3,9 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
+from database.models import RawPointD1, RawPointH1
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
+from testing_utils.dict_utils import list_of_dicts_are_equal
 from views.raw_points_view import RawPointsCreateMultipleView
 
 
@@ -210,3 +212,34 @@ def _setup_file_with_more_instruments_than_enabled(generate_file, file_data):
 def test_mismatch_with_more_instruments_than_enabled_raises_error():
     with pytest.raises(EnabledInstrumentsMismatchError):
         RawPointsCreateMultipleView().run()
+
+
+@pytest.fixture
+def _setup_file_data(generate_file, file_data):
+    generate_file(
+        filename="20241126_2300_instrument_data.json",
+        data=file_data,
+    )
+
+
+@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
+@pytest.mark.usefixtures("_setup_file_data")
+def test_create_raw_points(file_data):
+    RawPointsCreateMultipleView().run()
+
+    raw_points_d1 = [point.to_dict() for point in RawPointD1.query.all()]
+    expected_raw_point_d1_data = [
+        point_data
+        for instrument in file_data["data"].values()
+        for point_data in instrument["raw_points_d1"]
+    ]
+
+    raw_points_h1 = [point.to_dict() for point in RawPointH1.query.all()]
+    expected_raw_point_h1_data = [
+        point_data
+        for instrument in file_data["data"].values()
+        for point_data in instrument["raw_points_h1"]
+    ]
+
+    assert list_of_dicts_are_equal(raw_points_d1, expected_raw_point_d1_data)
+    assert list_of_dicts_are_equal(raw_points_h1, expected_raw_point_h1_data)
