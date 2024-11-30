@@ -8,8 +8,15 @@ from schemas.raw_points_schema import (
 from utils.list_utils import list_items_are_equal
 
 
+class EnabledInstrumentsMismatchError(Exception):
+    """
+    Error raised when the instruments in the file
+    and the enabled instruments do not match.
+    """
+
+
 class InstrumentsSchema(BaseModel):
-    data: dict[str, RawPointsSchema]
+    data: dict[str, RawPointsSchema] = {}
 
     @field_validator("data", mode="after")
     @classmethod
@@ -38,3 +45,11 @@ class InstrumentsSchema(BaseModel):
             raise ValueError(err)
 
         return data
+
+    def validate_instruments_enabled(self, enabled_instruments: tuple[str]) -> None:
+        if set(enabled_instruments) != set(self.data.keys()):
+            err = (
+                f"Mismatch between enabled instruments and file instruments: "
+                f"{enabled_instruments=}, {self.data.keys()=}"
+            )
+            raise EnabledInstrumentsMismatchError(err)

@@ -3,10 +3,8 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from views.raw_points_view import (
-    EnabledInstrumentsMismatchError,
-    RawPointsCreateMultipleView,
-)
+from schemas.instruments_schema import EnabledInstrumentsMismatchError
+from views.raw_points_view import RawPointsCreateMultipleView
 
 
 def test_no_file_raises_error():

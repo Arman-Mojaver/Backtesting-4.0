@@ -10,33 +10,20 @@ from config import config  # type: ignore[attr-defined]
 from schemas.instruments_schema import InstrumentsSchema
 
 
-class EnabledInstrumentsMismatchError(Exception):
-    """
-    Error raised when the instruments in the file
-    and the enabled instruments do not match.
-    """
-
-
 class RawPointsCreateMultipleView:
     def __init__(self):
         self.directory: Path = Path(Path.cwd()) / config.INSTRUMENT_DATA_PATH
         self.file_names: list[Path] = self._get_file_names()
         self.data: dict[str, Any] = {}
-        self.instruments_data: InstrumentsSchema | None = None
+        self.instruments_data: InstrumentsSchema = InstrumentsSchema()
 
     def run(self) -> None:
         self._validate_file_names()
         self.data = self._get_file_data()
         self.instruments_data = self._get_instrument_data()
-        self._validate_enabled_instruments()
-
-    def _validate_enabled_instruments(self):
-        if set(config.ENABLED_INSTRUMENTS) != set(self.data.keys()):
-            err = (
-                f"Mismatch between enabled instruments and file instruments: "
-                f"{config.ENABLED_INSTRUMENTS=}, {self.data.keys()=}"
-            )
-            raise EnabledInstrumentsMismatchError(err)
+        self.instruments_data.validate_instruments_enabled(
+            enabled_instruments=config.ENABLED_INSTRUMENTS,
+        )
 
     def _get_instrument_data(self):
         try:
