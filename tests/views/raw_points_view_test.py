@@ -1,7 +1,12 @@
+from unittest.mock import patch
+
 import pytest
 from pydantic import ValidationError
 
-from views.raw_points_view import RawPointsCreateMultipleView
+from views.raw_points_view import (
+    EnabledInstrumentsMismatchError,
+    RawPointsCreateMultipleView,
+)
 
 
 def test_no_file_raises_error():
@@ -167,4 +172,43 @@ def _setup_file_with_mismatched_end_dates(
 @pytest.mark.usefixtures("_setup_file_with_mismatched_end_dates")
 def test_file_data_with_mismatched_end_dates_raises_error():
     with pytest.raises(ValidationError):
+        RawPointsCreateMultipleView().run()
+
+
+@pytest.fixture
+def file_data_with_less_instruments_than_enabled(file_data):
+    file_data["data"].pop("USDCAD")
+    return file_data
+
+
+@pytest.fixture
+def _setup_file_with_less_instruments_than_enabled(
+    generate_file,
+    file_data_with_less_instruments_than_enabled,
+):
+    generate_file(
+        filename="20241126_2300_instrument_data.json",
+        data=file_data_with_less_instruments_than_enabled,
+    )
+
+
+@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
+@pytest.mark.usefixtures("_setup_file_with_less_instruments_than_enabled")
+def test_mismatch_with_less_instruments_than_enabled_raises_error():
+    with pytest.raises(EnabledInstrumentsMismatchError):
+        RawPointsCreateMultipleView().run()
+
+
+@pytest.fixture
+def _setup_file_with_more_instruments_than_enabled(generate_file, file_data):
+    generate_file(
+        filename="20241126_2300_instrument_data.json",
+        data=file_data,
+    )
+
+
+@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
+@pytest.mark.usefixtures("_setup_file_with_more_instruments_than_enabled")
+def test_mismatch_with_more_instruments_than_enabled_raises_error():
+    with pytest.raises(EnabledInstrumentsMismatchError):
         RawPointsCreateMultipleView().run()
