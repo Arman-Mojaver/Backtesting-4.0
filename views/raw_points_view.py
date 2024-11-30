@@ -25,22 +25,6 @@ class RawPointsCreateMultipleView:
             enabled_instruments=config.ENABLED_INSTRUMENTS,
         )
 
-    def _get_instrument_data(self):
-        try:
-            return InstrumentsSchema(**self.data)
-        except ValidationError:
-            raise
-
-    def _get_file_data(self) -> dict[str, Any]:
-        file = self.file_names[0]
-        with file.open() as f:
-            return json.load(f)
-
-    def _validate_file_names(self) -> None:
-        if not self.file_names:
-            err = f"Directory <{self.directory!s}> did not have instrument_data files"
-            raise FileNotFoundError(err)
-
     def _get_file_names(self) -> list[Path]:
         files_names = [
             file
@@ -48,3 +32,19 @@ class RawPointsCreateMultipleView:
             if str(file).endswith("_instrument_data.json")
         ]
         return sorted(files_names, key=lambda x: x.name, reverse=True)
+
+    def _validate_file_names(self) -> None:
+        if not self.file_names:
+            err = f"Directory <{self.directory!s}> did not have instrument_data files"
+            raise FileNotFoundError(err)
+
+    def _get_file_data(self) -> dict[str, Any]:
+        file = self.file_names[0]
+        with file.open() as f:
+            return json.load(f)
+
+    def _get_instrument_data(self):
+        try:
+            return InstrumentsSchema(**self.data)
+        except ValidationError:
+            raise
