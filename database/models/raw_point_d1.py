@@ -60,5 +60,5 @@ class RawPointD1(Base, CRUDMixin):
     volume = Column(Integer, nullable=False)
 
     __table_args__ = (
-        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument"),
+        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_d1"),
     )

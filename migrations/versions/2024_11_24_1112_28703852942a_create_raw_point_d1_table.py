@@ -1,5 +1,5 @@
 """
-Create_raw_point_d1_table.
+Create raw_point_d1 table.
 
 Revision ID: 28703852942a
 Revises:
@@ -33,6 +33,7 @@ def upgrade() -> None:
         sa.Column("close", sa.Float(), nullable=False),
         sa.Column("volume", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_raw_point_d1")),
+        sa.UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_d1"),
     )
 
 
