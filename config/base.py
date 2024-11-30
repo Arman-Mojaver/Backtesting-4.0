@@ -6,7 +6,7 @@ class BaseConfig:
 
     # Dates
     DATE_FORMAT: str = "%Y-%m-%d"
-    DATETIME_FORMAT: str = "%Y-%m-%d %H:%M"
+    DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"

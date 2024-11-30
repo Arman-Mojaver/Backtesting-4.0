@@ -12,7 +12,7 @@ args__expected_result__datetime_from_string_is_valid = [
         datetime(year=2023, month=1, day=5, tzinfo=timezone.utc),
     ),
     (
-        ("2023-01-05 05:45", config.DATETIME_FORMAT),
+        ("2023-01-05 05:45:00", config.DATETIME_FORMAT),
         datetime(year=2023, month=1, day=5, hour=5, minute=45, tzinfo=timezone.utc),
     ),
 ]
@@ -67,7 +67,7 @@ args__expected_result__datetime_to_string_is_valid = [
             datetime(year=2023, month=1, day=5, hour=5, minute=45, tzinfo=timezone.utc),
             config.DATETIME_FORMAT,
         ),
-        "2023-01-05 05:45",
+        "2023-01-05 05:45:00",
     ),
 ]
 

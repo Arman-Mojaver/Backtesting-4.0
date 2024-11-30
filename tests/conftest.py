@@ -80,7 +80,7 @@ DATA = {
             "raw_points_h1": [
                 {
                     "close": 1.06981,
-                    "datetime": "2023-11-13 00:00",
+                    "datetime": "2023-11-13 00:00:00",
                     "high": 1.0706,
                     "instrument": "EURUSD",
                     "low": 1.06648,
@@ -89,7 +89,7 @@ DATA = {
                 },
                 {
                     "close": 1.06981,
-                    "datetime": "2023-11-13 01:00",
+                    "datetime": "2023-11-13 01:00:00",
                     "high": 1.0706,
                     "instrument": "EURUSD",
                     "low": 1.06648,
@@ -98,7 +98,7 @@ DATA = {
                 },
                 {
                     "close": 1.08782,
-                    "datetime": "2023-11-14 00:00",
+                    "datetime": "2023-11-14 00:00:00",
                     "high": 1.08872,
                     "instrument": "EURUSD",
                     "low": 1.06916,
@@ -107,7 +107,7 @@ DATA = {
                 },
                 {
                     "close": 1.08782,
-                    "datetime": "2023-11-14 01:00",
+                    "datetime": "2023-11-14 01:00:00",
                     "high": 1.08872,
                     "instrument": "EURUSD",
                     "low": 1.06916,
@@ -140,7 +140,7 @@ DATA = {
             "raw_points_h1": [
                 {
                     "close": 1.06981,
-                    "datetime": "2023-11-13 00:00",
+                    "datetime": "2023-11-13 00:00:00",
                     "high": 1.0706,
                     "instrument": "USDCAD",
                     "low": 1.06648,
@@ -149,7 +149,7 @@ DATA = {
                 },
                 {
                     "close": 1.06981,
-                    "datetime": "2023-11-13 01:00",
+                    "datetime": "2023-11-13 01:00:00",
                     "high": 1.0706,
                     "instrument": "USDCAD",
                     "low": 1.06648,
@@ -158,7 +158,7 @@ DATA = {
                 },
                 {
                     "close": 1.08782,
-                    "datetime": "2023-11-14 00:00",
+                    "datetime": "2023-11-14 00:00:00",
                     "high": 1.08872,
                     "instrument": "USDCAD",
                     "low": 1.06916,
@@ -167,7 +167,7 @@ DATA = {
                 },
                 {
                     "close": 1.08782,
-                    "datetime": "2023-11-14 01:00",
+                    "datetime": "2023-11-14 01:00:00",
                     "high": 1.08872,
                     "instrument": "USDCAD",
                     "low": 1.06916,
