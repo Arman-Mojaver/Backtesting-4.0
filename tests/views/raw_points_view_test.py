@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 import pytest
 from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import RawPointD1, RawPointH1
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
@@ -243,3 +244,16 @@ def test_create_raw_points(file_data):
 
     assert list_of_dicts_are_equal(raw_points_d1, expected_raw_point_d1_data)
     assert list_of_dicts_are_equal(raw_points_h1, expected_raw_point_h1_data)
+
+
+@patch("views.raw_points_view.session")
+@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
+@pytest.mark.usefixtures("_setup_file_data")
+def test_commit_error(mock_session):
+    mock_session.commit.side_effect = SQLAlchemyError
+
+    RawPointsCreateMultipleView().run()
+
+    mock_session.commit.assert_called_once()
+    mock_session.rollback.assert_called_once()
+    mock_session.close.assert_called_once()

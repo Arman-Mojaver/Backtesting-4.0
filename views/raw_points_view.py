@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
 from config import config  # type: ignore[attr-defined]
 from database import session
@@ -28,7 +29,7 @@ class RawPointsCreateMultipleView:
         )
         self._create_raw_d1_points()
         self._create_raw_h1_points()
-        session.commit()
+        self._commit()
 
     def _get_file_names(self) -> list[Path]:
         files_names = [
@@ -63,3 +64,12 @@ class RawPointsCreateMultipleView:
         for raw_point_h1_data in self.instruments_data.raw_points_h1():
             raw_point_h1 = RawPointH1(**raw_point_h1_data.model_dump())
             session.add(raw_point_h1)
+
+    @staticmethod
+    def _commit() -> None:
+        try:
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+        finally:
+            session.close()
