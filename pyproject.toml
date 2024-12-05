@@ -64,6 +64,7 @@ quote-style = "double"
     "D101",     # Missing docstring in public class
     "D102",     # Missing docstring in public method
     "D103",     # Missing docstring in public function
+    "D106",     # Missing docstring in public nested class
     "D107",     # Missing docstring in __init__
 
     "INP001",   # Ignore implicit namespace packages in tests
