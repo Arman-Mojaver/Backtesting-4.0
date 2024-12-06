@@ -6,7 +6,8 @@ LOGGING_CONFIG = {
     "disable_existing_loggers": True,
     "formatters": {
         "console": {
-            "format": "bt: %(asctime)s - %(levelname)s - %(message)s",
+            "class": "config.logging_config.formatters.EnvFormatter",
+            "format": "bt: %(asctime)s - %(environment)s - %(levelname)s - %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
