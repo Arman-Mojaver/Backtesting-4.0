@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
 from config import config  # type: ignore[attr-defined]
+from config.logging_config.log_decorators import log_on_end, log_on_start
 from database import session
 from database.models import RawPointD1, RawPointH1
 from schemas.instruments_schema import InstrumentsSchema
@@ -24,6 +25,7 @@ class RawPointsCreateMultipleView:
             dict
         )
 
+    @log_on_end("Finished RawPointsCreateMultipleView")
     def run(self) -> None:
         self._validate_file_names()
         self.data = self._get_file_data()
@@ -59,6 +61,7 @@ class RawPointsCreateMultipleView:
         except ValidationError:
             raise
 
+    @log_on_start("Creating RawPointD1 points")
     def _create_raw_d1_points(self):
         for raw_point_d1_data in self.instruments_data.raw_points_d1():
             raw_point_d1 = RawPointD1(**raw_point_d1_data.model_dump())
@@ -68,6 +71,7 @@ class RawPointsCreateMultipleView:
             session.add(raw_point_d1)
             session.flush()
 
+    @log_on_start("Creating RawPointH1 points")
     def _create_raw_h1_points(self):
         for raw_point_h1_data in self.instruments_data.raw_points_h1():
             raw_point_d1 = self.raw_points_d1_by_instrument_by_date[
@@ -80,6 +84,7 @@ class RawPointsCreateMultipleView:
             session.add(raw_point_h1)
 
     @staticmethod
+    @log_on_end("Committed")
     def _commit() -> None:
         try:
             session.commit()
