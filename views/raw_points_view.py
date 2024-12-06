@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,9 @@ class RawPointsCreateMultipleView:
         self.file_names: list[Path] = self._get_file_names()
         self.data: dict[str, Any] = {}
         self.instruments_data: InstrumentsSchema = InstrumentsSchema()
+        self.raw_points_d1_by_instrument_by_date: defaultdict[Any, dict] = defaultdict(
+            dict
+        )
 
     def run(self) -> None:
         self._validate_file_names()
@@ -58,11 +62,21 @@ class RawPointsCreateMultipleView:
     def _create_raw_d1_points(self):
         for raw_point_d1_data in self.instruments_data.raw_points_d1():
             raw_point_d1 = RawPointD1(**raw_point_d1_data.model_dump())
+            self.raw_points_d1_by_instrument_by_date[raw_point_d1.instrument][
+                raw_point_d1.datetime
+            ] = raw_point_d1
             session.add(raw_point_d1)
+            session.flush()
 
     def _create_raw_h1_points(self):
         for raw_point_h1_data in self.instruments_data.raw_points_h1():
-            raw_point_h1 = RawPointH1(**raw_point_h1_data.model_dump())
+            raw_point_d1 = self.raw_points_d1_by_instrument_by_date[
+                raw_point_h1_data.instrument
+            ][raw_point_h1_data.date_str()]
+            raw_point_h1 = RawPointH1(
+                raw_point_d1_id=raw_point_d1.id,
+                **raw_point_h1_data.model_dump(),
+            )
             session.add(raw_point_h1)
 
     @staticmethod

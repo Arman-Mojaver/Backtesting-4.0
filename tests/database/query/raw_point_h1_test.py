@@ -1,6 +1,6 @@
 import pytest
 
-from database.models import RawPointH1
+from database.models import RawPointD1, RawPointH1
 from database.models.raw_point_h1 import MultipleValuesError
 from testing_utils.dict_utils import (
     dicts_by_key_are_equal,
@@ -10,7 +10,30 @@ from testing_utils.dict_utils import (
 
 
 @pytest.fixture
-def points(session):
+def raw_point_d1(session):
+    point_data = {
+        "datetime": "2023-11-13",
+        "instrument": "EURUSD",
+        "open": 1.06751,
+        "high": 1.0706,
+        "low": 1.06648,
+        "close": 1.06981,
+        "volume": 47554,
+    }
+
+    point = RawPointD1(**point_data)
+
+    session.add(point)
+    session.commit()
+
+    yield point
+
+    session.delete(point)
+    session.commit()
+
+
+@pytest.fixture
+def points(raw_point_d1, session):
     point_data_1 = {
         "datetime": "2023-11-13 00:00",
         "instrument": "EURUSD",
@@ -31,8 +54,8 @@ def points(session):
         "volume": 79728,
     }
 
-    point_1 = RawPointH1(**point_data_1)
-    point_2 = RawPointH1(**point_data_2)
+    point_1 = RawPointH1(raw_point_d1_id=raw_point_d1.id, **point_data_1)
+    point_2 = RawPointH1(raw_point_d1_id=raw_point_d1.id, **point_data_2)
 
     session.add_all([point_1, point_2])
     session.commit()

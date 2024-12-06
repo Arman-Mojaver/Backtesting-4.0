@@ -1,4 +1,6 @@
-from datetime import datetime, timezone
+from __future__ import annotations
+
+from datetime import date, datetime, timezone
 
 from config import config  # type: ignore[attr-defined]
 
@@ -18,7 +20,7 @@ def string_to_datetime(
 
 
 def datetime_to_string(
-    date: datetime,
+    date: datetime | date,
     format: str = config.DATE_FORMAT,  # noqa: A002
 ) -> str:
     try:

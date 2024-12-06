@@ -228,22 +228,31 @@ def _setup_file_data(generate_file, file_data):
 def test_create_raw_points(file_data):
     RawPointsCreateMultipleView().run()
 
-    raw_points_d1 = [point.to_dict() for point in RawPointD1.query.all()]
+    raw_points_d1 = RawPointD1.query.all()
     expected_raw_point_d1_data = [
         point_data
         for instrument in file_data["data"].values()
         for point_data in instrument["raw_points_d1"]
     ]
 
-    raw_points_h1 = [point.to_dict() for point in RawPointH1.query.all()]
+    raw_points_h1 = RawPointH1.query.all()
     expected_raw_point_h1_data = [
         point_data
         for instrument in file_data["data"].values()
         for point_data in instrument["raw_points_h1"]
     ]
 
-    assert list_of_dicts_are_equal(raw_points_d1, expected_raw_point_d1_data)
-    assert list_of_dicts_are_equal(raw_points_h1, expected_raw_point_h1_data)
+    assert list_of_dicts_are_equal(
+        [point.to_dict() for point in raw_points_d1],
+        expected_raw_point_d1_data,
+    )
+    assert list_of_dicts_are_equal(
+        [point.to_dict() for point in raw_points_h1],
+        expected_raw_point_h1_data,
+    )
+
+    for point in RawPointH1.query.all():
+        assert point.instrument == point.raw_point_d1.instrument
 
 
 @patch("views.raw_points_view.session")

@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, relationship
 
 from database import Base, CRUDMixin, session
+
+if TYPE_CHECKING:
+    from database.models import RawPointH1
 
 
 class MultipleValuesError(Exception):
@@ -46,7 +50,7 @@ class RawPointD1Query:
 class RawPointD1(Base, CRUDMixin):
     __tablename__ = "raw_point_d1"
     __repr_fields__ = ("instrument", "datetime")
-    serialize_rules = ("-id",)
+    serialize_rules = ("-id", "-raw_points_h1")
 
     query = RawPointD1Query
 
@@ -58,6 +62,11 @@ class RawPointD1(Base, CRUDMixin):
     low = Column(Float, nullable=False)
     close = Column(Float, nullable=False)
     volume = Column(Integer, nullable=False)
+
+    raw_points_h1: Mapped[list[RawPointH1]] = relationship(
+        back_populates="raw_point_d1",
+        cascade="all",
+    )
 
     __table_args__ = (
         UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_d1"),
