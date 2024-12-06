@@ -39,7 +39,7 @@ def create_raw_points() -> None:
         log.exception("Unexpected error")
         raise click.ClickException(err) from e
 
-    click.echo("Created raw points")
+    log.info("Created raw points")
 
 
 if __name__ == "__main__":
