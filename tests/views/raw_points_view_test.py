@@ -223,8 +223,16 @@ def _setup_file_data(generate_file, file_data):
     )
 
 
+@pytest.fixture
+def _clear_raw_point_tables(session):
+    yield
+    session.query(RawPointH1).delete()
+    session.query(RawPointD1).delete()
+    session.commit()
+
+
 @patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
-@pytest.mark.usefixtures("_setup_file_data")
+@pytest.mark.usefixtures("_setup_file_data", "_clear_raw_point_tables")
 def test_create_raw_points(file_data):
     RawPointsCreateMultipleView().run()
 
