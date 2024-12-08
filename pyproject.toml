@@ -99,6 +99,7 @@ omit = [
     "migrations/*",
     "testing_utils/*",
     "tests/*",
+    "config/logging_config/*",
 ]
 exclude_lines = [
     "if TYPE_CHECKING:",
