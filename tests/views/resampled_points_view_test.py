@@ -13,14 +13,16 @@ from views.resampled_points_view import (
     ResampledPointsCreateMultipleView,
 )
 
+# TODO: use more than one instrument in the tests  # noqa: TD002, TD003, FIX002
+
 
 @pytest.fixture
 def raw_points_d1(session):
     points_data = get_points_data(
         instrument="EURUSD",
         time_frame=TimeFrame.Day,
-        from_date=string_to_datetime("2023-11-13"),
-        to_date=string_to_datetime("2023-11-27"),
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-09-01"),
     )
 
     points = []
@@ -44,8 +46,8 @@ def raw_points_h1(raw_points_d1, session):
     points_data = get_points_data(
         instrument="EURUSD",
         time_frame=TimeFrame.Hour,
-        from_date=string_to_datetime("2023-11-13"),
-        to_date=string_to_datetime("2023-11-27"),
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-09-01"),
     )
 
     raw_points_d1_by_date = {
@@ -79,8 +81,8 @@ def raw_points_h1(raw_points_d1, session):
 def resampled_points_d1_data():
     return get_resampled_d1_data(
         instrument="EURUSD",
-        from_date=string_to_datetime("2023-11-13"),
-        to_date=string_to_datetime("2023-11-27"),
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-09-01"),
     )
 
 
