@@ -10,18 +10,8 @@ from testing_utils.dict_utils import (
 
 
 @pytest.fixture
-def raw_point_d1(session):
-    point_data = {
-        "datetime": "2023-11-13",
-        "instrument": "EURUSD",
-        "open": 1.06751,
-        "high": 1.0706,
-        "low": 1.06648,
-        "close": 1.06981,
-        "volume": 47554,
-    }
-
-    point = RawPointD1(**point_data)
+def raw_point_d1(raw_point_d1_data, session):
+    point = RawPointD1(**raw_point_d1_data)
 
     session.add(point)
     session.commit()
@@ -33,26 +23,8 @@ def raw_point_d1(session):
 
 
 @pytest.fixture
-def points(raw_point_d1, session):
-    point_data_1 = {
-        "datetime": "2023-11-13 00:00",
-        "instrument": "EURUSD",
-        "open": 1.06751,
-        "high": 1.0706,
-        "low": 1.06648,
-        "close": 1.06981,
-        "volume": 47554,
-    }
-
-    point_data_2 = {
-        "datetime": "2023-11-13 01:00",
-        "instrument": "EURUSD",
-        "open": 1.06916,
-        "high": 1.08872,
-        "low": 1.06916,
-        "close": 1.08782,
-        "volume": 79728,
-    }
+def points(raw_point_d1, raw_points_h1_data, session):
+    point_data_1, point_data_2 = raw_points_h1_data
 
     point_1 = RawPointH1(raw_point_d1_id=raw_point_d1.id, **point_data_1)
     point_2 = RawPointH1(raw_point_d1_id=raw_point_d1.id, **point_data_2)

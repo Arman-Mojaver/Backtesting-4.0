@@ -2,34 +2,24 @@ import pytest
 
 from database.models import RawPointD1
 from database.models.raw_point_d1 import MultipleValuesError
+from fixtures.price_data import get_points_data
 from testing_utils.dict_utils import (
     dicts_by_key_are_equal,
     dicts_multi_by_key_are_equal,
     lists_are_equal,
 )
+from utils.date_utils import string_to_datetime
+from utils.enums import TimeFrame
 
 
 @pytest.fixture
 def points(session):
-    point_data_1 = {
-        "datetime": "2023-11-13",
-        "instrument": "EURUSD",
-        "open": 1.06751,
-        "high": 1.0706,
-        "low": 1.06648,
-        "close": 1.06981,
-        "volume": 47554,
-    }
-
-    point_data_2 = {
-        "datetime": "2023-11-14",
-        "instrument": "EURUSD",
-        "open": 1.06916,
-        "high": 1.08872,
-        "low": 1.06916,
-        "close": 1.08782,
-        "volume": 79728,
-    }
+    point_data_1, point_data_2 = get_points_data(
+        instrument="EURUSD",
+        time_frame=TimeFrame.Day,
+        from_date=string_to_datetime("2023-11-13"),
+        to_date=string_to_datetime("2023-11-14"),
+    )
 
     point_1 = RawPointD1(**point_data_1)
     point_2 = RawPointD1(**point_data_2)
