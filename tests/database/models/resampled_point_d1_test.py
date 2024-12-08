@@ -72,7 +72,7 @@ def test_create_point_with_wrong_high_low_order(session):
 
 
 def test_instrument_datetime_unique_constraint(session):
-    point_data_1 = {
+    point_data = {
         "datetime": "2023-11-13",
         "instrument": "EURUSD",
         "open": 1.06751,
@@ -80,20 +80,11 @@ def test_instrument_datetime_unique_constraint(session):
         "low": 1.06648,
         "close": 1.06981,
         "volume": 47554,
+        "high_low_order": "high_first",
     }
 
-    point_data_2 = {
-        "datetime": "2023-11-13",
-        "instrument": "EURUSD",
-        "open": 1.06916,
-        "high": 1.08872,
-        "low": 1.06916,
-        "close": 1.08782,
-        "volume": 79728,
-    }
-
-    point_1 = ResampledPointD1(**point_data_1)
-    point_2 = ResampledPointD1(**point_data_2)
+    point_1 = ResampledPointD1(**point_data)
+    point_2 = ResampledPointD1(**point_data)
 
     session.add_all([point_1, point_2])
 
