@@ -53,7 +53,7 @@ class ResampledPointD1Query:
 
 class ResampledPointD1(Base, CRUDMixin):
     __tablename__ = "resampled_point_d1"
-    __repr_fields__ = ("instrument", "datetime")
+    __repr_fields__ = ("instrument", "datetime", "high_low_order")
     serialize_rules = ("-id",)
 
     query = ResampledPointD1Query
