@@ -1,6 +1,6 @@
 import pytest
 
-from config import config
+from config import config  # type: ignore[attr-defined]
 from fixtures.price_data import get_points_data
 from utils.date_utils import string_to_datetime
 from utils.enums import TimeFrame
