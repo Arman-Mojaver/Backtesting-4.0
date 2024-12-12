@@ -37,7 +37,9 @@ def upgrade() -> None:
         sa.Column("tp_multiplier", sa.Float(), nullable=False),
         sa.Column("sl_multiplier", sa.Float(), nullable=False),
         sa.Column("parameters", sa.JSON(), nullable=False),
+        sa.Column("identifier", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_money_management_strategy")),
+        sa.UniqueConstraint("identifier", name="uq_money_management_strategy_identifier"),
     )
 
 
