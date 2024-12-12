@@ -183,7 +183,7 @@ def get_points_data(
     to_date: datetime,
 ) -> list[dict[str, Any]]:
     rates = INSTRUMENT_MAPPER[instrument][time_frame]
-    sorted_dates = sorted(rates.keys())
+    sorted_dates = sorted(rates.keys())  # type: ignore[attr-defined]
 
     data = []
     for date in sorted_dates:
@@ -191,7 +191,7 @@ def get_points_data(
         if from_date > data_obj or data_obj > to_date:
             continue
 
-        open_, high, low, close, volume = rates[date][1:6]
+        open_, high, low, close, volume = rates[date][1:6]  # type: ignore[index]
 
         point_data = {
             "instrument": instrument,
@@ -213,7 +213,7 @@ def get_resampled_d1_data(
     to_date: datetime,
 ) -> list[dict[str, Any]]:
     points = INSTRUMENT_MAPPER[instrument]["resampled_d1"]
-    sorted_dates = sorted(points.keys())
+    sorted_dates = sorted(points.keys())  # type: ignore[attr-defined]
 
     data = []
     for date in sorted_dates:
@@ -221,7 +221,7 @@ def get_resampled_d1_data(
         if from_date > data_obj or data_obj > to_date:
             continue
 
-        point_data = points[date]
+        point_data = points[date]  # type: ignore[index]
         data.append(point_data)
 
     return data
