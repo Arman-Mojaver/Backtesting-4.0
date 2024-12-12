@@ -22,6 +22,15 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
+    high_low_order_type = postgresql.ENUM(
+        "high_first",
+        "low_first",
+        "undefined",
+        name="highloworder",
+        create_type=False,
+    )
+    high_low_order_type.create(op.get_bind(), checkfirst=True)
+
     op.create_table(
         "resampled_point_d1",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
@@ -32,11 +41,7 @@ def upgrade() -> None:
         sa.Column("low", sa.Float(), nullable=False),
         sa.Column("close", sa.Float(), nullable=False),
         sa.Column("volume", sa.Integer(), nullable=False),
-        sa.Column(
-            "high_low_order",
-            postgresql.ENUM("high_first", "low_first", "undefined", name="highloworder"),
-            nullable=False,
-        ),
+        sa.Column("high_low_order", high_low_order_type, nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_resampled_point_d1")),
         sa.UniqueConstraint(
             "datetime",
@@ -48,3 +53,11 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("resampled_point_d1")
+    high_low_order_type = postgresql.ENUM(
+        "high_first",
+        "low_first",
+        "undefined",
+        name="highloworder",
+        create_type=False,
+    )
+    high_low_order_type.drop(op.get_bind())

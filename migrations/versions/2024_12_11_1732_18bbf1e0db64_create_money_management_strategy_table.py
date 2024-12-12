@@ -23,14 +23,17 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
+    money_management_strategy_type = postgresql.ENUM(
+        "atr",
+        name="moneymanagementstrategytype",
+        create_type=False,
+    )
+    money_management_strategy_type.create(op.get_bind(), checkfirst=True)
+
     op.create_table(
         "money_management_strategy",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column(
-            "type",
-            postgresql.ENUM("atr", name="moneymanagementstrategytype"),
-            nullable=False,
-        ),
+        sa.Column("type", money_management_strategy_type, nullable=False),
         sa.Column("tp_multiplier", sa.Float(), nullable=False),
         sa.Column("sl_multiplier", sa.Float(), nullable=False),
         sa.Column("parameters", sa.JSON(), nullable=False),
@@ -40,3 +43,10 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("money_management_strategy")
+
+    money_management_strategy_type = postgresql.ENUM(
+        "atr",
+        name="moneymanagementstrategytype",
+        create_type=False,
+    )
+    money_management_strategy_type.drop(op.get_bind())
