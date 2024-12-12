@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy.exc import IntegrityError
 
 from database.models.money_management_strategy import MoneyManagementStrategy
 
@@ -48,3 +49,13 @@ def test_delete_point(money_management_strategy_point, session):
         .filter_by(id=money_management_strategy_id)
         .one_or_none()
     )
+
+
+def test_unique_identifier(money_management_strategy_data, session):
+    point_1 = MoneyManagementStrategy(**money_management_strategy_data)
+    point_2 = MoneyManagementStrategy(**money_management_strategy_data)
+
+    session.add_all([point_1, point_2])
+
+    with pytest.raises(IntegrityError):
+        session.commit()
