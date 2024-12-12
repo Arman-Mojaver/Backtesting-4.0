@@ -10,6 +10,7 @@ def money_management_strategy_data():
         "tp_multiplier": 1.5,
         "sl_multiplier": 1.0,
         "parameters": {"atr_parameter": 14},
+        "identifier": "atr-1.5-1.0-14",
     }
 
 

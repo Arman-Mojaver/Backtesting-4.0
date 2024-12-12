@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from sqlalchemy import JSON, Column, Float, Integer
+from sqlalchemy import JSON, Column, Float, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import object_session
 
@@ -22,7 +22,7 @@ class MoneyManagementStrategyQuery:
 
 class MoneyManagementStrategy(Base, CRUDMixin):
     __tablename__ = "money_management_strategy"
-    __repr_fields__ = ("type", "tp_multiplier", "sl_multiplier", "parameters")
+    __repr_fields__ = ("identifier",)
     serialize_rules = ("-id",)
 
     query = MoneyManagementStrategyQuery
@@ -32,6 +32,11 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     tp_multiplier = Column(Float, nullable=False)
     sl_multiplier = Column(Float, nullable=False)
     parameters = Column(JSON, nullable=False)
+    identifier = Column(String, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("identifier", name="uq_money_management_strategy_identifier"),
+    )
 
     def delete(self) -> None:
         object_session(self).delete(self)

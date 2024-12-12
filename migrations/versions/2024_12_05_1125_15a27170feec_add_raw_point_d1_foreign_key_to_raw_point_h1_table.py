@@ -1,5 +1,5 @@
 """
-Add raw_point_d1 foreign key to raw_point_h1.
+Add raw_point_d1 foreign key to raw_point_h1 table.
 
 Revision ID: 15a27170feec
 Revises: 5ef9cb0fed6a
