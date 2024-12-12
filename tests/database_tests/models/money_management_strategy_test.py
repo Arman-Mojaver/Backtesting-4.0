@@ -33,15 +33,14 @@ def money_management_strategy_point(money_management_strategy_data, session):
     session.add(point)
     session.commit()
 
-    yield point
-
-    session.query(MoneyManagementStrategy).delete()
+    return point
 
 
 def test_delete_point(money_management_strategy_point, session):
     money_management_strategy_id = money_management_strategy_point.id
 
     money_management_strategy_point.delete()
+    session.commit()
 
     assert (
         not session.query(MoneyManagementStrategy)
