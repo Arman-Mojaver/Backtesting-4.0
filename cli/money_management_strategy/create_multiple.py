@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategy create -t atr -tp 1.1 1.1 -sl 1.4 1.4 -atr 15 15
+bt mm_strategies create -t atr -tp 1.1 1.1 -sl 1.4 1.4 -atr 15 15
 """
 
 from __future__ import annotations

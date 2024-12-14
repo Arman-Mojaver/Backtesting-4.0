@@ -40,7 +40,10 @@ class MoneyManagementStrategyDeleteMultipleView:
         identifiers = self._get_queried_identifiers()
 
         if self.identifiers and set(self.identifiers) != set(identifiers):
-            err = f"Identifier mismatch: {self.identifiers=}, {identifiers=}"
+            err = (
+                "Identifier mismatch: Introduced identifiers: "
+                f"{self.identifiers}, Existing Identifiers: {identifiers}"
+            )
             raise NonExistentIdentifierError(err)
 
     def _get_queried_identifiers(self) -> set[str]:
