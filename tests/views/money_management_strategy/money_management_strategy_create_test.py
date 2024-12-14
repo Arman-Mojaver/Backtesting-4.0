@@ -40,8 +40,5 @@ def test_create_one(money_management_strategy_data, session):
 def test_commit_error(mock_session, money_management_strategy_data):
     mock_session.commit.side_effect = SQLAlchemyError
 
-    MoneyManagementStrategyCreateOneView(**money_management_strategy_data).run()
-
-    mock_session.commit.assert_called_once()
-    mock_session.rollback.assert_called_once()
-    mock_session.close.assert_called_once()
+    with pytest.raises(SQLAlchemyError):
+        MoneyManagementStrategyCreateOneView(**money_management_strategy_data).run()

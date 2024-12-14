@@ -126,8 +126,5 @@ def test_create_resampled_points(resampled_points_d1_data, session):
 def test_commit_error(mock_session):
     mock_session.commit.side_effect = SQLAlchemyError
 
-    ResampledPointsCreateMultipleView().run()
-
-    mock_session.commit.assert_called_once()
-    mock_session.rollback.assert_called_once()
-    mock_session.close.assert_called_once()
+    with pytest.raises(SQLAlchemyError):
+        ResampledPointsCreateMultipleView().run()

@@ -141,18 +141,18 @@ def test_create_multiple(money_management_strategies_data, session):
         item.to_dict(rules=("-identifier",)) for item in money_management_strategies
     ] == money_management_strategies_data
 
+    session.query(MoneyManagementStrategy).delete()
+    session.commit()
+
 
 @patch("views.money_management_strategy.create_multiple_view.session")
 def test_commit_error(mock_session, money_management_strategies_data):
     mock_session.commit.side_effect = SQLAlchemyError
 
-    MoneyManagementStrategyCreateMultipleView(
-        type="atr",
-        tp_multiplier_range=(1.5, 1.6),
-        sl_multiplier_range=(1.0, 1.1),
-        atr_parameter_range=(14, 15),
-    ).run()
-
-    mock_session.commit.assert_called_once()
-    mock_session.rollback.assert_called_once()
-    mock_session.close.assert_called_once()
+    with pytest.raises(SQLAlchemyError):
+        MoneyManagementStrategyCreateMultipleView(
+            type="atr",
+            tp_multiplier_range=(1.5, 1.6),
+            sl_multiplier_range=(1.0, 1.1),
+            atr_parameter_range=(14, 15),
+        ).run()

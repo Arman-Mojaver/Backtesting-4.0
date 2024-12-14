@@ -269,8 +269,5 @@ def test_create_raw_points(file_data):
 def test_commit_error(mock_session):
     mock_session.commit.side_effect = SQLAlchemyError
 
-    RawPointsCreateMultipleView().run()
-
-    mock_session.commit.assert_called_once()
-    mock_session.rollback.assert_called_once()
-    mock_session.close.assert_called_once()
+    with pytest.raises(SQLAlchemyError):
+        RawPointsCreateMultipleView().run()

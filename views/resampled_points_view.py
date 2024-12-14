@@ -52,5 +52,6 @@ class ResampledPointsCreateMultipleView:
             session.commit()
         except SQLAlchemyError:
             session.rollback()
+            raise
         finally:
             session.close()
