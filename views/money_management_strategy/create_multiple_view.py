@@ -28,7 +28,7 @@ class MoneyManagementStrategyCreateMultipleView:
         self.sl_multiplier_range: tuple[float, float] = sl_multiplier_range
         self.atr_parameter_range: tuple[int, int] = atr_parameter_range
 
-    @log_on_end("Finished MoneyManagementStrategyCreateOneView")
+    @log_on_end("Finished MoneyManagementStrategyCreateMultipleView")
     def run(self) -> None:
         tp_values = self._get_tp_values()
         sl_values = self._get_sl_values()
