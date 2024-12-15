@@ -83,8 +83,8 @@ class MoneyManagementStrategyCreateMultipleView:
             )
         )
 
-    @staticmethod
     def _get_atr_schemas_data(
+        self,
         tp_values: list[float],
         sl_values: list[float],
         atr_values: list[int],
@@ -95,7 +95,7 @@ class MoneyManagementStrategyCreateMultipleView:
                 for atr_value in list(atr_values):
                     atr_schemas_data.append(  # noqa: PERF401
                         {
-                            "type": "atr",
+                            "type": self.type,
                             "tp_multiplier": tp_value,
                             "sl_multiplier": sl_value,
                             "parameters": {"atr_parameter": atr_value},

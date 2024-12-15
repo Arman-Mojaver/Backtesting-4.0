@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import MoneyManagementStrategy
@@ -8,6 +9,17 @@ from utils.range_utils import InvalidRangeInputsError
 from views.money_management_strategy.create_multiple_view import (
     MoneyManagementStrategyCreateMultipleView,
 )
+
+
+@pytest.mark.parametrize("type", ["invalid_type", 123])
+def tests_invalid_type(type):  # noqa: A002
+    with pytest.raises(ValidationError):
+        MoneyManagementStrategyCreateMultipleView(
+            type="invalid_type",
+            tp_multiplier_range=(1.0, 1.2),
+            sl_multiplier_range=(1.0, 1.2),
+            atr_parameter_range=(14, 16),
+        ).run()
 
 
 @pytest.mark.parametrize(
