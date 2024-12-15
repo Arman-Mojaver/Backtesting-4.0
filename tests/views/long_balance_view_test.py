@@ -4,6 +4,7 @@ import pytest
 
 from database.models.resasmpled_point_d1 import ResampledPointD1
 from fixtures.price_data import get_resampled_d1_data
+from models.long_balance_point import LongBalancePoint
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
 from utils.date_utils import string_to_datetime
 from views.long_balance_view import LongBalanceView, NoResampledPointsError
@@ -54,9 +55,11 @@ def test_raw_points_has_mismatch_with_enabled_instruments(resampled_points_d1):
 def test_return_long_balance(resampled_points_d1):
     result = LongBalanceView().run()
 
-    expected_result = {
-        "EURUSD": {
-            "2023-08-23": [
+    expected_result = [
+        LongBalancePoint(
+            instrument="EURUSD",
+            datetime="2023-08-23",
+            balance=[
                 -1.08448 + 1.08715,
                 -1.08448 + 1.08026,
                 -1.08448 + 1.08767,
@@ -68,7 +71,11 @@ def test_return_long_balance(resampled_points_d1):
                 -1.08448 + 1.07822,
                 -1.08448 + 1.0892,
             ],
-            "2023-08-24": [
+        ),
+        LongBalancePoint(
+            instrument="EURUSD",
+            datetime="2023-08-24",
+            balance=[
                 -1.08631 + 1.08767,
                 -1.08631 + 1.0805,
                 -1.08631 + 1.0842,
@@ -78,7 +85,11 @@ def test_return_long_balance(resampled_points_d1):
                 -1.08631 + 1.07822,
                 -1.08631 + 1.0892,
             ],
-            "2023-08-25": [
+        ),
+        LongBalancePoint(
+            instrument="EURUSD",
+            datetime="2023-08-25",
+            balance=[
                 -1.08086 + 1.0842,
                 -1.08086 + 1.07656,
                 -1.08086 + 1.07928,
@@ -86,19 +97,29 @@ def test_return_long_balance(resampled_points_d1):
                 -1.08086 + 1.07822,
                 -1.08086 + 1.0892,
             ],
-            "2023-08-28": [
+        ),
+        LongBalancePoint(
+            instrument="EURUSD",
+            datetime="2023-08-28",
+            balance=[
                 -1.07958 + 1.07928,
                 -1.07958 + 1.08223,
                 -1.07958 + 1.07822,
                 -1.07958 + 1.0892,
             ],
-            "2023-08-29": [
+        ),
+        LongBalancePoint(
+            instrument="EURUSD",
+            datetime="2023-08-29",
+            balance=[
                 -1.08186 + 1.07822,
                 -1.08186 + 1.0892,
             ],
-        },
-        "USDCAD": {
-            "2023-11-13": [
+        ),
+        LongBalancePoint(
+            instrument="USDCAD",
+            datetime="2023-11-13",
+            balance=[
                 -1.37935 + 1.38314,
                 -1.37935 + 1.37767,
                 -1.37935 + 1.38429,
@@ -106,17 +127,25 @@ def test_return_long_balance(resampled_points_d1):
                 -1.37935 + 1.37094,
                 -1.37935 + 1.36543,
             ],
-            "2023-11-14": [
+        ),
+        LongBalancePoint(
+            instrument="USDCAD",
+            datetime="2023-11-14",
+            balance=[
                 -1.38011 + 1.38429,
                 -1.38011 + 1.36842,
                 -1.38011 + 1.37094,
                 -1.38011 + 1.36543,
             ],
-            "2023-11-15": [
+        ),
+        LongBalancePoint(
+            instrument="USDCAD",
+            datetime="2023-11-15",
+            balance=[
                 -1.36833 + 1.37094,
                 -1.36833 + 1.36543,
             ],
-        },
-    }
+        ),
+    ]
 
     assert result == expected_result
