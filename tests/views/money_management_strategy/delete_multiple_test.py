@@ -1,4 +1,7 @@
+from unittest.mock import patch
+
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import MoneyManagementStrategy
 from views.money_management_strategy.delete_multiple_view import (
@@ -110,3 +113,11 @@ def test_delete_partial_multiple_by_identifiers(money_management_strategies, ses
     ).run()
 
     assert session.query(MoneyManagementStrategy).all() == [money_management_strategy_2]
+
+
+@patch("views.money_management_strategy.delete_multiple_view.session")
+def test_commit_error(mock_session):
+    mock_session.commit.side_effect = SQLAlchemyError
+
+    with pytest.raises(SQLAlchemyError):
+        MoneyManagementStrategyDeleteMultipleView().run()
