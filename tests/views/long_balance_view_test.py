@@ -51,7 +51,7 @@ def test_raw_points_has_mismatch_with_enabled_instruments(resampled_points_d1):
 
 
 @patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
-def test_1(resampled_points_d1):
+def test_return_long_balance(resampled_points_d1):
     result = LongBalanceView().run()
 
     expected_result = {
