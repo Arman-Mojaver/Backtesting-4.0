@@ -25,5 +25,5 @@ def datetime_to_string(
 ) -> str:
     try:
         return datetime.strftime(date, format)
-    except ValueError as e:
+    except TypeError as e:
         raise DateError from e

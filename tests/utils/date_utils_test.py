@@ -79,3 +79,21 @@ args__expected_result__datetime_to_string_is_valid = [
 )
 def test_datetime_to_string_is_valid(args, expected_result):
     assert datetime_to_string(*args) == expected_result
+
+
+args__is_invalid__datetime_to_string_is_invalid = [
+    ("random_string",),
+    (123456,),
+    ([2023, 1, 5],),
+    ({"year": 2023, "month": 1, "day": 5},),
+]
+
+
+@pytest.mark.parametrize(
+    "args",
+    args__is_invalid__datetime_to_string_is_invalid,
+    ids=str,
+)
+def test_datetime_to_string_is_invalid(args):
+    with pytest.raises(DateError):
+        datetime_to_string(*args)
