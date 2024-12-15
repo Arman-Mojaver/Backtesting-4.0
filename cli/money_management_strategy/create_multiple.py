@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategies create -t atr -tp 1.1 1.1 -sl 1.4 1.4 -atr 15 15
+bt mm_strategies create -tp 1.1 1.1 -sl 1.4 1.4 -atr 15 15
 """
 
 from __future__ import annotations
@@ -68,6 +68,7 @@ def create_multiple_money_management_strategies(
             sl_multiplier_range=sl_multiplier_range,
             atr_parameter_range=atr_parameter_range,
         ).run()
+
     except InvalidRangeInputsError as e:
         err = f"Invalid range input: {e}"
         log.exception("Invalid range input")

@@ -22,6 +22,7 @@ def create_resampled_points() -> None:
 
     try:
         ResampledPointsCreateMultipleView().run()
+
     except NoRawPointsError as e:
         err = f"No raw points in database: {e}"
         log.exception("No raw points in database")

@@ -35,6 +35,7 @@ def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None
 
     try:
         MoneyManagementStrategyDeleteMultipleView(identifiers=set(identifiers)).run()
+
     except NonExistentIdentifierError as e:
         log.exception(e)
         err = f"{e}"

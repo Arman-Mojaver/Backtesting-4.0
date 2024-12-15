@@ -19,6 +19,7 @@ def create_raw_points() -> None:
 
     try:
         RawPointsCreateMultipleView().run()
+
     except FileNotFoundError as e:
         err = f"File not found: {e}"
         log.exception("File not found")
