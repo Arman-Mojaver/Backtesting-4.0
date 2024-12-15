@@ -2,7 +2,7 @@ import pytest
 
 from database.models import ResampledPointD1
 from fixtures.price_data import get_resampled_d1_data
-from indicators.atr import get_atr_values, get_true_range_values
+from indicators.atr import get_atr, get_true_range
 from utils.date_utils import string_to_datetime
 
 
@@ -45,7 +45,7 @@ TR_VALUES_2023_08_21__2023_09_01 = [
 
 
 def test_get_tr(resampled_points_d1):
-    assert get_true_range_values(resampled_points_d1) == TR_VALUES_2023_08_21__2023_09_01
+    assert get_true_range(resampled_points_d1) == TR_VALUES_2023_08_21__2023_09_01
 
 
 X = TR_VALUES_2023_08_21__2023_09_01
@@ -149,5 +149,5 @@ X = TR_VALUES_2023_08_21__2023_09_01
 )
 def test_get_atr(atr_parameter, expected_result):
     assert (
-        get_atr_values(TR_VALUES_2023_08_21__2023_09_01, atr_parameter) == expected_result
+            get_atr(TR_VALUES_2023_08_21__2023_09_01, atr_parameter) == expected_result
     )

@@ -1,6 +1,6 @@
 import pytest
 
-from indicators.sma import simple_moving_average
+from indicators.sma import get_sma
 
 VALUES = [10, 20, 30, 40, 50, 60]
 
@@ -52,4 +52,4 @@ VALUES = [10, 20, 30, 40, 50, 60]
     ],
 )
 def test_simple_moving_average(n, expected_result):
-    assert simple_moving_average(VALUES, n) == expected_result
+    assert get_sma(VALUES, n) == expected_result
