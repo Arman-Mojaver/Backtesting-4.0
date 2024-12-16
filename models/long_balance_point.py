@@ -9,3 +9,7 @@ class LongBalancePoint(BaseModel):
     instrument: str
     datetime: datetime
     balance: list[float]
+
+
+class LongBalancePoints(BaseModel):
+    items: list[LongBalancePoint]

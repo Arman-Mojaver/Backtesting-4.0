@@ -2,17 +2,20 @@ from unittest.mock import patch
 
 import pytest
 
+from controllers.long_balance_create_multiple_controller import (
+    LongBalanceCreateMultipleController,
+    NoResampledPointsError,
+)
 from database.models.resasmpled_point_d1 import ResampledPointD1
 from fixtures.price_data import get_resampled_d1_data
 from models.long_balance_point import LongBalancePoint
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
 from utils.date_utils import string_to_datetime
-from views.long_balance_view import LongBalanceView, NoResampledPointsError
 
 
 def test_no_raw_points_raises_error():
     with pytest.raises(NoResampledPointsError):
-        LongBalanceView().run()
+        LongBalanceCreateMultipleController().run()
 
 
 @pytest.fixture
@@ -48,12 +51,12 @@ def resampled_points_d1(session):
 @patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
 def test_raw_points_has_mismatch_with_enabled_instruments(resampled_points_d1):
     with pytest.raises(EnabledInstrumentsMismatchError):
-        LongBalanceView().run()
+        LongBalanceCreateMultipleController().run()
 
 
 @patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
 def test_return_long_balance(resampled_points_d1):
-    result = LongBalanceView().run()
+    result = LongBalanceCreateMultipleController().run()
 
     expected_result = [
         LongBalancePoint(

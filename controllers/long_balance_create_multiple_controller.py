@@ -11,7 +11,7 @@ class NoResampledPointsError(Exception):
     pass
 
 
-class LongBalanceView:
+class LongBalanceCreateMultipleController:
     def __init__(self):
         self.resampled_points_by_instrument = ResampledPointD1.query.dict_multi_by_key(
             "instrument"

@@ -148,6 +148,4 @@ X = TR_VALUES_2023_08_21__2023_09_01
     ],
 )
 def test_get_atr(atr_parameter, expected_result):
-    assert (
-            get_atr(TR_VALUES_2023_08_21__2023_09_01, atr_parameter) == expected_result
-    )
+    assert get_atr(TR_VALUES_2023_08_21__2023_09_01, atr_parameter) == expected_result
