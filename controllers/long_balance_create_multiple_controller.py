@@ -3,12 +3,9 @@ from __future__ import annotations
 from config import config  # type: ignore[attr-defined]
 from database.models import ResampledPointD1
 from database.models.resasmpled_point_d1 import HighLowOrder
+from exceptions import NoResampledPointsError
 from models.long_balance_point import LongBalancePoint
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
-
-
-class NoResampledPointsError(Exception):
-    pass
 
 
 class LongBalanceCreateMultipleController:
@@ -87,8 +84,8 @@ class LongBalanceCreateMultipleController:
         high_low_point: ResampledPointD1,
         long_balance: list[float],
     ) -> None:
-        long_balance.append(-open_point.open + high_low_point.low)
-        long_balance.append(-open_point.open + high_low_point.high)
+        long_balance.append(int(round(10000 * (-open_point.open + high_low_point.low))))
+        long_balance.append(int(round(10000 * (-open_point.open + high_low_point.high))))
 
     @staticmethod
     def _high_first(
@@ -96,5 +93,5 @@ class LongBalanceCreateMultipleController:
         high_low_point: ResampledPointD1,
         long_balance: list[float],
     ) -> None:
-        long_balance.append(-open_point.open + high_low_point.high)
-        long_balance.append(-open_point.open + high_low_point.low)
+        long_balance.append(int(round(10000 * (-open_point.open + high_low_point.high))))
+        long_balance.append(int(round(10000 * (-open_point.open + high_low_point.low))))

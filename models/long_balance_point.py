@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class LongBalancePoint(BaseModel):
     instrument: str
     datetime: datetime
-    balance: list[float]
+    balance: list[int]
 
 
 class LongBalancePoints(BaseModel):

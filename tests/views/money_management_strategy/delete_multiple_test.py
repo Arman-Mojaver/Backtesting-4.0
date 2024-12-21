@@ -4,17 +4,11 @@ import pytest
 from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import MoneyManagementStrategy
+from fixtures.helpers import generate_identifier
 from views.money_management_strategy.delete_multiple_view import (
     MoneyManagementStrategyDeleteMultipleView,
     NonExistentIdentifierError,
 )
-
-
-def generate_identifier(data):
-    return (
-        f'{data["type"]}-{data["tp_multiplier"]}-'
-        f'{data["sl_multiplier"]}-{data["parameters"]["atr_parameter"]}'
-    )
 
 
 @pytest.fixture
