@@ -7,11 +7,13 @@ from database.models.money_management_strategy import MoneyManagementStrategy
 from database.models.raw_point_d1 import RawPointD1
 from database.models.raw_point_h1 import RawPointH1
 from database.models.resasmpled_point_d1 import ResampledPointD1
+from database.models.short_operation_point import ShortOperationPoint
 
 __all__: list[str] = [
+    "LongOperationPoint",
     "MoneyManagementStrategy",
     "RawPointD1",
     "RawPointH1",
     "ResampledPointD1",
-    "LongOperationPoint",
+    "ShortOperationPoint",
 ]
