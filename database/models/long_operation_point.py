@@ -15,7 +15,7 @@ class LongOperationPointQuery:
 
 class LongOperationPoint(Base, CRUDMixin):
     __tablename__ = "long_operation_point"
-    __repr_fields__ = ("instrument", "datetime")
+    __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
     serialize_rules = ("-id", "-money_management_strategy_id")
 
     query = LongOperationPointQuery
