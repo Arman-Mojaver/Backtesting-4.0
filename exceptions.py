@@ -7,3 +7,7 @@ class NoResampledPointsError(Exception):
 
 class NoMoneyManagementStrategiesError(Exception):
     pass
+
+
+class LargeAtrParameterError(Exception):
+    pass
