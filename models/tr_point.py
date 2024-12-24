@@ -5,11 +5,13 @@ from datetime import datetime  # noqa: TCH003
 from pydantic import BaseModel
 
 
-class LongBalancePoint(BaseModel):
+class TrPoint(BaseModel):
     instrument: str
     datetime: datetime
-    balance: list[int]
+    value: float
 
 
-class LongBalancePoints(BaseModel):
-    items: list[LongBalancePoint]
+class AtrPoint(BaseModel):
+    instrument: str
+    datetime: datetime
+    value: int

@@ -14,29 +14,6 @@ from views.operation_points_view import OperationPointsCreateMultipleView
 
 
 @pytest.fixture
-def money_management_strategy(session):
-    money_management_strategy_data_1 = {
-        "type": "atr",
-        "tp_multiplier": 0.4,
-        "sl_multiplier": 0.2,
-        "parameters": {"atr_parameter": 3},
-    }
-
-    money_management_strategy_1 = MoneyManagementStrategy(
-        **money_management_strategy_data_1,
-        identifier=generate_identifier(money_management_strategy_data_1),
-    )
-
-    session.add(money_management_strategy_1)
-    session.commit()
-
-    yield money_management_strategy_1
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
-
-
-@pytest.fixture
 def money_management_strategy_with_large_atr_parameter(session):
     money_management_strategy_data_1 = {
         "type": "atr",
