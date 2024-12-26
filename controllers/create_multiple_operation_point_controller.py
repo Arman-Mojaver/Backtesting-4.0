@@ -249,9 +249,17 @@ class OperationPointsCreateOneController:
         return short_operation_points
 
     def _filter_out_balance_overflow_results(self):
-        self.long_operation_points = [
-            point for point in self.long_operation_points if point.result is not None
-        ]
-        self.short_operation_points = [
-            point for point in self.short_operation_points if point.result is not None
-        ]
+        filtered_long_operation_points, filtered_short_operation_points = [], []
+        for long_point, short_point in zip(
+            self.long_operation_points,
+            self.short_operation_points,
+            strict=True,
+        ):
+            if long_point.result is None or short_point.result is None:
+                break
+
+            filtered_long_operation_points.append(long_point)
+            filtered_short_operation_points.append(short_point)
+
+        self.long_operation_points = filtered_long_operation_points
+        self.short_operation_points = filtered_short_operation_points

@@ -112,3 +112,52 @@ def four_resampled_points_d1_low_atr(generate_resampled_points, session):
     points_data_eurusd.append(eurusd_2023_08_24_data)
 
     return generate_resampled_points(points_data_eurusd)
+
+
+@pytest.fixture
+def five_resampled_points_d1_long_asymmetric_overflow(generate_resampled_points, session):
+    points_data_eurusd = get_resampled_d1_data(
+        instrument="EURUSD",
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-08-24"),
+    )
+    eurusd_2023_08_24_data = points_data_eurusd[-1]
+    eurusd_2023_08_25_data = {
+        "datetime": "2023-08-25",
+        "instrument": "EURUSD",
+        "open": eurusd_2023_08_24_data["close"],
+        "high": eurusd_2023_08_24_data["close"] + 0.0020,
+        "low": eurusd_2023_08_24_data["close"] - 0.0010,
+        "close": eurusd_2023_08_24_data["close"],
+        "volume": 60671,
+        "high_low_order": "high_first",
+    }
+    points_data_eurusd.append(eurusd_2023_08_25_data)
+
+    return generate_resampled_points(points_data_eurusd)
+
+
+@pytest.fixture
+def five_resampled_points_d1_short_asymmetric_overflow(
+    generate_resampled_points,
+    session,
+):
+    points_data_eurusd = get_resampled_d1_data(
+        instrument="EURUSD",
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-08-24"),
+    )
+    eurusd_2023_08_24_data = points_data_eurusd[-1]
+    eurusd_2023_08_25_data = {
+        "datetime": "2023-08-25",
+        "instrument": "EURUSD",
+        "open": eurusd_2023_08_24_data["close"],
+        "high": eurusd_2023_08_24_data["close"] - 0.0020,
+        "low": eurusd_2023_08_24_data["close"] + 0.0010,
+        "close": eurusd_2023_08_24_data["close"],
+        "volume": 60671,
+        "high_low_order": "high_first",
+    }
+    points_data_eurusd.append(eurusd_2023_08_25_data)
+
+    return generate_resampled_points(points_data_eurusd)
