@@ -51,6 +51,8 @@ class OperationPointsCreateOneController:
         self.atr_points = self._get_atr_points()
         self.long_operation_points = self._get_long_operation_points()
         self.short_operation_points = self._get_short_operation_points()
+        self._filter_out_balance_overflow_results()
+
         return self.long_operation_points, self.short_operation_points
 
     def _get_long_balance_points(self) -> LongBalancePoints:
@@ -181,7 +183,11 @@ class OperationPointsCreateOneController:
         return atr_points
 
     @staticmethod
-    def _calculate_result(tp: int, sl: int, balance: list[FluctuationPoint]) -> int:
+    def _calculate_result(
+        tp: int,
+        sl: int,
+        balance: list[FluctuationPoint],
+    ) -> int | None:
         for balance_point in balance:
             if balance_point.value >= tp:
                 return tp
@@ -189,7 +195,8 @@ class OperationPointsCreateOneController:
             if balance_point.value <= -sl:
                 return -sl
 
-        return 0
+        # Balance overflow
+        return None
 
     def _get_long_operation_points(self) -> list[LongOperationPoint]:
         long_operation_points: list[LongOperationPoint] = []
@@ -240,3 +247,11 @@ class OperationPointsCreateOneController:
             short_operation_points.append(short_operation_point)
 
         return short_operation_points
+
+    def _filter_out_balance_overflow_results(self):
+        self.long_operation_points = [
+            point for point in self.long_operation_points if point.result is not None
+        ]
+        self.short_operation_points = [
+            point for point in self.short_operation_points if point.result is not None
+        ]
