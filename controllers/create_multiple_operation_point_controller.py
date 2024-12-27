@@ -201,8 +201,8 @@ class OperationPointsCreateOneController:
     def _get_long_operation_points(self) -> list[LongOperationPoint]:
         long_operation_points: list[LongOperationPoint] = []
         for atr_point in self.atr_points:
-            tp = atr_point.value * self.money_management_strategy.tp_multiplier
-            sl = atr_point.value * self.money_management_strategy.sl_multiplier
+            tp = round(atr_point.value * self.money_management_strategy.tp_multiplier)
+            sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
             long_balance_point = self.long_balance_points_by_date[atr_point.datetime]
             result = self._calculate_result(
                 tp=tp,
@@ -225,8 +225,8 @@ class OperationPointsCreateOneController:
     def _get_short_operation_points(self) -> list[ShortOperationPoint]:
         short_operation_points: list[ShortOperationPoint] = []
         for atr_point in self.atr_points:
-            tp = atr_point.value * self.money_management_strategy.tp_multiplier
-            sl = atr_point.value * self.money_management_strategy.sl_multiplier
+            tp = round(atr_point.value * self.money_management_strategy.tp_multiplier)
+            sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
             short_balance_point = self.short_balance_points_by_date[atr_point.datetime]
 
             result = self._calculate_result(
