@@ -21,7 +21,7 @@ def delete_operation_points(session):
 
 @pytest.fixture
 def money_management_strategy(session):
-    money_management_strategy_data_1 = {
+    money_management_strategy_data = {
         "type": "atr",
         "tp_multiplier": 0.4,
         "sl_multiplier": 0.2,
@@ -29,14 +29,51 @@ def money_management_strategy(session):
     }
 
     money_management_strategy_1 = MoneyManagementStrategy(
-        **money_management_strategy_data_1,
-        identifier=generate_identifier(money_management_strategy_data_1),
+        **money_management_strategy_data,
+        identifier=generate_identifier(money_management_strategy_data),
     )
 
     session.add(money_management_strategy_1)
     session.commit()
 
     yield money_management_strategy_1
+
+    session.query(MoneyManagementStrategy).delete()
+    session.commit()
+
+
+@pytest.fixture
+def money_management_strategies(session):
+    money_management_strategy_data_1 = {
+        "type": "atr",
+        "tp_multiplier": 0.4,
+        "sl_multiplier": 0.2,
+        "parameters": {"atr_parameter": 3},
+    }
+    money_management_strategy_data_2 = {
+        "type": "atr",
+        "tp_multiplier": 0.6,
+        "sl_multiplier": 0.3,
+        "parameters": {"atr_parameter": 3},
+    }
+
+    money_management_strategy_1 = MoneyManagementStrategy(
+        **money_management_strategy_data_1,
+        identifier=generate_identifier(money_management_strategy_data_1),
+    )
+    money_management_strategy_2 = MoneyManagementStrategy(
+        **money_management_strategy_data_2,
+        identifier=generate_identifier(money_management_strategy_data_2),
+    )
+    money_management_strategies = [
+        money_management_strategy_1,
+        money_management_strategy_2,
+    ]
+
+    session.add_all(money_management_strategies)
+    session.commit()
+
+    yield money_management_strategies
 
     session.query(MoneyManagementStrategy).delete()
     session.commit()

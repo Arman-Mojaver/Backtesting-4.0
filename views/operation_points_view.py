@@ -52,11 +52,16 @@ class OperationPointsCreateMultipleView:
             raise NoMoneyManagementStrategiesError(err)
 
     def _validate_atr_parameter(self):
-        atr_parameter = self.money_management_strategies[0].parameters["atr_parameter"]
-        if len(self.resampled_points) < atr_parameter:
+        atr_parameters = [
+            money_management_strategy.parameters["atr_parameter"]
+            for money_management_strategy in self.money_management_strategies
+        ]
+        if any(
+            len(self.resampled_points) < atr_parameter for atr_parameter in atr_parameters
+        ):
             err = (
                 "Not enough resampled points for given atr_parameter"
-                f"{len(self.resampled_points)=}, {atr_parameter=}"
+                f"{len(self.resampled_points)=}, {atr_parameters=}"
             )
 
             raise LargeAtrParameterError(err)
@@ -72,14 +77,15 @@ class OperationPointsCreateMultipleView:
 
     def _run_controller(self):
         all_long_operation_points, all_short_operation_points = [], []
-        controller = OperationPointsCreateOneController(
-            money_management_strategy=self.money_management_strategies[0],
-            resampled_points=self.resampled_points,
-        )
-        long_operation_points, short_operation_points = controller.run()
+        for money_management_strategy in self.money_management_strategies:
+            controller = OperationPointsCreateOneController(
+                money_management_strategy=money_management_strategy,
+                resampled_points=self.resampled_points,
+            )
+            long_operation_points, short_operation_points = controller.run()
 
-        all_long_operation_points.extend(long_operation_points)
-        all_short_operation_points.extend(short_operation_points)
+            all_long_operation_points.extend(long_operation_points)
+            all_short_operation_points.extend(short_operation_points)
         return all_long_operation_points, all_short_operation_points
 
     def _add_to_session(self):
