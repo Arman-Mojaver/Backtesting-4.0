@@ -198,3 +198,20 @@ def five_resampled_points_d1_short_asymmetric_overflow(
     points_data_eurusd.append(eurusd_2023_08_25_data)
 
     return generate_resampled_points(points_data_eurusd)
+
+
+@pytest.fixture
+def three_resampled_points_d1_two_instruments(generate_resampled_points, session):
+    points_data_eurusd = get_resampled_d1_data(
+        instrument="EURUSD",
+        from_date=string_to_datetime("2023-08-21"),
+        to_date=string_to_datetime("2023-08-23"),
+    )
+
+    points_data_usdcad = get_resampled_d1_data(
+        instrument="USDCAD",
+        from_date=string_to_datetime("2023-11-13"),
+        to_date=string_to_datetime("2023-11-15"),
+    )
+
+    return generate_resampled_points(points_data_eurusd + points_data_usdcad)

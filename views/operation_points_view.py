@@ -24,7 +24,9 @@ from schemas.instruments_schema import EnabledInstrumentsMismatchError
 
 class OperationPointsCreateMultipleView:
     def __init__(self):
-        self.resampled_points = ResampledPointD1.query.all()
+        self.resampled_points_by_instrument = ResampledPointD1.query.dict_multi_by_key(
+            "instrument"
+        )
         self.money_management_strategies = MoneyManagementStrategy.query.all()
 
         self.all_long_operation_points: list[LongOperationPoint] = []
@@ -42,7 +44,7 @@ class OperationPointsCreateMultipleView:
         self._commit()
 
     def _validate_resampled_points_exist(self):
-        if not self.resampled_points:
+        if not self.resampled_points_by_instrument:
             err = "No resampled points in db"
             raise NoResampledPointsError(err)
 
@@ -56,18 +58,19 @@ class OperationPointsCreateMultipleView:
             money_management_strategy.parameters["atr_parameter"]
             for money_management_strategy in self.money_management_strategies
         ]
-        if any(
-            len(self.resampled_points) < atr_parameter for atr_parameter in atr_parameters
-        ):
-            err = (
-                "Not enough resampled points for given atr_parameter"
-                f"{len(self.resampled_points)=}, {atr_parameters=}"
-            )
+        for resampled_points in self.resampled_points_by_instrument.values():
+            if any(
+                len(resampled_points) < atr_parameter for atr_parameter in atr_parameters
+            ):
+                err = (
+                    "Not enough resampled points for given atr_parameter"
+                    f"{len(resampled_points)=}, {atr_parameters=}"
+                )
 
-            raise LargeAtrParameterError(err)
+                raise LargeAtrParameterError(err)
 
     def _validate_enabled_instruments(self):
-        instruments = [point.instrument for point in self.resampled_points]
+        instruments = self.resampled_points_by_instrument.keys()
         if set(config.ENABLED_INSTRUMENTS) != set(instruments):
             err = (
                 f"Mismatch between enabled instruments and file instruments: "
@@ -77,15 +80,16 @@ class OperationPointsCreateMultipleView:
 
     def _run_controller(self):
         all_long_operation_points, all_short_operation_points = [], []
-        for money_management_strategy in self.money_management_strategies:
-            controller = OperationPointsCreateOneController(
-                money_management_strategy=money_management_strategy,
-                resampled_points=self.resampled_points,
-            )
-            long_operation_points, short_operation_points = controller.run()
+        for resampled_points in self.resampled_points_by_instrument.values():
+            for money_management_strategy in self.money_management_strategies:
+                controller = OperationPointsCreateOneController(
+                    money_management_strategy=money_management_strategy,
+                    resampled_points=resampled_points,
+                )
+                long_operation_points, short_operation_points = controller.run()
 
-            all_long_operation_points.extend(long_operation_points)
-            all_short_operation_points.extend(short_operation_points)
+                all_long_operation_points.extend(long_operation_points)
+                all_short_operation_points.extend(short_operation_points)
         return all_long_operation_points, all_short_operation_points
 
     def _add_to_session(self):
