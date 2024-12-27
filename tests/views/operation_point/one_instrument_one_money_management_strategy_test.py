@@ -24,14 +24,41 @@ def test_create_one_pair_without_balance_overflow(
     long_operation_points = session.query(LongOperationPoint).all()
     short_operation_points = session.query(ShortOperationPoint).all()
 
+    atr = int(
+        round(
+            10000
+            * (
+                sum(
+                    [
+                        1.09137 - 1.08634,
+                        max(
+                            abs(1.09305 - 1.08329),
+                            abs(1.09305 - 1.08949),
+                            abs(1.08329 - 1.08949),
+                        ),
+                        max(
+                            abs(1.08715 - 1.08026),
+                            abs(1.08715 - 1.08452),
+                            abs(1.08026 - 1.08452),
+                        ),
+                    ]
+                )
+                / 3
+            )
+        )
+    )
+
+    tp = round(money_management_strategy.tp_multiplier * atr)
+    sl = round(money_management_strategy.sl_multiplier * atr)
+
     long_results = [i.to_dict() for i in long_operation_points]
     expected_long_results = [
         {
             "instrument": "EURUSD",
             "datetime": "2023-08-23",
-            "result": -14,
-            "tp": 29,
-            "sl": 14,
+            "result": -sl,  # -14
+            "tp": tp,  # 29
+            "sl": sl,  # 14
             "long_balance": [
                 int(round(10000 * (-1.08448 + 1.08715))),  # 27
                 int(round(10000 * (-1.08448 + 1.08026))),  # -42
@@ -44,9 +71,9 @@ def test_create_one_pair_without_balance_overflow(
         {
             "instrument": "EURUSD",
             "datetime": "2023-08-23",
-            "result": -14,
-            "tp": 29,
-            "sl": 14,
+            "result": -sl,  # -14
+            "tp": tp,  # 29
+            "sl": sl,  # 14
             "short_balance": [
                 -int(round(10000 * (-1.08448 + 1.08715))),  # -27
                 -int(round(10000 * (-1.08448 + 1.08026))),  # 42
@@ -86,12 +113,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "long_balance": [
-                int(round(10000 * (-1.08448 + 1.08715))),  #  27
-                int(round(10000 * (-1.08448 + 1.08026))),  # -42
-                int(round(10000 * (-1.08448 + 1.08767))),  #  32
-                int(round(10000 * (-1.08448 + 1.0805))),  # -40
-            ],
+            "long_balance": [27, -42, 32, -40],
         },
         {
             "instrument": "EURUSD",
@@ -99,10 +121,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": -16,
             "tp": 32,
             "sl": 16,
-            "long_balance": [
-                int(round(10000 * (-1.08631 + 1.08767))),  #  14
-                int(round(10000 * (-1.08631 + 1.0805))),  # -58
-            ],
+            "long_balance": [14, -58],
         },
     ]
 
@@ -114,12 +133,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [
-                -int(round(10000 * (-1.08448 + 1.08715))),  # -27
-                -int(round(10000 * (-1.08448 + 1.08026))),  #  42
-                -int(round(10000 * (-1.08448 + 1.08767))),  # -32
-                -int(round(10000 * (-1.08448 + 1.0805))),  #  40
-            ],
+            "short_balance": [-27, 42, -32, 40],
         },
         {
             "instrument": "EURUSD",
@@ -127,10 +141,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": 32,
             "tp": 32,
             "sl": 16,
-            "short_balance": [
-                -int(round(10000 * (-1.08631 + 1.08767))),  # -14
-                -int(round(10000 * (-1.08631 + 1.0805))),  #  58
-            ],
+            "short_balance": [-14, 58],
         },
     ]
 
