@@ -24,42 +24,46 @@ def test_create_one_pair_without_balance_overflow(
     long_operation_points = session.query(LongOperationPoint).all()
     short_operation_points = session.query(ShortOperationPoint).all()
 
-    assert len(long_operation_points) == 1
-    assert len(short_operation_points) == 1
+    long_results = [i.to_dict() for i in long_operation_points]
+    expected_long_results = [
+        {
+            "instrument": "EURUSD",
+            "datetime": "2023-08-23",
+            "result": -14,
+            "tp": 29,
+            "sl": 14,
+            "long_balance": [
+                int(round(10000 * (-1.08448 + 1.08715))),  # 27
+                int(round(10000 * (-1.08448 + 1.08026))),  # -42
+            ],
+        }
+    ]
 
-    long_operation_point = long_operation_points[0]
-    short_operation_point = session.query(ShortOperationPoint).all()[0]
+    short_results = [i.to_dict() for i in short_operation_points]
+    expected_short_results = [
+        {
+            "instrument": "EURUSD",
+            "datetime": "2023-08-23",
+            "result": -14,
+            "tp": 29,
+            "sl": 14,
+            "short_balance": [
+                -int(round(10000 * (-1.08448 + 1.08715))),  # -27
+                -int(round(10000 * (-1.08448 + 1.08026))),  # 42
+            ],
+        }
+    ]
 
     assert (
-        long_operation_point.money_management_strategy_id == money_management_strategy.id
+        i.money_management_strategy_id == money_management_strategy.id
+        for i in long_operation_points
     )
     assert (
-        short_operation_point.money_management_strategy_id == money_management_strategy.id
+        i.money_management_strategy_id == money_management_strategy.id
+        for i in short_operation_points
     )
-
-    assert long_operation_point.to_dict() == {
-        "instrument": "EURUSD",
-        "datetime": "2023-08-23",
-        "result": -14,
-        "tp": 29,
-        "sl": 14,
-        "long_balance": [
-            int(round(10000 * (-1.08448 + 1.08715))),  #  27
-            int(round(10000 * (-1.08448 + 1.08026))),  # -42
-        ],
-    }
-
-    assert short_operation_point.to_dict() == {
-        "instrument": "EURUSD",
-        "datetime": "2023-08-23",
-        "result": -14,
-        "tp": 29,
-        "sl": 14,
-        "short_balance": [
-            -int(round(10000 * (-1.08448 + 1.08715))),  # -27
-            -int(round(10000 * (-1.08448 + 1.08026))),  #  42
-        ],
-    }
+    assert list_of_dicts_are_equal(long_results, expected_long_results)
+    assert list_of_dicts_are_equal(short_results, expected_short_results)
 
 
 @patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
