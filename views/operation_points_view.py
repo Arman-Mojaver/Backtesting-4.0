@@ -33,8 +33,7 @@ class OperationPointsCreateMultipleView:
         )
         self.money_management_strategies = MoneyManagementStrategy.query.all()
 
-        self.all_long_operation_points: list[LongOperationPoint] = []
-        self.all_short_operation_points: list[ShortOperationPoint] = []
+        self.all_operation_points: list[LongOperationPoint | ShortOperationPoint] = []
 
     @log_on_start("Creating Operation Points")
     @log_on_end("Finished OperationPointsCreateMultipleView")
@@ -43,9 +42,7 @@ class OperationPointsCreateMultipleView:
         self._validate_money_management_strategy_exists()
         self._validate_atr_parameter()
         self._validate_enabled_instruments()
-        self.all_long_operation_points, self.all_short_operation_points = (
-            self._run_controller()
-        )
+        self.all_operation_points = self._run_controller()
         self._add_to_session()
         self._commit()
 
@@ -85,7 +82,7 @@ class OperationPointsCreateMultipleView:
             raise EnabledInstrumentsMismatchError(err)
 
     def _run_controller(self):
-        all_long_operation_points, all_short_operation_points = [], []
+        all_operation_points = []
         for instrument, resampled_points in self.resampled_points_by_instrument.items():
             log.info(f"Processing instrument: {instrument}")
             controller = BalancePointCreateMultipleController(
@@ -94,21 +91,23 @@ class OperationPointsCreateMultipleView:
             long_balance_points_by_date, short_balance_points_by_date = controller.run()
 
             for money_management_strategy in self.money_management_strategies:
+                log.info(
+                    "Creating Operation Points for money management strategy: "
+                    f"{money_management_strategy.identifier}"
+                )
                 controller = OperationPointsCreateOneController(
                     money_management_strategy=money_management_strategy,
                     resampled_points=resampled_points,
                     long_balance_points_by_date=long_balance_points_by_date,
                     short_balance_points_by_date=short_balance_points_by_date,
                 )
-                long_operation_points, short_operation_points = controller.run()
+                operation_points = controller.run()
+                all_operation_points.extend(operation_points)
 
-                all_long_operation_points.extend(long_operation_points)
-                all_short_operation_points.extend(short_operation_points)
-        return all_long_operation_points, all_short_operation_points
+        return all_operation_points
 
     def _add_to_session(self):
-        session.add_all(self.all_long_operation_points)
-        session.add_all(self.all_short_operation_points)
+        session.add_all(self.all_operation_points)
 
     @staticmethod
     @log_on_end("Committed")

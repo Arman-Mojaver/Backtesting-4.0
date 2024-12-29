@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import date  # noqa: TCH003
 
-from config.logging_config.log_decorators import log_on_start
 from database.models import (
     LongOperationPoint,
     MoneyManagementStrategy,
@@ -38,14 +37,14 @@ class OperationPointsCreateOneController:
         self.long_operation_points: list[LongOperationPoint] = []
         self.short_operation_points: list[ShortOperationPoint] = []
 
-    def run(self) -> tuple[list[LongOperationPoint], list[ShortOperationPoint]]:
+    def run(self) -> list[LongOperationPoint | ShortOperationPoint]:
         self.tr_points = self._get_tr_points()
         self.atr_points = self._get_atr_points()
         self.long_operation_points = self._get_long_operation_points()
         self.short_operation_points = self._get_short_operation_points()
         self._filter_out_balance_overflow_results()
 
-        return self.long_operation_points, self.short_operation_points
+        return self.long_operation_points + self.short_operation_points
 
     def _get_tr_points(self) -> list[TrPoint]:
         initial_point = self.resampled_points[0]
@@ -108,7 +107,6 @@ class OperationPointsCreateOneController:
         # Balance overflow
         return None
 
-    @log_on_start("Generating LongOperationPoints")
     def _get_long_operation_points(self) -> list[LongOperationPoint]:
         long_operation_points: list[LongOperationPoint] = []
         for atr_point in self.atr_points:
@@ -133,7 +131,6 @@ class OperationPointsCreateOneController:
 
         return long_operation_points
 
-    @log_on_start("Generating ShortOperationPoints")
     def _get_short_operation_points(self) -> list[ShortOperationPoint]:
         short_operation_points: list[ShortOperationPoint] = []
         for atr_point in self.atr_points:

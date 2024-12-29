@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from config.logging_config.log_decorators import log_on_end
+from config.logging_config.log_decorators import log_on_start
 from database.models.resasmpled_point_d1 import HighLowOrder
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ class BalancePointCreateMultipleController:
     def __init__(self, resampled_points: list[ResampledPointD1]):
         self.resampled_points: list[ResampledPointD1] = resampled_points
 
-    @log_on_end("Creating Balance Points")
+    @log_on_start("Creating Balance Points")
     def run(
         self,
     ) -> tuple[dict[date, list[int]], dict[date, list[int]]]:
