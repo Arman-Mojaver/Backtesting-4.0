@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime  # noqa: TCH003
+from datetime import date  # noqa: TCH003
 
+from config.logging_config.log_decorators import log_on_start
 from database.models import (
     LongOperationPoint,
     MoneyManagementStrategy,
     ResampledPointD1,
     ShortOperationPoint,
-)
-from database.models.resasmpled_point_d1 import HighLowOrder
-from models.balance_point import (
-    FluctuationPoint,
-    LongBalancePoint,
-    LongBalancePoints,
-    ShortBalancePoint,
-    ShortBalancePoints,
 )
 from models.tr_point import AtrPoint, TrPoint
 
@@ -24,6 +17,8 @@ class OperationPointsCreateOneController:
         self,
         money_management_strategy: MoneyManagementStrategy,
         resampled_points: list[ResampledPointD1],
+        long_balance_points_by_date: dict[date, list[int]],
+        short_balance_points_by_date: dict[date, list[int]],
     ):
         self.money_management_strategy: MoneyManagementStrategy = (
             money_management_strategy
@@ -31,22 +26,19 @@ class OperationPointsCreateOneController:
         self.resampled_points: list[ResampledPointD1] = resampled_points
         self.atr_parameter = self.money_management_strategy.parameters["atr_parameter"]
 
-        self.long_balance_points: LongBalancePoints = LongBalancePoints()
-        self.short_balance_points: ShortBalancePoints = ShortBalancePoints()
-        self.long_balance_points_by_date: dict[datetime, LongBalancePoint] = {}
-        self.short_balance_points_by_date: dict[datetime, ShortBalancePoint] = {}
+        self.long_balance_points_by_date: dict[date, list[int]] = (
+            long_balance_points_by_date
+        )
+        self.short_balance_points_by_date: dict[date, list[int]] = (
+            short_balance_points_by_date
+        )
+
         self.tr_points: list[TrPoint] = []
         self.atr_points: list[AtrPoint] = []
         self.long_operation_points: list[LongOperationPoint] = []
         self.short_operation_points: list[ShortOperationPoint] = []
 
     def run(self) -> tuple[list[LongOperationPoint], list[ShortOperationPoint]]:
-        self.long_balance_points = self._get_long_balance_points()
-        self.short_balance_points = ShortBalancePoints.from_long_balance_points(
-            long_balance_points=self.long_balance_points,
-        )
-        self.long_balance_points_by_date = self.long_balance_points.by_date()
-        self.short_balance_points_by_date = self.short_balance_points.by_date()
         self.tr_points = self._get_tr_points()
         self.atr_points = self._get_atr_points()
         self.long_operation_points = self._get_long_operation_points()
@@ -54,88 +46,6 @@ class OperationPointsCreateOneController:
         self._filter_out_balance_overflow_results()
 
         return self.long_operation_points, self.short_operation_points
-
-    def _get_long_balance_points(self) -> LongBalancePoints:
-        long_balance_points = []
-        for open_point_index, open_point in enumerate(self.resampled_points):
-            long_balance = self._generate_long_balance(
-                open_point_index=open_point_index,
-                open_point=open_point,
-                resampled_points=self.resampled_points,
-            )
-
-            long_balance_point = LongBalancePoint(
-                instrument=open_point.instrument,
-                datetime=open_point.datetime,
-                balance=long_balance,
-            )
-
-            long_balance_points.append(long_balance_point)
-        return LongBalancePoints(items=long_balance_points)
-
-    def _generate_long_balance(
-        self,
-        open_point_index: int,
-        open_point: ResampledPointD1,
-        resampled_points: list[ResampledPointD1],
-    ) -> list[FluctuationPoint]:
-        long_balance: list[FluctuationPoint] = []
-        for high_low_point in resampled_points[open_point_index:]:
-            if self._is_high_or_undefined(point=high_low_point):
-                self._high_first(
-                    open_point=open_point,
-                    high_low_point=high_low_point,
-                    long_balance=long_balance,
-                )
-            else:
-                self._low_first(
-                    open_point=open_point,
-                    high_low_point=high_low_point,
-                    long_balance=long_balance,
-                )
-        return long_balance
-
-    @staticmethod
-    def _is_high_or_undefined(point: ResampledPointD1) -> bool:
-        return point.high_low_order in {HighLowOrder.high_first, HighLowOrder.undefined}
-
-    @staticmethod
-    def _low_first(
-        open_point: ResampledPointD1,
-        high_low_point: ResampledPointD1,
-        long_balance: list[FluctuationPoint],
-    ) -> None:
-        long_balance.append(
-            FluctuationPoint(
-                datetime=high_low_point.datetime,
-                value=int(round(10000 * (-open_point.open + high_low_point.low))),
-            )
-        )
-        long_balance.append(
-            FluctuationPoint(
-                datetime=high_low_point.datetime,
-                value=int(round(10000 * (-open_point.open + high_low_point.high))),
-            )
-        )
-
-    @staticmethod
-    def _high_first(
-        open_point: ResampledPointD1,
-        high_low_point: ResampledPointD1,
-        long_balance: list[FluctuationPoint],
-    ) -> None:
-        long_balance.append(
-            FluctuationPoint(
-                datetime=high_low_point.datetime,
-                value=int(round(10000 * (-open_point.open + high_low_point.high))),
-            )
-        )
-        long_balance.append(
-            FluctuationPoint(
-                datetime=high_low_point.datetime,
-                value=int(round(10000 * (-open_point.open + high_low_point.low))),
-            )
-        )
 
     def _get_tr_points(self) -> list[TrPoint]:
         initial_point = self.resampled_points[0]
@@ -186,28 +96,29 @@ class OperationPointsCreateOneController:
     def _calculate_result(
         tp: int,
         sl: int,
-        balance: list[FluctuationPoint],
+        balance: list[int],
     ) -> int | None:
-        for balance_point in balance:
-            if balance_point.value >= tp:
+        for balance_value in balance:
+            if balance_value >= tp:
                 return tp
 
-            if balance_point.value <= -sl:
+            if balance_value <= -sl:
                 return -sl
 
         # Balance overflow
         return None
 
+    @log_on_start("Generating LongOperationPoints")
     def _get_long_operation_points(self) -> list[LongOperationPoint]:
         long_operation_points: list[LongOperationPoint] = []
         for atr_point in self.atr_points:
             tp = round(atr_point.value * self.money_management_strategy.tp_multiplier)
             sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
-            long_balance_point = self.long_balance_points_by_date[atr_point.datetime]
+            long_balance = self.long_balance_points_by_date[atr_point.datetime.date()]
             result = self._calculate_result(
                 tp=tp,
                 sl=sl,
-                balance=long_balance_point.balance,
+                balance=long_balance,
             )
             long_operation_point = LongOperationPoint(
                 instrument=atr_point.instrument,
@@ -215,24 +126,25 @@ class OperationPointsCreateOneController:
                 result=result,
                 tp=tp,
                 sl=sl,
-                long_balance=long_balance_point.balance_values(),
+                long_balance=long_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
             )
             long_operation_points.append(long_operation_point)
 
         return long_operation_points
 
+    @log_on_start("Generating ShortOperationPoints")
     def _get_short_operation_points(self) -> list[ShortOperationPoint]:
         short_operation_points: list[ShortOperationPoint] = []
         for atr_point in self.atr_points:
             tp = round(atr_point.value * self.money_management_strategy.tp_multiplier)
             sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
-            short_balance_point = self.short_balance_points_by_date[atr_point.datetime]
+            short_balance = self.short_balance_points_by_date[atr_point.datetime.date()]
 
             result = self._calculate_result(
                 tp=tp,
                 sl=sl,
-                balance=short_balance_point.balance,
+                balance=short_balance,
             )
 
             short_operation_point = ShortOperationPoint(
@@ -241,7 +153,7 @@ class OperationPointsCreateOneController:
                 result=result,
                 tp=tp,
                 sl=sl,
-                short_balance=short_balance_point.balance_values(),
+                short_balance=short_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
             )
             short_operation_points.append(short_operation_point)

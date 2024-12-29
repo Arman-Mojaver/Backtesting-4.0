@@ -3,7 +3,10 @@ from __future__ import annotations
 from sqlalchemy.exc import SQLAlchemyError
 
 from config import config  # type: ignore[attr-defined]
-from config.logging_config.log_decorators import log_on_end
+from config.logging_config.log_decorators import log_on_end, log_on_start
+from controllers.create_multiple_balance_point_controller import (
+    BalancePointCreateMultipleController,
+)
 from controllers.create_multiple_operation_point_controller import (
     OperationPointsCreateOneController,
 )
@@ -19,6 +22,7 @@ from exceptions import (
     NoMoneyManagementStrategiesError,
     NoResampledPointsError,
 )
+from logger import log
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
 
 
@@ -32,6 +36,8 @@ class OperationPointsCreateMultipleView:
         self.all_long_operation_points: list[LongOperationPoint] = []
         self.all_short_operation_points: list[ShortOperationPoint] = []
 
+    @log_on_start("Creating Operation Points")
+    @log_on_end("Finished OperationPointsCreateMultipleView")
     def run(self) -> None:
         self._validate_resampled_points_exist()
         self._validate_money_management_strategy_exists()
@@ -80,11 +86,19 @@ class OperationPointsCreateMultipleView:
 
     def _run_controller(self):
         all_long_operation_points, all_short_operation_points = [], []
-        for resampled_points in self.resampled_points_by_instrument.values():
+        for instrument, resampled_points in self.resampled_points_by_instrument.items():
+            log.info(f"Processing instrument: {instrument}")
+            controller = BalancePointCreateMultipleController(
+                resampled_points=resampled_points
+            )
+            long_balance_points_by_date, short_balance_points_by_date = controller.run()
+
             for money_management_strategy in self.money_management_strategies:
                 controller = OperationPointsCreateOneController(
                     money_management_strategy=money_management_strategy,
                     resampled_points=resampled_points,
+                    long_balance_points_by_date=long_balance_points_by_date,
+                    short_balance_points_by_date=short_balance_points_by_date,
                 )
                 long_operation_points, short_operation_points = controller.run()
 
