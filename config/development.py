@@ -12,4 +12,4 @@ class DevelopmentConfig(BaseConfig):
 
     INSTRUMENT_DATA_PATH = "instrument_data/development"
 
-    ENABLED_INSTRUMENTS = ("EURUSD", "USDCAD")
+    ENABLED_INSTRUMENTS = ("EURUSD",)

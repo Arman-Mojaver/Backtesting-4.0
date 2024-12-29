@@ -12,4 +12,4 @@ class ProductionConfig(BaseConfig):
 
     INSTRUMENT_DATA_PATH = "instrument_data/production"
 
-    ENABLED_INSTRUMENTS = ("EURUSD", "USDCAD")
+    ENABLED_INSTRUMENTS = ("EURUSD",)
