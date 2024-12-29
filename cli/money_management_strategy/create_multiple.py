@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategies create -tp 1.1 1.1 -sl 1.4 1.4 -atr 15 15
+bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14
 """
 
 from __future__ import annotations
@@ -25,36 +25,53 @@ from views.money_management_strategy.create_multiple_view import (
     "--type",
     type=str,
     default="atr",
-    required=True,
     help="Money Management Strategy type",
 )
 @click.option(
     "-tp",
     "--tp_multiplier_range",
     type=click.Tuple([float, float]),
-    required=True,
     help="TP Multiplier range",
 )
 @click.option(
     "-sl",
     "--sl_multiplier_range",
     type=click.Tuple([float, float]),
-    required=True,
     help="SL Multiplier range",
 )
 @click.option(
     "-atr",
     "--atr_parameter_range",
     type=click.Tuple([int, int]),
-    required=True,
     help="ATR parameter range",
+)
+@click.option(
+    "-e",
+    "--example",
+    type=bool,
+    is_flag=True,
+    default=False,
+    help="Display an example of how to use the command",
 )
 def create_multiple_money_management_strategies(
     type: str,  # noqa: A002
     tp_multiplier_range: tuple[float, float],
     sl_multiplier_range: tuple[float, float],
     atr_parameter_range: tuple[int, int],
+    *,
+    example: bool,
 ) -> None:
+    if example:
+        click.echo("bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14")
+        return
+
+    if not all([type, tp_multiplier_range, sl_multiplier_range, atr_parameter_range]):
+        err = (
+            f"Missing options: {type=}, {tp_multiplier_range=}, "
+            f"{sl_multiplier_range=}, {atr_parameter_range=}"
+        )
+        raise click.ClickException(err)
+
     if config.is_production():
         confirm(
             "You are about to create multiple money management strategies in production. "
