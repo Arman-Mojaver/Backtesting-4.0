@@ -79,7 +79,7 @@ def test_create(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42],
+            "short_balance": [-27],  # [-27, 42]
         }
     ]
 
@@ -105,7 +105,7 @@ def test_create(
             "result": -22,
             "tp": 43,
             "sl": 22,
-            "short_balance": [-27, 42],
+            "short_balance": [-27],  # [-27, 42]
         }
     ]
 
@@ -185,7 +185,7 @@ def test_create(
             "result": -18,
             "tp": 36,
             "sl": 18,
-            "short_balance": [-26, 29],
+            "short_balance": [-26],  # [-26, 29]
         }
     ]
 

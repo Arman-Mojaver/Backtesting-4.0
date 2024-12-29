@@ -65,7 +65,7 @@ def test_create_one_pair_without_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42],
+            "short_balance": [-27],  # [-27, 42]
         }
     ]
 
@@ -91,7 +91,7 @@ def test_create_one_pair_without_balance_overflow(
             "result": -22,
             "tp": 43,
             "sl": 22,
-            "short_balance": [-27, 42],
+            "short_balance": [-27],  # [-27, 42]
         }
     ]
 

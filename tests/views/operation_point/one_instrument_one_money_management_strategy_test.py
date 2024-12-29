@@ -74,10 +74,7 @@ def test_create_one_pair_without_balance_overflow(
             "result": -sl,  # -14
             "tp": tp,  # 29
             "sl": sl,  # 14
-            "short_balance": [
-                -int(round(10000 * (-1.08448 + 1.08715))),  # -27
-                -int(round(10000 * (-1.08448 + 1.08026))),  # 42
-            ],
+            "short_balance": [-int(round(10000 * (-1.08448 + 1.08715)))],  # -27
         }
     ]
 
@@ -113,7 +110,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "long_balance": [27, -42, 32, -40],
+            "long_balance": [27, -42],  # [27, -42, 32, -40]
         },
         {
             "instrument": "EURUSD",
@@ -133,7 +130,7 @@ def test_create_two_pairs_without_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42, -32, 40],
+            "short_balance": [-27],  # [-27, 42, -32, 40]
         },
         {
             "instrument": "EURUSD",
@@ -236,7 +233,7 @@ def test_create_with_symmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "long_balance": [27, -42, 23, 13],
+            "long_balance": [27, -42],  # [27, -42, 23, 13]
         }
     ]
 
@@ -248,7 +245,7 @@ def test_create_with_symmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42, -23, -13],
+            "short_balance": [-27],  # [-27, 42, -23, -13]
         }
     ]
 
@@ -286,7 +283,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "long_balance": [27, -42, 32, -40, -15, -45],
+            "long_balance": [27, -42],  # [27, -42, 32, -40, -15, -45]
         },
         {
             "instrument": "EURUSD",
@@ -294,7 +291,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "result": -16,
             "tp": 32,
             "sl": 16,
-            "long_balance": [14, -58, -34, -64],
+            "long_balance": [14, -58],  # [14, -58, -34, -64]
         },
     ]
 
@@ -306,7 +303,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42, -32, 40, 15, 45],
+            "short_balance": [-27],  # [-27, 42, -32, 40, 15, 45]
         },
         {
             "instrument": "EURUSD",
@@ -314,7 +311,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "result": 32,
             "tp": 32,
             "sl": 16,
-            "short_balance": [-14, 58, 34, 64],
+            "short_balance": [-14, 58],  # [-14, 58, 34, 64]
         },
     ]
 
@@ -352,7 +349,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "long_balance": [27, -42, 32, -40, -55, -25],
+            "long_balance": [27, -42],  # [27, -42, 32, -40, -55, -25]
         },
         {
             "instrument": "EURUSD",
@@ -360,7 +357,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "result": -16,
             "tp": 32,
             "sl": 16,
-            "long_balance": [14, -58, -74, -44],
+            "long_balance": [14, -58],  # [14, -58, -74, -44]
         },
     ]
 
@@ -372,7 +369,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "result": -14,
             "tp": 29,
             "sl": 14,
-            "short_balance": [-27, 42, -32, 40, 55, 25],
+            "short_balance": [-27],  # [-27, 42, -32, 40, 55, 25]
         },
         {
             "instrument": "EURUSD",
@@ -380,7 +377,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "result": 32,
             "tp": 32,
             "sl": 16,
-            "short_balance": [-14, 58, 74, 44],
+            "short_balance": [-14, 58],  # [-14, 58, 74, 44]
         },
     ]
 

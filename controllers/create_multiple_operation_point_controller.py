@@ -96,16 +96,16 @@ class OperationPointsCreateOneController:
         tp: int,
         sl: int,
         balance: list[int],
-    ) -> int | None:
-        for balance_value in balance:
+    ) -> tuple[int | None, list[int]]:
+        for balance_index, balance_value in enumerate(balance):
             if balance_value >= tp:
-                return tp
+                return tp, balance[: balance_index + 1]
 
             if balance_value <= -sl:
-                return -sl
+                return -sl, balance[: balance_index + 1]
 
         # Balance overflow
-        return None
+        return None, []
 
     def _get_long_operation_points(self) -> list[LongOperationPoint]:
         long_operation_points: list[LongOperationPoint] = []
@@ -113,7 +113,7 @@ class OperationPointsCreateOneController:
             tp = round(atr_point.value * self.money_management_strategy.tp_multiplier)
             sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
             long_balance = self.long_balance_points_by_date[atr_point.datetime.date()]
-            result = self._calculate_result(
+            result, partial_long_balance = self._calculate_result(
                 tp=tp,
                 sl=sl,
                 balance=long_balance,
@@ -124,7 +124,7 @@ class OperationPointsCreateOneController:
                 result=result,
                 tp=tp,
                 sl=sl,
-                long_balance=long_balance,
+                long_balance=partial_long_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
             )
             long_operation_points.append(long_operation_point)
@@ -138,7 +138,7 @@ class OperationPointsCreateOneController:
             sl = round(atr_point.value * self.money_management_strategy.sl_multiplier)
             short_balance = self.short_balance_points_by_date[atr_point.datetime.date()]
 
-            result = self._calculate_result(
+            result, partial_short_balance = self._calculate_result(
                 tp=tp,
                 sl=sl,
                 balance=short_balance,
@@ -150,7 +150,7 @@ class OperationPointsCreateOneController:
                 result=result,
                 tp=tp,
                 sl=sl,
-                short_balance=short_balance,
+                short_balance=partial_short_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
             )
             short_operation_points.append(short_operation_point)
