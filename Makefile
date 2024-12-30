@@ -1,11 +1,10 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade
+.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
 
 
 
 # Dev tools
-
 bash:
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api bash
 
@@ -20,7 +19,6 @@ logs:
 
 
 # Tests
-
 cov:
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"pytest --cov --cov-report html:coverage/html" \
@@ -33,7 +31,6 @@ pytest:
 
 
 # Docker commands
-
 up:
 	docker compose -f docker-compose.yaml up -d
 
@@ -53,7 +50,6 @@ status: ps
 
 
 # Docker image commands
-
 build:
 	docker image build -t armanmojaver/backtesting:latest .
 
@@ -73,7 +69,6 @@ pull:
 
 
 # Linting
-
 ruff:
 	ruff check
 
@@ -86,7 +81,6 @@ mypy:
 
 
 # Alembic
-
 alembic-upgrade:
 	export ENVIRONMENT=development && \
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
@@ -114,3 +108,22 @@ freeze:
 
 pyupgrade:
 	pyup_dirs . --py313-plus --recursive
+
+
+
+# DB
+db-development:
+	docker compose -f docker-compose.yaml exec -it db-development sh -c \
+	"psql -U postgres"
+
+db-production:
+	docker compose -f docker-compose.yaml exec -it db-production sh -c \
+	"psql -U postgres"
+
+db-development-size:
+	docker compose -f docker-compose.yaml exec -it db-development sh -c \
+	"psql -U postgres -c \"SELECT pg_size_pretty(pg_database_size('db-development'));\""
+
+db-production-size:
+	docker compose -f docker-compose.yaml exec -it db-production sh -c \
+	"psql -U postgres -c \"SELECT pg_size_pretty(pg_database_size('db-production'));\""
