@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from database.models.indicator import Indicator
 from database.models.long_operation_point import LongOperationPoint
 from database.models.money_management_strategy import MoneyManagementStrategy
 from database.models.raw_point_d1 import RawPointD1
@@ -10,6 +11,7 @@ from database.models.resasmpled_point_d1 import ResampledPointD1
 from database.models.short_operation_point import ShortOperationPoint
 
 __all__: list[str] = [
+    "Indicator",
     "LongOperationPoint",
     "MoneyManagementStrategy",
     "RawPointD1",
