@@ -6,6 +6,7 @@ import click
 sys.path.append(Path(__file__).resolve().parent.parent.as_posix())
 
 
+from .indicator.main import indicators_subcommands
 from .money_management_strategy.main import money_management_strategies_subcommands
 from .operation_points.main import operation_points_subcommands
 from .pytest.pytest_one import run_test
@@ -18,6 +19,7 @@ def main() -> None:
     pass
 
 
+main.add_command(indicators_subcommands)
 main.add_command(money_management_strategies_subcommands)
 main.add_command(operation_points_subcommands)
 main.add_command(run_test)
