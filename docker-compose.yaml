@@ -2,10 +2,23 @@ name: backtesting
 services:
   api:
     container_name: api
-    build: .
+    image: armanmojaver/backtesting-api
     tty: true
     volumes:
       - ./:/app
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - db-development
+      - db-production
+      - db-testing
+
+  strategy:
+    container_name: strategy
+    image: armanmojaver/backtesting-strategy
+    stdin_open: true
+    tty: true
+    command: /bin/sh
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
     depends_on:

@@ -1,12 +1,15 @@
 SHELL = /bin/bash
 
-.PHONY: bash run logs cov pytest up in down clean ps status build build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
+.PHONY: bash strategy run logs cov pytest up in down clean ps status build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
 
 
 
 # Dev tools
 bash:
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api bash
+
+strategy:
+	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history strategy bash
 
 run:
 	docker compose -f docker-compose.yaml run --rm -it \
@@ -51,20 +54,27 @@ status: ps
 
 # Docker image commands
 build:
-	docker image build -t armanmojaver/backtesting:latest .
+	docker image build -t armanmojaver/backtesting-api:latest .
+	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
+
+build-go:
+	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
 
 build-no-cache:
-	docker image build --no-cache -t armanmojaver/backtesting:latest .
+	docker image build --no-cache -t armanmojaver/backtesting-api:latest .
+	docker image build --no-cache -t armanmojaver/backtesting-strategy:latest ./go_contex
 
 
 push:
 	cat .docker_password | docker login --username armanmojaver --password-stdin
-	docker push armanmojaver/backtesting:latest
+	docker push armanmojaver/backtesting-api:latest
+	docker push armanmojaver/backtesting-strategy:latest
 
 
 pull:
 	cat .docker_password | docker login --username armanmojaver --password-stdin
-	docker pull armanmojaver/backtesting:latest
+	docker pull armanmojaver/backtesting-api:latest
+	docker pull armanmojaver/backtesting-strategy:latest
 
 
 
