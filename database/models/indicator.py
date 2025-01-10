@@ -4,7 +4,6 @@ from enum import Enum
 from typing import Any
 
 from sqlalchemy import JSON, Column, Integer, String, UniqueConstraint
-from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import object_session
 
 from database import Base, CRUDMixin, session
@@ -28,7 +27,7 @@ class Indicator(Base, CRUDMixin):
     query = IndicatorQuery
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(PG_ENUM(IndicatorType), nullable=False)
+    type = Column(String, nullable=False)
     parameters = Column(JSON, nullable=False)
     identifier = Column(String, nullable=False)
 

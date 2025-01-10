@@ -22,10 +22,7 @@ from views.indicator.delete_multiple_view import (
 @click.argument("identifiers", nargs=-1)
 def delete_multiple_indicators(identifiers: tuple[str]) -> None:
     if not identifiers:
-        confirm(
-            "You are about to delete all indicators. "
-            "Do you wish to continue?"
-        )
+        confirm("You are about to delete all indicators. Do you wish to continue?")
 
     if config.is_production():
         confirm(

@@ -13,7 +13,6 @@ from typing import Sequence
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = "c85eba75ccd9"
@@ -23,17 +22,10 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    indicator_type = postgresql.ENUM(
-        "macd",
-        name="indicatortype",
-        create_type=False,
-    )
-    indicator_type.create(op.get_bind(), checkfirst=True)
-
     op.create_table(
         "indicator",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("type", indicator_type, nullable=False),
+        sa.Column("type", sa.String(), nullable=False),
         sa.Column("parameters", sa.JSON(), nullable=False),
         sa.Column("identifier", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_indicator")),
@@ -43,10 +35,3 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("indicator")
-
-    indicator_type = postgresql.ENUM(
-        "macd",
-        name="indicatortype",
-        create_type=False,
-    )
-    indicator_type.drop(op.get_bind())

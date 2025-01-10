@@ -32,9 +32,7 @@ class IndicatorDeleteMultipleView:
 
     def _filter_by_identifiers(self) -> None:
         if self.identifiers:
-            self.query = self.query.filter(
-                Indicator.identifier.in_(self.identifiers)
-            )
+            self.query = self.query.filter(Indicator.identifier.in_(self.identifiers))
 
     def _validate_identifiers(self) -> None:
         identifiers = self._get_queried_identifiers()
