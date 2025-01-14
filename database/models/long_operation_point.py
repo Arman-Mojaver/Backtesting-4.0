@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sqlalchemy import ARRAY, Column, Date, ForeignKey, Integer, String
+from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
 
 from database import Base, CRUDMixin, session
 
@@ -27,6 +27,7 @@ class LongOperationPoint(Base, CRUDMixin):
     tp = Column(Integer, nullable=False)
     sl = Column(Integer, nullable=False)
     long_balance = Column(ARRAY(Integer), nullable=False)
+    risk = Column(Float, nullable=False)
     money_management_strategy_id = Column(
         Integer,
         ForeignKey("money_management_strategy.id"),

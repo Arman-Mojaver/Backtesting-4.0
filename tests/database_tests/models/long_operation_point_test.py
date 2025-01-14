@@ -37,6 +37,7 @@ def long_operation_point_data():
         "tp": 50,
         "sl": 30,
         "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.02,
     }
 
 

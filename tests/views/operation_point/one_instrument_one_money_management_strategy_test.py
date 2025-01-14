@@ -63,6 +63,7 @@ def test_create_one_pair_without_balance_overflow(
                 int(round(10000 * (-1.08448 + 1.08715))),  # 27
                 int(round(10000 * (-1.08448 + 1.08026))),  # -42
             ],
+            "risk": 0.02,
         }
     ]
 
@@ -75,6 +76,7 @@ def test_create_one_pair_without_balance_overflow(
             "tp": tp,  # 29
             "sl": sl,  # 14
             "short_balance": [-int(round(10000 * (-1.08448 + 1.08715)))],  # -27
+            "risk": 0.02,
         }
     ]
 
@@ -111,6 +113,7 @@ def test_create_two_pairs_without_balance_overflow(
             "tp": 29,
             "sl": 14,
             "long_balance": [27, -42],  # [27, -42, 32, -40]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -119,6 +122,7 @@ def test_create_two_pairs_without_balance_overflow(
             "tp": 32,
             "sl": 16,
             "long_balance": [14, -58],
+            "risk": 0.02,
         },
     ]
 
@@ -131,6 +135,7 @@ def test_create_two_pairs_without_balance_overflow(
             "tp": 29,
             "sl": 14,
             "short_balance": [-27],  # [-27, 42, -32, 40]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -139,6 +144,7 @@ def test_create_two_pairs_without_balance_overflow(
             "tp": 32,
             "sl": 16,
             "short_balance": [-14, 58],
+            "risk": 0.02,
         },
     ]
 
@@ -236,6 +242,7 @@ def test_create_with_symmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "long_balance": [27, -42],  # [27, -42, 23, 13]
+            "risk": 0.02,
         }
     ]
 
@@ -248,6 +255,7 @@ def test_create_with_symmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "short_balance": [-27],  # [-27, 42, -23, -13]
+            "risk": 0.02,
         }
     ]
 
@@ -286,6 +294,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "long_balance": [27, -42],  # [27, -42, 32, -40, -15, -45]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -294,6 +303,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "tp": 32,
             "sl": 16,
             "long_balance": [14, -58],  # [14, -58, -34, -64]
+            "risk": 0.02,
         },
     ]
 
@@ -306,6 +316,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "short_balance": [-27],  # [-27, 42, -32, 40, 15, 45]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -314,6 +325,7 @@ def test_create_with_long_asymmetric_balance_overflow(
             "tp": 32,
             "sl": 16,
             "short_balance": [-14, 58],  # [-14, 58, 34, 64]
+            "risk": 0.02,
         },
     ]
 
@@ -352,6 +364,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "long_balance": [27, -42],  # [27, -42, 32, -40, -55, -25]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -360,6 +373,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "tp": 32,
             "sl": 16,
             "long_balance": [14, -58],  # [14, -58, -74, -44]
+            "risk": 0.02,
         },
     ]
 
@@ -372,6 +386,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "tp": 29,
             "sl": 14,
             "short_balance": [-27],  # [-27, 42, -32, 40, 55, 25]
+            "risk": 0.02,
         },
         {
             "instrument": "EURUSD",
@@ -380,6 +395,7 @@ def test_create_with_short_asymmetric_balance_overflow(
             "tp": 32,
             "sl": 16,
             "short_balance": [-14, 58],  # [-14, 58, 74, 44]
+            "risk": 0.02,
         },
     ]
 

@@ -68,6 +68,7 @@ def test_create(
             "tp": 29,
             "sl": 14,
             "long_balance": [27, -42],
+            "risk": 0.02,
         }
     ]
 
@@ -80,6 +81,7 @@ def test_create(
             "tp": 29,
             "sl": 14,
             "short_balance": [-27],  # [-27, 42]
+            "risk": 0.02,
         }
     ]
 
@@ -94,6 +96,7 @@ def test_create(
             "tp": 43,
             "sl": 22,
             "long_balance": [27, -42],
+            "risk": 0.02,
         }
     ]
 
@@ -106,6 +109,7 @@ def test_create(
             "tp": 43,
             "sl": 22,
             "short_balance": [-27],  # [-27, 42]
+            "risk": 0.02,
         }
     ]
 
@@ -174,6 +178,7 @@ def test_create(
             "tp": 36,
             "sl": 18,
             "long_balance": [26, -29],
+            "risk": 0.02,
         }
     ]
 
@@ -186,6 +191,7 @@ def test_create(
             "tp": 36,
             "sl": 18,
             "short_balance": [-26],  # [-26, 29]
+            "risk": 0.02,
         }
     ]
 

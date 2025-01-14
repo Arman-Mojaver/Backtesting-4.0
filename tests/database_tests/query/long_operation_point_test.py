@@ -47,6 +47,7 @@ def long_operation_points(money_management_strategies, session):
         "tp": 50,
         "sl": 30,
         "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.02,
     }
 
     long_operation_point_data_2 = {
@@ -56,6 +57,7 @@ def long_operation_points(money_management_strategies, session):
         "tp": 10,
         "sl": 35,
         "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.02,
     }
 
     point_1 = LongOperationPoint(

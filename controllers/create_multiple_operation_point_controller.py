@@ -126,6 +126,7 @@ class OperationPointsCreateOneController:
                 sl=sl,
                 long_balance=partial_long_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
+                risk=self.money_management_strategy.risk,
             )
             long_operation_points.append(long_operation_point)
 
@@ -152,6 +153,7 @@ class OperationPointsCreateOneController:
                 sl=sl,
                 short_balance=partial_short_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
+                risk=self.money_management_strategy.risk,
             )
             short_operation_points.append(short_operation_point)
 
