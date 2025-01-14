@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-.PHONY: bash strategy run logs cov pytest up in down clean ps status build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
+.PHONY: bash strategy run logs cov pytest up in ing down clean ps status build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
 
 
 
@@ -39,6 +39,9 @@ up:
 
 in:
 	docker compose -f docker-compose.yaml exec -it api /bin/bash
+
+ing:
+	docker compose -f docker-compose.yaml exec -it strategy /bin/bash
 
 down:
 	docker compose -f docker-compose.yaml down
