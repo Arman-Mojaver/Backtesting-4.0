@@ -12,6 +12,7 @@ def points(session):
         "sl_multiplier": 1.0,
         "parameters": {"atr_parameter": 14},
         "identifier": "atr-1.5-1.0-14",
+        "risk": 0.02,
     }
 
     money_management_strategy_data_2 = {
@@ -20,6 +21,7 @@ def points(session):
         "sl_multiplier": 0.8,
         "parameters": {"atr_parameter": 15},
         "identifier": "atr-1.7-0.8-15",
+        "risk": 0.02,
     }
 
     point_1 = MoneyManagementStrategy(**money_management_strategy_data_1)

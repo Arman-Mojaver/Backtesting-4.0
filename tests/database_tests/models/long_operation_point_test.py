@@ -11,6 +11,7 @@ def money_management_strategy_data():
         "sl_multiplier": 1.0,
         "parameters": {"atr_parameter": 14},
         "identifier": "atr-1.5-1.0-14",
+        "risk": 0.02,
     }
 
 

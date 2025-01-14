@@ -33,6 +33,7 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     sl_multiplier = Column(Float, nullable=False)
     parameters = Column(JSON, nullable=False)
     identifier = Column(String, nullable=False)
+    risk = Column(Float, nullable=False)
 
     __table_args__ = (
         UniqueConstraint("identifier", name="uq_money_management_strategy_identifier"),

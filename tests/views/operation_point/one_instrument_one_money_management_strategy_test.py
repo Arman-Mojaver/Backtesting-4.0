@@ -161,6 +161,7 @@ def money_management_strategy_with_large_multipliers(session):
         "tp_multiplier": 500,
         "sl_multiplier": 500,
         "parameters": {"atr_parameter": 3},
+        "risk": 0.02,
     }
 
     money_management_strategy_1 = MoneyManagementStrategy(
@@ -197,6 +198,7 @@ def money_management_strategy_with_symmetric_balance_overflow(session):
         "tp_multiplier": 0.4,
         "sl_multiplier": 0.2,
         "parameters": {"atr_parameter": 3},
+        "risk": 0.02,
     }
 
     money_management_strategy_1 = MoneyManagementStrategy(

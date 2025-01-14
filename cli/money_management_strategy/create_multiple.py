@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14
+bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2
 """
 
 from __future__ import annotations
@@ -46,6 +46,12 @@ from views.money_management_strategy.create_multiple_view import (
     help="ATR parameter range",
 )
 @click.option(
+    "-r",
+    "--risk_percentage_range",
+    type=click.Tuple([int, int]),
+    help="Risk parameter range",
+)
+@click.option(
     "-e",
     "--example",
     type=bool,
@@ -53,22 +59,31 @@ from views.money_management_strategy.create_multiple_view import (
     default=False,
     help="Display an example of how to use the command",
 )
-def create_multiple_money_management_strategies(
+def create_multiple_money_management_strategies(  # noqa: PLR0913
     type: str,  # noqa: A002
     tp_multiplier_range: tuple[float, float],
     sl_multiplier_range: tuple[float, float],
     atr_parameter_range: tuple[int, int],
+    risk_percentage_range: tuple[int, int],
     *,
     example: bool,
 ) -> None:
     if example:
-        click.echo("bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14")
+        click.echo("bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2")
         return
 
-    if not all([type, tp_multiplier_range, sl_multiplier_range, atr_parameter_range]):
+    if not all(
+        [
+            type,
+            tp_multiplier_range,
+            sl_multiplier_range,
+            atr_parameter_range,
+            risk_percentage_range,
+        ]
+    ):
         err = (
             f"Missing options: {type=}, {tp_multiplier_range=}, "
-            f"{sl_multiplier_range=}, {atr_parameter_range=}"
+            f"{sl_multiplier_range=}, {atr_parameter_range=}, {risk_percentage_range=}"
         )
         raise click.ClickException(err)
 
@@ -84,6 +99,7 @@ def create_multiple_money_management_strategies(
             tp_multiplier_range=tp_multiplier_range,
             sl_multiplier_range=sl_multiplier_range,
             atr_parameter_range=atr_parameter_range,
+            risk_percentage_range=risk_percentage_range,
         ).run()
 
     except InvalidRangeInputsError as e:

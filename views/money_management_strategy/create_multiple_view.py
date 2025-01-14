@@ -14,7 +14,7 @@ from utils.range_utils import InvalidRangeInputsError, frange
 
 class MoneyManagementStrategyCreateMultipleView:
     SL_TP_STEP = 0.1
-    ATR_STEP = 1
+    INT_STEP = 1
 
     def __init__(
         self,
@@ -22,18 +22,22 @@ class MoneyManagementStrategyCreateMultipleView:
         tp_multiplier_range: tuple[float, float],
         sl_multiplier_range: tuple[float, float],
         atr_parameter_range: tuple[int, int],
+        risk_percentage_range: tuple[int, int],
     ):
         self.type: str = type
         self.tp_multiplier_range: tuple[float, float] = tp_multiplier_range
         self.sl_multiplier_range: tuple[float, float] = sl_multiplier_range
         self.atr_parameter_range: tuple[int, int] = atr_parameter_range
+        self.risk_percentage_range: tuple[int, int] = risk_percentage_range
 
     @log_on_end("Finished MoneyManagementStrategyCreateMultipleView")
     def run(self) -> None:
         tp_values = self._get_tp_values()
         sl_values = self._get_sl_values()
         atr_values = self._get_atr_values()
+        risk_values = self._get_risk_percentage_values()
         atr_schemas_data = self._get_atr_schemas_data(
+            risk_values=risk_values,
             tp_values=tp_values,
             sl_values=sl_values,
             atr_values=atr_values,
@@ -78,29 +82,46 @@ class MoneyManagementStrategyCreateMultipleView:
         return list(
             range(
                 self.atr_parameter_range[0],
-                self.atr_parameter_range[1] + self.ATR_STEP,
-                self.ATR_STEP,
+                self.atr_parameter_range[1] + self.INT_STEP,
+                self.INT_STEP,
             )
         )
 
+    def _get_risk_percentage_values(self) -> list[float]:
+        if self.risk_percentage_range[0] <= 0 or self.risk_percentage_range[1] <= 0:
+            err = "Risk Percentages must be positive integers"
+            raise InvalidRangeInputsError(err)
+
+        return [
+            i / 100
+            for i in range(
+                self.risk_percentage_range[0],
+                self.risk_percentage_range[1] + self.INT_STEP,
+                self.INT_STEP,
+            )
+        ]
+
     def _get_atr_schemas_data(
         self,
+        risk_values: list[float],
         tp_values: list[float],
         sl_values: list[float],
         atr_values: list[int],
     ) -> list[dict[str, Any]]:
         atr_schemas_data = []
-        for tp_value in list(tp_values):
-            for sl_value in list(sl_values):
-                for atr_value in list(atr_values):
-                    atr_schemas_data.append(  # noqa: PERF401
-                        {
-                            "type": self.type,
-                            "tp_multiplier": tp_value,
-                            "sl_multiplier": sl_value,
-                            "parameters": {"atr_parameter": atr_value},
-                        }
-                    )
+        for risk_value in risk_values:
+            for tp_value in list(tp_values):
+                for sl_value in list(sl_values):
+                    for atr_value in list(atr_values):
+                        atr_schemas_data.append(  # noqa: PERF401
+                            {
+                                "type": self.type,
+                                "tp_multiplier": tp_value,
+                                "sl_multiplier": sl_value,
+                                "parameters": {"atr_parameter": atr_value},
+                                "risk": risk_value,
+                            }
+                        )
         return atr_schemas_data
 
     @staticmethod

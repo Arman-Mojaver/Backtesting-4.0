@@ -14,11 +14,12 @@ class AtrSchema(BaseModel):
     tp_multiplier: float = Field(gt=0)
     sl_multiplier: float = Field(gt=0)
     parameters: AtrParameter
+    risk: float = Field(gt=0)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> str:
         return (
             f"{self.type}-{self.tp_multiplier}-"
-            f"{self.sl_multiplier}-{self.parameters.atr_parameter}"
+            f"{self.sl_multiplier}-{self.parameters.atr_parameter}-{self.risk}"
         )

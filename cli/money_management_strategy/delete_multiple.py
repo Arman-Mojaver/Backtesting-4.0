@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategies delete "atr-1.1-1.4-14" "atr-1.1-1.4-15"
+bt mm_strategies delete "atr-1.1-1.4-14-0.02" "atr-1.1-1.4-15-0.02"
 """
 
 from __future__ import annotations

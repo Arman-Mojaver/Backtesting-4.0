@@ -26,6 +26,7 @@ def money_management_strategy(session):
         "tp_multiplier": 0.4,
         "sl_multiplier": 0.2,
         "parameters": {"atr_parameter": 3},
+        "risk": 0.02,
     }
 
     money_management_strategy_1 = MoneyManagementStrategy(
@@ -49,12 +50,14 @@ def money_management_strategies(session):
         "tp_multiplier": 0.4,
         "sl_multiplier": 0.2,
         "parameters": {"atr_parameter": 3},
+        "risk": 0.02,
     }
     money_management_strategy_data_2 = {
         "type": "atr",
         "tp_multiplier": 0.6,
         "sl_multiplier": 0.3,
         "parameters": {"atr_parameter": 3},
+        "risk": 0.02,
     }
 
     money_management_strategy_1 = MoneyManagementStrategy(

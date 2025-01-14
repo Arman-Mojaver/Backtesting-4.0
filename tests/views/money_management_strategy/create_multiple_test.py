@@ -19,6 +19,7 @@ def tests_invalid_type(type):  # noqa: A002
             tp_multiplier_range=(1.0, 1.2),
             sl_multiplier_range=(1.0, 1.2),
             atr_parameter_range=(14, 16),
+            risk_percentage_range=(2, 3),
         ).run()
 
 
@@ -40,6 +41,7 @@ def test_invalid_tp_multiplier_range_inputs(start, stop):
             tp_multiplier_range=(start, stop),
             sl_multiplier_range=(1.0, 1.2),
             atr_parameter_range=(14, 16),
+            risk_percentage_range=(2, 3),
         ).run()
 
 
@@ -61,6 +63,7 @@ def test_invalid_sl_multiplier_range_inputs(start, stop):
             tp_multiplier_range=(1.0, 1.2),
             sl_multiplier_range=(start, stop),
             atr_parameter_range=(14, 16),
+            risk_percentage_range=(2, 3),
         ).run()
 
 
@@ -82,6 +85,29 @@ def test_invalid_atr_parameter_range_inputs(start, stop):
             tp_multiplier_range=(1.0, 1.2),
             sl_multiplier_range=(1.0, 1.2),
             atr_parameter_range=(start, stop),
+            risk_percentage_range=(2, 3),
+        ).run()
+
+
+@pytest.mark.parametrize(
+    ("start", "stop"),
+    [
+        # range values have 0
+        (0, 5),
+        (1, 0),
+        # range values have negative numbers
+        (-2, 5),
+        (1, -3),
+    ],
+)
+def test_invalid_risk_percentage_range_inputs(start, stop):
+    with pytest.raises(InvalidRangeInputsError):
+        MoneyManagementStrategyCreateMultipleView(
+            type="atr",
+            tp_multiplier_range=(1.0, 1.2),
+            sl_multiplier_range=(1.0, 1.2),
+            atr_parameter_range=(14, 16),
+            risk_percentage_range=(start, stop),
         ).run()
 
 
@@ -93,48 +119,112 @@ def money_management_strategies_data():
             "tp_multiplier": 1.5,
             "sl_multiplier": 1.0,
             "parameters": {"atr_parameter": 14},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.5,
             "sl_multiplier": 1.0,
             "parameters": {"atr_parameter": 15},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.5,
             "sl_multiplier": 1.1,
             "parameters": {"atr_parameter": 14},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.5,
             "sl_multiplier": 1.1,
             "parameters": {"atr_parameter": 15},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.6,
             "sl_multiplier": 1.0,
             "parameters": {"atr_parameter": 14},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.6,
             "sl_multiplier": 1.0,
             "parameters": {"atr_parameter": 15},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.6,
             "sl_multiplier": 1.1,
             "parameters": {"atr_parameter": 14},
+            "risk": 0.02,
         },
         {
             "type": "atr",
             "tp_multiplier": 1.6,
             "sl_multiplier": 1.1,
             "parameters": {"atr_parameter": 15},
+            "risk": 0.02,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.5,
+            "sl_multiplier": 1.0,
+            "parameters": {"atr_parameter": 14},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.5,
+            "sl_multiplier": 1.0,
+            "parameters": {"atr_parameter": 15},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.5,
+            "sl_multiplier": 1.1,
+            "parameters": {"atr_parameter": 14},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.5,
+            "sl_multiplier": 1.1,
+            "parameters": {"atr_parameter": 15},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.6,
+            "sl_multiplier": 1.0,
+            "parameters": {"atr_parameter": 14},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.6,
+            "sl_multiplier": 1.0,
+            "parameters": {"atr_parameter": 15},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.6,
+            "sl_multiplier": 1.1,
+            "parameters": {"atr_parameter": 14},
+            "risk": 0.03,
+        },
+        {
+            "type": "atr",
+            "tp_multiplier": 1.6,
+            "sl_multiplier": 1.1,
+            "parameters": {"atr_parameter": 15},
+            "risk": 0.03,
         },
     ]
 
@@ -145,6 +235,7 @@ def test_create_multiple(money_management_strategies_data, session):
         tp_multiplier_range=(1.5, 1.6),
         sl_multiplier_range=(1.0, 1.1),
         atr_parameter_range=(14, 15),
+        risk_percentage_range=(2, 3),
     ).run()
 
     money_management_strategies = MoneyManagementStrategy.query.all()
@@ -167,4 +258,5 @@ def test_commit_error(mock_session, money_management_strategies_data):
             tp_multiplier_range=(1.5, 1.6),
             sl_multiplier_range=(1.0, 1.1),
             atr_parameter_range=(14, 15),
+            risk_percentage_range=(2, 3),
         ).run()
