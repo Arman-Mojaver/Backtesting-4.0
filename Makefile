@@ -1,88 +1,95 @@
 SHELL = /bin/bash
 
-.PHONY: bash strategy run logs cov pytest gotest tests up in ing down clean ps status build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade alembic-downgrade freeze pyupgrade db-development db-production db-development-size db-production-size
+.PHONY: help bash strategy run logs cov pytest gotest tests up in ing down clean ps \
+        build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade \
+        alembic-downgrade freeze pyupgrade db-development db-production db-size
+
+.DEFAULT_GOAL := help
+
+
+
+help: ## Show this help message
+	@echo "Available targets:"
+	@grep -E '(^[a-zA-Z_-]+:.*?##|^# [A-Za-z])' $(MAKEFILE_LIST) | \
+	awk 'BEGIN {FS = ":.*?## "}; \
+	/^# / {printf "\n%s\n", substr($$0, 3); next} \
+	{printf "  %-20s %s\n", $$1, $$2}'
 
 
 
 # Dev tools
-bash:
+bash:  ## Start a bash shell in api container
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api bash
 
-strategy:
+strategy:  ## Start a bash shell in strategy container
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history strategy bash
 
-run:
+run:  ## Run run_script.py file in api container
 	docker compose -f docker-compose.yaml run --rm -it \
 	-v ~/.bash_history:/root/.bash_history api /bin/bash -c \
 	"python run_script.py"
 
-logs:
+logs:  ## Display docker-compose logs
 	docker compose logs --tail=100 -f
 
 
 
 # Tests
-cov:
+cov:  ## Run tests and make coverage report
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"pytest --cov --cov-report html:coverage/html" \
 	&& open coverage/html/index.html
 
-pytest:
+pytest:  ## Run pytest
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"python -m pytest"
 
-
-gotest:
+gotest:  ## Run go tests
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD)/go_context:/app strategy /bin/bash -c \
 	"go test ./... -v"
 
-
-tests: pytest gotest
+tests: pytest gotest  ## Run all tests (pytest + go tests)
 
 
 
 # Docker commands
-up:
+up:  ## Start containers
 	docker compose -f docker-compose.yaml up -d
 
-in:
+in:  ## Start a bash shell in started api container
 	docker compose -f docker-compose.yaml exec -it api /bin/bash
 
-ing:
+ing:  ## Start a bash shell in started strategy container
 	docker compose -f docker-compose.yaml exec -it strategy /bin/bash
 
-down:
+down:  ## Remove containers
 	docker compose -f docker-compose.yaml down
 
-clean: down
+clean: down  ## Remove containers
 
-ps:
+ps:  ## Display containers
 	docker compose ps
-
-status: ps
 
 
 
 # Docker image commands
-build:
+build:  ## Build images (python + go)
 	docker image build -t armanmojaver/backtesting-api:latest .
 	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
 
-build-go:
+build-go:  ## Build go image
 	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
 
-build-no-cache:
+build-no-cache:  ## Build images, no cache (python + go)
 	docker image build --no-cache -t armanmojaver/backtesting-api:latest .
-	docker image build --no-cache -t armanmojaver/backtesting-strategy:latest ./go_contex
+	docker image build --no-cache -t armanmojaver/backtesting-strategy:latest ./go_context
 
-
-push:
+push:  ## Push images (python + go)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker push armanmojaver/backtesting-api:latest
 	docker push armanmojaver/backtesting-strategy:latest
 
-
-pull:
+pull:  ## Pull images (python + go)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker pull armanmojaver/backtesting-api:latest
 	docker pull armanmojaver/backtesting-strategy:latest
@@ -90,19 +97,22 @@ pull:
 
 
 # Linting
-ruff:
+ruff:  ## Run ruff check
 	ruff check
 
-ruff-f:
+format:  ## Run ruff format
 	ruff format
 
-mypy:
+mypy: ## Run mypy
 	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
+
+pyupgrade: ## Run pyupgrade
+	pyup_dirs . --py313-plus --recursive
 
 
 
 # Alembic
-alembic-upgrade:
+alembic-upgrade:  ## Run alembic upgrades (development + production)
 	export ENVIRONMENT=development && \
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"alembic upgrade head"
@@ -112,7 +122,7 @@ alembic-upgrade:
 	"alembic upgrade head"
 
 
-alembic-downgrade:
+alembic-downgrade:  ## Run alembic downgrade -1 (development + production)
 	export ENVIRONMENT=development && \
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"alembic downgrade -1"
@@ -124,27 +134,25 @@ alembic-downgrade:
 
 
 # Other commands
-freeze:
+freeze:  ## Run pip freeze (requirements.txt)
 	pip freeze | grep -v "bt_cli" > requirements.txt
-
-pyupgrade:
-	pyup_dirs . --py313-plus --recursive
 
 
 
 # DB
-db-development:
+db-development:  ## Start a bash shell in db-development
 	docker compose -f docker-compose.yaml exec -it db-development sh -c \
 	"psql -U postgres"
 
-db-production:
+db-production:  ## Start a bash shell in db-production
 	docker compose -f docker-compose.yaml exec -it db-production sh -c \
 	"psql -U postgres"
 
-db-development-size:
+db-size:  ## Get size of db-development and db-production
+	@echo "db-development"
 	docker compose -f docker-compose.yaml exec -it db-development sh -c \
 	"psql -U postgres -c \"SELECT pg_size_pretty(pg_database_size('db-development'));\""
 
-db-production-size:
+	@echo "db-production"
 	docker compose -f docker-compose.yaml exec -it db-production sh -c \
 	"psql -U postgres -c \"SELECT pg_size_pretty(pg_database_size('db-production'));\""
