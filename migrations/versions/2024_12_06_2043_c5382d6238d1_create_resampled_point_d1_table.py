@@ -9,11 +9,14 @@ Create Date: 2024-12-06 20:43:06.011049
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 revision: str = "c5382d6238d1"
 down_revision: str | None = "15a27170feec"

@@ -26,7 +26,7 @@ def debug(request) -> bool:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def _setup_test_database(*, debug: bool) -> Generator[None, None, None]:
+def _setup_test_database(*, debug: bool) -> Generator[None]:
     """Create the test database, runs migrations, and tear it down afterward."""
     if database_exists(project_config.SQLALCHEMY_DATABASE_URI):
         drop_database(project_config.SQLALCHEMY_DATABASE_URI)
