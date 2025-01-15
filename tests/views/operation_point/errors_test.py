@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import MoneyManagementStrategy
 from exceptions import (
@@ -117,4 +118,14 @@ def test_mismatch_with_more_instruments_than_enabled_raises_error():
 @pytest.mark.usefixtures("resampled_points_d1", "money_management_strategy")
 def test_mismatch_with_less_instruments_than_enabled_raises_error():
     with pytest.raises(EnabledInstrumentsMismatchError):
+        OperationPointsCreateMultipleView().run()
+
+
+@patch("views.operation_points_view.session")
+@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
+@pytest.mark.usefixtures("resampled_points_d1", "money_management_strategy")
+def test_commit_error(mock_session):
+    mock_session.commit.side_effect = SQLAlchemyError
+
+    with pytest.raises(SQLAlchemyError):
         OperationPointsCreateMultipleView().run()
