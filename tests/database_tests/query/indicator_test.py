@@ -1,6 +1,6 @@
 import pytest
 
-from database.models import Indicator, MoneyManagementStrategy
+from database.models import Indicator
 from testing_utils.dict_utils import lists_are_equal
 
 
@@ -38,4 +38,4 @@ def points(session):
 
 
 def test_all(session, points):
-    assert lists_are_equal(MoneyManagementStrategy.query.all(), points)
+    assert lists_are_equal(Indicator.query.all(), points)
