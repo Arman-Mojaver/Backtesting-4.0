@@ -1,0 +1,36 @@
+from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy.orm import object_session
+
+from database import Base, CRUDMixin
+
+
+class Strategy(Base, CRUDMixin):
+    __tablename__ = "strategy"
+    __repr_fields__ = (
+        "id",
+        "annual_roi",
+        "max_draw_down",
+        "min_annual_roi",
+        "annual_operation_count",
+    )
+    serialize_rules = ("-id", "-money_management_strategy_id", "-indicator_id")
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    annual_roi = Column(Float, nullable=False)
+    max_draw_down = Column(Float, nullable=False)
+    min_annual_roi = Column(Float, nullable=False)
+    annual_operation_count = Column(Float, nullable=False)
+    money_management_strategy_id = Column(
+        Integer,
+        ForeignKey("money_management_strategy.id"),
+        nullable=False,
+    )
+    indicator_id = Column(
+        Integer,
+        ForeignKey("indicator.id"),
+        nullable=False,
+    )
+
+    def delete(self) -> None:
+        object_session(self).delete(self)
+        object_session(self).flush()
