@@ -20,3 +20,17 @@ func (cfg *DBConfig) DBConnStr() string {
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode)
 }
+
+// Table structs
+
+type ResampledPointD1 struct {
+	ID           int64
+	Datetime     string
+	Instrument   string
+	Open         float64
+	High         float64
+	Low          float64
+	Close        float64
+	Volume       int
+	HighLowOrder string
+}
