@@ -46,3 +46,15 @@ type LongOperationPoint struct {
 	Risk                      float64
 	MoneyManagementStrategyID int
 }
+
+type ShortOperationPoint struct {
+	ID                        int64
+	Instrument                string
+	Datetime                  string
+	Result                    int
+	Tp                        int
+	Sl                        int
+	ShortBalance              []int
+	Risk                      float64
+	MoneyManagementStrategyID int
+}
