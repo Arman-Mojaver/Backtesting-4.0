@@ -58,3 +58,10 @@ type ShortOperationPoint struct {
 	Risk                      float64
 	MoneyManagementStrategyID int
 }
+
+type Indicator struct {
+	ID         int64
+	Type       string
+	Parameters string
+	Identifier string
+}

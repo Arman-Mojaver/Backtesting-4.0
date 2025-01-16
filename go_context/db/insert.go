@@ -130,3 +130,39 @@ func InsertShortOperationPoints(conn *sql.DB, points []ShortOperationPoint) ([]S
 
 	return points, nil
 }
+
+func InsertIndicators(conn *sql.DB, indicators []Indicator) ([]Indicator, error) {
+	InsertStatement := `
+	INSERT INTO indicator (type, parameters, identifier)
+	VALUES ($1, $2, $3) RETURNING id;`
+
+	transaction, err := conn.Begin()
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	statement, err := transaction.Prepare(InsertStatement)
+	if err != nil {
+		transaction.Rollback()
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer statement.Close()
+
+	for i := range indicators {
+		err := statement.QueryRow(
+			indicators[i].Type,
+			indicators[i].Parameters,
+			indicators[i].Identifier,
+		).Scan(&indicators[i].ID)
+		if err != nil {
+			transaction.Rollback()
+			return nil, fmt.Errorf("failed to insert indicator: %w", err)
+		}
+	}
+
+	if err := transaction.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return indicators, nil
+}
