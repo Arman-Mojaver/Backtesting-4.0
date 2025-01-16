@@ -65,3 +65,13 @@ type Indicator struct {
 	Parameters string
 	Identifier string
 }
+
+type Strategy struct {
+	ID                        int64
+	AnnualROI                 float64
+	MaxDrawDown               float64
+	MinAnnualROI              float64
+	AnnualOperationCount      float64
+	MoneyManagementStrategyID int
+	IndicatorID               int
+}

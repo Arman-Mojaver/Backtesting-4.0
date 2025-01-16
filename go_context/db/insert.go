@@ -166,3 +166,42 @@ func InsertIndicators(conn *sql.DB, indicators []Indicator) ([]Indicator, error)
 
 	return indicators, nil
 }
+
+func InsertStrategies(conn *sql.DB, strategies []Strategy) ([]Strategy, error) {
+	InsertStatement := `
+	INSERT INTO strategy (annual_roi, max_draw_down, min_annual_roi, annual_operation_count, money_management_strategy_id, indicator_id)
+	VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;`
+
+	transaction, err := conn.Begin()
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	statement, err := transaction.Prepare(InsertStatement)
+	if err != nil {
+		transaction.Rollback()
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer statement.Close()
+
+	for i := range strategies {
+		err := statement.QueryRow(
+			strategies[i].AnnualROI,
+			strategies[i].MaxDrawDown,
+			strategies[i].MinAnnualROI,
+			strategies[i].AnnualOperationCount,
+			strategies[i].MoneyManagementStrategyID,
+			strategies[i].IndicatorID,
+		).Scan(&strategies[i].ID)
+		if err != nil {
+			transaction.Rollback()
+			return nil, fmt.Errorf("failed to insert strategy: %w", err)
+		}
+	}
+
+	if err := transaction.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return strategies, nil
+}
