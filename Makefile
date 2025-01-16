@@ -1,8 +1,8 @@
 SHELL = /bin/bash
 
 .PHONY: help bash strategy run logs cov pytest gotest tests up in ing down clean ps \
-        build build-go build-no-cache push pull ruff ruff-f mypy alembic-upgrade \
-        alembic-downgrade freeze pyupgrade db-development db-production db-size
+        build build-go build-no-cache push pull ruff format fmt mypy pyupgrade \
+        alembic-upgrade alembic-downgrade freeze  db-development db-production db-size
 
 .DEFAULT_GOAL := help
 
@@ -102,6 +102,9 @@ ruff:  ## Run ruff check
 
 format:  ## Run ruff format
 	ruff format
+
+fmt:  ## Run go formatter
+	docker compose -f docker-compose.yaml run --rm -it -v $(PWD)/go_context:/app strategy bash -c "go fmt ./..."
 
 mypy: ## Run mypy
 	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
