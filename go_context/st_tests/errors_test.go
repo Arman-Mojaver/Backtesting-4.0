@@ -1,8 +1,8 @@
 package strategy_test
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"strategy/db"
 	"testing"
 
@@ -20,6 +20,13 @@ func (suite *StrategyTestSuite) SetupSuite() {
 
 	fmt.Println("Creating 'testing-db'")
 	db.CreateDB(config)
+
+	conn, _ := db.ConnectDB(config.DBConnStr())
+	defer conn.Close()
+
+	fmt.Println("Creating tables")
+	db.CreateTables(conn)
+
 }
 
 func (suite *StrategyTestSuite) TearDownTest() {
