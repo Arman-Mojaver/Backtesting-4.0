@@ -34,3 +34,15 @@ type ResampledPointD1 struct {
 	Volume       int
 	HighLowOrder string
 }
+
+type LongOperationPoint struct {
+	ID                        int64
+	Instrument                string
+	Datetime                  string
+	Result                    int
+	Tp                        int
+	Sl                        int
+	LongBalance               []int
+	Risk                      float64
+	MoneyManagementStrategyID int
+}
