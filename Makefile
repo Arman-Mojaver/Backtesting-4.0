@@ -19,10 +19,10 @@ help: ## Show this help message
 
 # Dev tools
 bash:  ## Start a bash shell in api container
-	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history api bash
+	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history -v $(PWD):/app api bash
 
 strategy:  ## Start a bash shell in strategy container
-	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history strategy bash
+	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history -v $(PWD)/go_context:/app strategy bash
 
 run:  ## Run run_script.py file in api container
 	docker compose -f docker-compose.yaml run --rm -it \
