@@ -16,16 +16,18 @@ type StrategyTestSuite struct {
 
 func (suite *StrategyTestSuite) SetupSuite() {
 	environment := os.Getenv("ENVIRONMENT")
-	config, _ := db.GetDBConfig(environment)
+	config, err := db.GetDBConfig(environment)
+	require.NoError(suite.T(), err, "Failed to get DB config")
 
 	fmt.Println("Creating 'testing-db'")
-	db.CreateDB(config)
+	require.NoError(suite.T(), db.CreateDB(config), "Failed to create database")
 
-	conn, _ := db.ConnectDB(config.DBConnStr())
+	conn, err := db.ConnectDB(config.DBConnStr())
+	require.NoError(suite.T(), err, "Failed to connect to database")
 	defer conn.Close()
 
 	fmt.Println("Creating tables")
-	db.CreateTables(conn)
+	require.NoError(suite.T(), db.CreateTables(conn), "Failed to create tables")
 
 }
 
@@ -35,10 +37,12 @@ func (suite *StrategyTestSuite) TearDownTest() {
 
 func (suite *StrategyTestSuite) TearDownSuite() {
 	environment := os.Getenv("ENVIRONMENT")
-	config, _ := db.GetDBConfig(environment)
+	config, err := db.GetDBConfig(environment)
+	require.NoError(suite.T(), err, "Failed to get DB config")
 
 	fmt.Println("Dropping 'testing-db'")
-	db.DropDB(config)
+	require.NoError(suite.T(), db.DropDB(config), "Failed to drop database")
+
 }
 
 func (suite *StrategyTestSuite) TestEnvironmentIsTesting() {
