@@ -58,11 +58,12 @@ func CreateLongOperationPointTable(conn *sql.DB) error {
 	CREATE TABLE IF NOT EXISTS long_operation_point (
 		id SERIAL PRIMARY KEY,
 		instrument TEXT NOT NULL,
-		datetime TIMESTAMP NOT NULL,
+		datetime DATE NOT NULL,
 		result INT NOT NULL,
 		tp INT NOT NULL,
 		sl INT NOT NULL,
 		long_balance INT[] NOT NULL,
+		risk Float NOT NULL,
 		money_management_strategy_id INT NOT NULL
 	);`
 
@@ -78,11 +79,12 @@ func CreateShortOperationPointTable(conn *sql.DB) error {
 	CREATE TABLE IF NOT EXISTS short_operation_point (
 		id SERIAL PRIMARY KEY,
 		instrument TEXT NOT NULL,
-		datetime TIMESTAMP NOT NULL,
+		datetime DATE NOT NULL,
 		result INT NOT NULL,
 		tp INT NOT NULL,
 		sl INT NOT NULL,
 		short_balance INT[] NOT NULL,
+		risk Float NOT NULL,
 		money_management_strategy_id INT NOT NULL
 	);`
 
