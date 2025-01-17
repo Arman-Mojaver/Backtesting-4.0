@@ -1,6 +1,7 @@
 package strategy_test
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 	"strategy/db"
@@ -12,6 +13,8 @@ import (
 
 type StrategyTestSuite struct {
 	suite.Suite
+	dbConfig *db.DBConfig
+	dbConn   *sql.DB
 }
 
 func (suite *StrategyTestSuite) SetupSuite() {
@@ -19,36 +22,29 @@ func (suite *StrategyTestSuite) SetupSuite() {
 	config, err := db.GetDBConfig(environment)
 	require.NoError(suite.T(), err, "Failed to get DB config")
 
+	suite.dbConfig = &config
+
 	fmt.Println("Creating 'testing-db'")
 	require.NoError(suite.T(), db.CreateDB(config), "Failed to create database")
 
 	conn, err := db.ConnectDB(config.DBConnStr())
 	require.NoError(suite.T(), err, "Failed to connect to database")
-	defer conn.Close()
 
 	fmt.Println("Creating tables")
 	require.NoError(suite.T(), db.CreateTables(conn), "Failed to create tables")
+
+	suite.dbConn = conn
 }
 
 func (suite *StrategyTestSuite) TearDownTest() {
-	environment := os.Getenv("ENVIRONMENT")
-	config, err := db.GetDBConfig(environment)
-	require.NoError(suite.T(), err, "Failed to get DB config")
-
-	conn, err := db.ConnectDB(config.DBConnStr())
-	require.NoError(suite.T(), err, "Failed to connect to database")
-	defer conn.Close()
-
-	require.NoError(suite.T(), db.DeleteEntries(conn), "Failed to create database")
+	require.NoError(suite.T(), db.DeleteEntries(suite.dbConn), "Failed to delete database entries")
 }
 
 func (suite *StrategyTestSuite) TearDownSuite() {
-	environment := os.Getenv("ENVIRONMENT")
-	config, err := db.GetDBConfig(environment)
-	require.NoError(suite.T(), err, "Failed to get DB config")
+	require.NoError(suite.T(), suite.dbConn.Close(), "Failed to close database connection")
 
 	fmt.Println("Dropping 'testing-db'")
-	require.NoError(suite.T(), db.DropDB(config), "Failed to drop database")
+	require.NoError(suite.T(), db.DropDB(*suite.dbConfig), "Failed to drop database")
 }
 
 func (suite *StrategyTestSuite) TestEnvironmentIsTesting() {
