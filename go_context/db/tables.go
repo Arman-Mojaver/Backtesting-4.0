@@ -57,7 +57,7 @@ func CreateLongOperationPointTable(conn *sql.DB) error {
 	CreateLongOperationPointTableStatement := `
 	CREATE TABLE IF NOT EXISTS long_operation_point (
 		id SERIAL PRIMARY KEY,
-		instrument TEXT NOT NULL,
+		instrument VARCHAR NOT NULL,
 		datetime DATE NOT NULL,
 		result INT NOT NULL,
 		tp INT NOT NULL,
@@ -78,7 +78,7 @@ func CreateShortOperationPointTable(conn *sql.DB) error {
 	CreateShortOperationPointTableStatement := `
 	CREATE TABLE IF NOT EXISTS short_operation_point (
 		id SERIAL PRIMARY KEY,
-		instrument TEXT NOT NULL,
+		instrument VARCHAR NOT NULL,
 		datetime DATE NOT NULL,
 		result INT NOT NULL,
 		tp INT NOT NULL,
