@@ -28,11 +28,18 @@ func (suite *StrategyTestSuite) SetupSuite() {
 
 	fmt.Println("Creating tables")
 	require.NoError(suite.T(), db.CreateTables(conn), "Failed to create tables")
-
 }
 
 func (suite *StrategyTestSuite) TearDownTest() {
-	// Tear Down test
+	environment := os.Getenv("ENVIRONMENT")
+	config, err := db.GetDBConfig(environment)
+	require.NoError(suite.T(), err, "Failed to get DB config")
+
+	conn, err := db.ConnectDB(config.DBConnStr())
+	require.NoError(suite.T(), err, "Failed to connect to database")
+	defer conn.Close()
+
+	require.NoError(suite.T(), db.DeleteEntries(conn), "Failed to create database")
 }
 
 func (suite *StrategyTestSuite) TearDownSuite() {
@@ -42,7 +49,6 @@ func (suite *StrategyTestSuite) TearDownSuite() {
 
 	fmt.Println("Dropping 'testing-db'")
 	require.NoError(suite.T(), db.DropDB(config), "Failed to drop database")
-
 }
 
 func (suite *StrategyTestSuite) TestEnvironmentIsTesting() {
