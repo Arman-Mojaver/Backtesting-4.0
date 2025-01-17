@@ -5,7 +5,7 @@ import (
 
 	"database/sql"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 func InsertResampledPointsD1(conn *sql.DB, points []ResampledPointD1) ([]ResampledPointD1, error) {
@@ -73,7 +73,7 @@ func InsertLongOperationPoints(conn *sql.DB, points []LongOperationPoint) ([]Lon
 			points[i].Result,
 			points[i].Tp,
 			points[i].Sl,
-			points[i].LongBalance,
+			pq.Array(points[i].LongBalance),
 			points[i].Risk,
 			points[i].MoneyManagementStrategyID,
 		).Scan(&points[i].ID)
@@ -114,7 +114,7 @@ func InsertShortOperationPoints(conn *sql.DB, points []ShortOperationPoint) ([]S
 			points[i].Result,
 			points[i].Tp,
 			points[i].Sl,
-			points[i].ShortBalance,
+			pq.Array(points[i].ShortBalance),
 			points[i].Risk,
 			points[i].MoneyManagementStrategyID,
 		).Scan(&points[i].ID)
