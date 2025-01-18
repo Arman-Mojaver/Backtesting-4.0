@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strategy/db"
+	"strategy/fixtures"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -49,6 +50,21 @@ func (suite *StrategyTestSuite) TearDownSuite() {
 
 func (suite *StrategyTestSuite) TestEnvironmentIsTesting() {
 	require.Equal(suite.T(), os.Getenv("ENVIRONMENT"), "testing", "Environment should be 'testing'")
+}
+
+func (suite *StrategyTestSuite) TestGetLongOperationPointsNoLongOperationPoints() {
+	points, err := db.GetLongOperationPoints(suite.dbConn)
+	require.Equal(suite.T(), err, db.ErrorNoLongOperationPoints, "Error should be ErrorNoLongOperationPoints")
+	require.Equal(suite.T(), points, []db.LongOperationPoint{}, "Slice should be empty")
+}
+
+func (suite *StrategyTestSuite) TestGetLongOperationPointsReturnsPoints() {
+	// Setup
+	db.InsertLongOperationPoints(suite.dbConn, fixtures.LongOperationPoints)
+
+	points, err := db.GetLongOperationPoints(suite.dbConn)
+	require.Equal(suite.T(), err, nil, "Error should be nil")
+	require.Equal(suite.T(), points, fixtures.LongOperationPoints, "Points do not match")
 }
 
 func TestErrorsSuite(t *testing.T) {
