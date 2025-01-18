@@ -9,13 +9,26 @@ import (
 )
 
 func CreateDB(dbConfig DBConfig) error {
-	conn, _ := ConnectDB(dbConfig.ConnStr())
+	conn, err := ConnectDB(dbConfig.ConnStr())
+	if err != nil {
+		return fmt.Errorf("failed to connect to database server: %w", err)
+	}
 	defer conn.Close()
 
-	_, err := conn.Exec(fmt.Sprintf(`CREATE DATABASE "%s";`, dbConfig.DBName))
+	var exists bool
+	query := `SELECT EXISTS (SELECT FROM pg_database WHERE datname = $1);`
+	err = conn.QueryRow(query, dbConfig.DBName).Scan(&exists)
 	if err != nil {
-		log.Fatalf("Failed to create database: %v", err)
+		return fmt.Errorf("failed to check if database exists: %w", err)
 	}
+
+	if !exists {
+		_, err = conn.Exec(fmt.Sprintf(`CREATE DATABASE "%s";`, dbConfig.DBName))
+		if err != nil {
+			return fmt.Errorf("failed to create database: %w", err)
+		}
+	}
+
 	return nil
 }
 
