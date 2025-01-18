@@ -64,7 +64,22 @@ func (suite *StrategyTestSuite) TestGetLongOperationPointsReturnsPoints() {
 
 	points, err := db.GetLongOperationPoints(suite.dbConn)
 	require.Equal(suite.T(), err, nil, "Error should be nil")
-	require.Equal(suite.T(), points, fixtures.LongOperationPoints, "Points do not match")
+	require.Equal(suite.T(), points, fixtures.LongOperationPoints, "Points should match")
+}
+
+func (suite *StrategyTestSuite) TestGetShortOperationPointsNoShortOperationPoints() {
+	points, err := db.GetShortOperationPoints(suite.dbConn)
+	require.Equal(suite.T(), err, db.ErrorNoShortOperationPoints, "Error should be ErrorNoShortOperationPoints")
+	require.Equal(suite.T(), points, []db.ShortOperationPoint{}, "Slice should be empty")
+}
+
+func (suite *StrategyTestSuite) TestGetShortOperationPointsReturnsPoints() {
+	// Setup
+	db.InsertShortOperationPoints(suite.dbConn, fixtures.ShortOperationPoints)
+
+	points, err := db.GetShortOperationPoints(suite.dbConn)
+	require.Equal(suite.T(), err, nil, "Error should be nil")
+	require.Equal(suite.T(), points, fixtures.ShortOperationPoints, "Points should match")
 }
 
 func TestErrorsSuite(t *testing.T) {
