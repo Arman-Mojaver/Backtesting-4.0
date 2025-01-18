@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"fmt"
+	"io"
+	"log"
 	"os"
 
 	"strategy/db"
@@ -17,23 +18,35 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create strategies",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Setup logging
+		file, err := os.OpenFile("bt.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("Failed to open log file: %s", err)
+		}
+		defer file.Close()
+
+		multiWriter := io.MultiWriter(os.Stdout, file)
+		log.SetOutput(multiWriter)
+		log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+
+		// Connect to DB
 		environment := os.Getenv("ENVIRONMENT")
 		config, err := db.GetDBConfig(environment)
 
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
+			log.Fatalf("Error: %v\n", err)
 			return
 		}
-		fmt.Printf("DBConfig: %+v\n", config)
+		log.Printf("DBConfig: %+v\n", config)
 
 		conn, err := db.ConnectDB(config.DBConnStr())
 		if err != nil {
-			fmt.Printf("Cannot reach the database: %v", err)
+			log.Fatalf("Cannot reach the database: %v", err)
 			return
 		}
 		defer conn.Close()
-		fmt.Println("Connected to PostgreSQL!")
+		log.Println("Connected to PostgreSQL!")
 
-		// fmt.Println("Created strategies")
+		// log.Println("Created strategies")
 	},
 }
