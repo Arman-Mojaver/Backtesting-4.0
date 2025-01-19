@@ -46,7 +46,7 @@ pytest:  ## Run pytest
 
 gotest:  ## Run go tests
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD)/go_context:/app strategy /bin/bash -c \
-	"go test ./... -v"
+	"go test ./... -gcflags=all=-l -v"
 
 tests: pytest gotest  ## Run all tests (pytest + go tests)
 
