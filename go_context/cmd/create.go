@@ -57,7 +57,6 @@ var createCmd = &cobra.Command{
 		_ = OperationPoints
 		log.Printf("Queried OperationPoints successfully!")
 
-
 		// log.Println("Created strategies")
 	},
 }

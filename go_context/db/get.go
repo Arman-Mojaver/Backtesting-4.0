@@ -76,7 +76,6 @@ func queryLongOperationPoints(conn *sql.DB) ([]LongOperationPoint, error) {
 	return points, nil
 }
 
-
 func queryShortOperationPoints(conn *sql.DB) ([]ShortOperationPoint, error) {
 	query := `
 		SELECT id, instrument, datetime, result, tp, sl, short_balance, risk, money_management_strategy_id
@@ -124,8 +123,6 @@ func queryShortOperationPoints(conn *sql.DB) ([]ShortOperationPoint, error) {
 	return points, nil
 }
 
-
-
 func GetLongOperationPoints(conn *sql.DB) ([]LongOperationPoint, error) {
 	longOperationPoints, err := queryLongOperationPoints(conn)
 	if err != nil {
@@ -138,7 +135,6 @@ func GetLongOperationPoints(conn *sql.DB) ([]LongOperationPoint, error) {
 
 	return longOperationPoints, nil
 }
-
 
 func GetShortOperationPoints(conn *sql.DB) ([]ShortOperationPoint, error) {
 	shortOperationPoints, err := queryShortOperationPoints(conn)
