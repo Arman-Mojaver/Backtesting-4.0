@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"strategy/db"
+	"strategy/st"
 
 	"github.com/spf13/cobra"
 )
@@ -46,6 +47,16 @@ var createCmd = &cobra.Command{
 		}
 		defer conn.Close()
 		log.Println("Connected to PostgreSQL!")
+
+		// Query operation points
+		OperationPoints, err := st.GetOperationPoints(conn)
+		if err != nil {
+			log.Fatalf("Error in Querying Operation Points: %v", err)
+			return
+		}
+		_ = OperationPoints
+		log.Printf("Queried OperationPoints successfully!")
+
 
 		// log.Println("Created strategies")
 	},

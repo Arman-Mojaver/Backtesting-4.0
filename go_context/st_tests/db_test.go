@@ -12,13 +12,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type StrategyTestSuite struct {
+type DBTestSuite struct {
 	suite.Suite
 	dbConfig *db.DBConfig
 	dbConn   *sql.DB
 }
 
-func (suite *StrategyTestSuite) SetupSuite() {
+func (suite *DBTestSuite) SetupSuite() {
 	environment := os.Getenv("ENVIRONMENT")
 	config, err := db.GetDBConfig(environment)
 	require.NoError(suite.T(), err, "Failed to get DB config")
@@ -37,28 +37,28 @@ func (suite *StrategyTestSuite) SetupSuite() {
 	suite.dbConn = conn
 }
 
-func (suite *StrategyTestSuite) TearDownTest() {
+func (suite *DBTestSuite) TearDownTest() {
 	require.NoError(suite.T(), db.DeleteEntries(suite.dbConn), "Failed to delete database entries")
 }
 
-func (suite *StrategyTestSuite) TearDownSuite() {
+func (suite *DBTestSuite) TearDownSuite() {
 	require.NoError(suite.T(), suite.dbConn.Close(), "Failed to close database connection")
 
 	fmt.Println("Dropping 'testing-db'")
 	require.NoError(suite.T(), db.DropDB(*suite.dbConfig), "Failed to drop database")
 }
 
-func (suite *StrategyTestSuite) TestEnvironmentIsTesting() {
+func (suite *DBTestSuite) TestEnvironmentIsTesting() {
 	require.Equal(suite.T(), os.Getenv("ENVIRONMENT"), "testing", "Environment should be 'testing'")
 }
 
-func (suite *StrategyTestSuite) TestGetLongOperationPointsNoLongOperationPoints() {
+func (suite *DBTestSuite) TestGetLongOperationPointsNoLongOperationPoints() {
 	points, err := db.GetLongOperationPoints(suite.dbConn)
 	require.Equal(suite.T(), err, db.ErrorNoLongOperationPoints, "Error should be ErrorNoLongOperationPoints")
 	require.Equal(suite.T(), points, []db.LongOperationPoint{}, "Slice should be empty")
 }
 
-func (suite *StrategyTestSuite) TestGetLongOperationPointsReturnsPoints() {
+func (suite *DBTestSuite) TestGetLongOperationPointsReturnsPoints() {
 	// Setup
 	db.InsertLongOperationPoints(suite.dbConn, fixtures.LongOperationPoints)
 
@@ -67,13 +67,13 @@ func (suite *StrategyTestSuite) TestGetLongOperationPointsReturnsPoints() {
 	require.Equal(suite.T(), points, fixtures.LongOperationPoints, "Points should match")
 }
 
-func (suite *StrategyTestSuite) TestGetShortOperationPointsNoShortOperationPoints() {
+func (suite *DBTestSuite) TestGetShortOperationPointsNoShortOperationPoints() {
 	points, err := db.GetShortOperationPoints(suite.dbConn)
 	require.Equal(suite.T(), err, db.ErrorNoShortOperationPoints, "Error should be ErrorNoShortOperationPoints")
 	require.Equal(suite.T(), points, []db.ShortOperationPoint{}, "Slice should be empty")
 }
 
-func (suite *StrategyTestSuite) TestGetShortOperationPointsReturnsPoints() {
+func (suite *DBTestSuite) TestGetShortOperationPointsReturnsPoints() {
 	// Setup
 	db.InsertShortOperationPoints(suite.dbConn, fixtures.ShortOperationPoints)
 
@@ -82,7 +82,7 @@ func (suite *StrategyTestSuite) TestGetShortOperationPointsReturnsPoints() {
 	require.Equal(suite.T(), points, fixtures.ShortOperationPoints, "Points should match")
 }
 
-func TestErrorsSuite(t *testing.T) {
+func TestDBSuite(t *testing.T) {
 	os.Setenv("ENVIRONMENT", "testing")
-	suite.Run(t, new(StrategyTestSuite))
+	suite.Run(t, new(DBTestSuite))
 }
