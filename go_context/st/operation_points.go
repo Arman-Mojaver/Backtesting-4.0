@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strategy/db"
+	"sort"
 )
 
 var ErrGetLongOperationPoints = errors.New("query LongOperationPoints error")
@@ -35,4 +36,49 @@ func GetOperationPoints(dbConn *sql.DB) (OperationPoints, error) {
 		LongOperationPoints:  longOperationPoints,
 		ShortOperationPoints: shortOperationPoints,
 	}, nil
+}
+
+
+var ErrOperationPointsMismatch = errors.New("long and short Operation Points do not match")
+
+
+func operationPointsMatch(operationPoints OperationPoints) bool {
+	longDatesByInstrument := make(map[string][]string)
+	shortDatesByInstrument := make(map[string][]string)
+
+	for _, lop := range operationPoints.LongOperationPoints {
+		longDatesByInstrument[lop.Instrument] = append(longDatesByInstrument[lop.Instrument], lop.Datetime)
+	}
+
+	for _, sop := range operationPoints.ShortOperationPoints {
+		shortDatesByInstrument[sop.Instrument] = append(shortDatesByInstrument[sop.Instrument], sop.Datetime)
+	}
+
+	for instrument, longDates := range longDatesByInstrument {
+		shortDates := shortDatesByInstrument[instrument]
+
+		sort.Strings(longDates)
+		sort.Strings(shortDates)
+
+		if len(longDates) != len(shortDates) {
+			return false
+		}
+
+		for i := range longDates {
+			if longDates[i] != shortDates[i] {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func GetOperationPointsMap(operationPoints OperationPoints) (int, error) {
+	if !operationPointsMatch(operationPoints) {
+		return 0, ErrOperationPointsMismatch
+	}
+
+	return 0, nil
+
 }
