@@ -14,3 +14,8 @@
 ### Install and execute the CLI:
   1. From the root directory: `pip install -e .`
   2. While venv is active, execute: `bt`
+
+### Create new alembic revision:
+  1. Make model modifications (when creating a new model, it needs to be added to the __init__.py file)
+  2. Get inside the api docker container
+  3. Execute command: `alembic revision --autogenerate -m "<revision title>"`
