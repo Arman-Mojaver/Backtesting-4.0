@@ -10,6 +10,7 @@ from database.models.raw_point_d1 import RawPointD1
 from database.models.raw_point_h1 import RawPointH1
 from database.models.resasmpled_point_d1 import ResampledPointD1
 from database.models.short_operation_point import ShortOperationPoint
+from database.models.short_operation_points_strategies import ShortOperationPointStrategy
 from database.models.strategy import Strategy
 
 __all__: list[str] = [
@@ -21,5 +22,6 @@ __all__: list[str] = [
     "RawPointH1",
     "ResampledPointD1",
     "ShortOperationPoint",
+    "ShortOperationPointStrategy",
     "Strategy",
 ]

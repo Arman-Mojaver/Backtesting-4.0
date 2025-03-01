@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from database import Base, CRUDMixin, session
 
@@ -16,7 +17,7 @@ class ShortOperationPointQuery:
 class ShortOperationPoint(Base, CRUDMixin):
     __tablename__ = "short_operation_point"
     __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
-    serialize_rules = ("-id", "-money_management_strategy_id")
+    serialize_rules = ("-id", "-money_management_strategy_id", "-strategies")
 
     query = ShortOperationPointQuery
 
@@ -32,4 +33,9 @@ class ShortOperationPoint(Base, CRUDMixin):
         Integer,
         ForeignKey("money_management_strategy.id"),
         nullable=False,
+    )
+    strategies = relationship(
+        "Strategy",
+        back_populates="short_operation_points",
+        secondary="short_operation_points_strategies",
     )

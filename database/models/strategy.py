@@ -18,6 +18,7 @@ class Strategy(Base, CRUDMixin):
         "-money_management_strategy_id",
         "-indicator_id",
         "-long_operation_points",
+        "-short_operation_points",
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -39,6 +40,11 @@ class Strategy(Base, CRUDMixin):
         "LongOperationPoint",
         back_populates="strategies",
         secondary="long_operation_points_strategies",
+    )
+    short_operation_points = relationship(
+        "ShortOperationPoint",
+        back_populates="strategies",
+        secondary="short_operation_points_strategies",
     )
 
     def delete(self) -> None:
