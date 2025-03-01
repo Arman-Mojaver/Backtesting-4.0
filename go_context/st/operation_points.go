@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strategy/db"
 	"sort"
+	"strategy/db"
 )
 
 var ErrGetLongOperationPoints = errors.New("query LongOperationPoints error")
@@ -38,9 +38,13 @@ func GetOperationPoints(dbConn *sql.DB) (OperationPoints, error) {
 	}, nil
 }
 
+// Instrument -> MoneyManagementStrategyID -> Datetime -> OperationPoint
+type OperationPointsMaps struct {
+	LongOperationPointsMap  map[string]map[int]map[string]db.LongOperationPoint
+	ShortOperationPointsMap map[string]map[int]map[string]db.ShortOperationPoint
+}
 
 var ErrOperationPointsMismatch = errors.New("long and short Operation Points do not match")
-
 
 func operationPointsMatch(operationPoints OperationPoints) bool {
 	longDatesByInstrument := make(map[string][]string)
@@ -74,11 +78,48 @@ func operationPointsMatch(operationPoints OperationPoints) bool {
 	return true
 }
 
-func GetOperationPointsMap(operationPoints OperationPoints) (int, error) {
-	if !operationPointsMatch(operationPoints) {
-		return 0, ErrOperationPointsMismatch
+func createOperationPointsMap(operationPoints OperationPoints) OperationPointsMaps {
+	operationPointsMap := OperationPointsMaps{
+		LongOperationPointsMap:  make(map[string]map[int]map[string]db.LongOperationPoint),
+		ShortOperationPointsMap: make(map[string]map[int]map[string]db.ShortOperationPoint),
 	}
 
-	return 0, nil
+	// Long operation points map
+	for _, point := range operationPoints.LongOperationPoints {
+		if _, exists := operationPointsMap.LongOperationPointsMap[point.Instrument]; !exists {
+			operationPointsMap.LongOperationPointsMap[point.Instrument] = make(map[int]map[string]db.LongOperationPoint)
+		}
+
+		if _, exists := operationPointsMap.LongOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID]; !exists {
+			operationPointsMap.LongOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID] = make(map[string]db.LongOperationPoint)
+		}
+
+		operationPointsMap.LongOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID][point.Datetime] = point
+	}
+
+	// Short operation points map
+	for _, point := range operationPoints.ShortOperationPoints {
+		if _, exists := operationPointsMap.ShortOperationPointsMap[point.Instrument]; !exists {
+			operationPointsMap.ShortOperationPointsMap[point.Instrument] = make(map[int]map[string]db.ShortOperationPoint)
+		}
+
+		if _, exists := operationPointsMap.ShortOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID]; !exists {
+			operationPointsMap.ShortOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID] = make(map[string]db.ShortOperationPoint)
+		}
+
+		operationPointsMap.ShortOperationPointsMap[point.Instrument][point.MoneyManagementStrategyID][point.Datetime] = point
+	}
+
+	return operationPointsMap
+}
+
+func GetOperationPointsMap(operationPoints OperationPoints) (OperationPointsMaps, error) {
+	if !operationPointsMatch(operationPoints) {
+		return OperationPointsMaps{}, ErrOperationPointsMismatch
+	}
+
+	operationPointsMap := createOperationPointsMap(operationPoints)
+
+	return operationPointsMap, nil
 
 }

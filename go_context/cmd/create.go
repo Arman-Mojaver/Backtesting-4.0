@@ -49,13 +49,21 @@ var createCmd = &cobra.Command{
 		log.Println("Connected to PostgreSQL!")
 
 		// Query operation points
-		OperationPoints, err := st.GetOperationPoints(conn)
+		operationPoints, err := st.GetOperationPoints(conn)
 		if err != nil {
 			log.Fatalf("Error in Querying Operation Points: %v", err)
 			return
 		}
-		_ = OperationPoints
 		log.Printf("Queried OperationPoints successfully!")
+
+		operationPointsMap, err := st.GetOperationPointsMap(operationPoints)
+		if err != nil {
+			log.Fatalf("Error creating Operation Points Map: %v", err)
+			return
+		}
+		_ = operationPointsMap
+		// log.Println(operationPointsMap.LongOperationPointsMap["EURUSD"][382541]["2015-05-01"])
+		log.Printf("Created OperationPointsMap successfully!")
 
 		// log.Println("Created strategies")
 	},

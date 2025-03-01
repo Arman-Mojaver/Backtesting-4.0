@@ -50,7 +50,7 @@ func (suite *TestSuite) TestGetOperationPointsMapReturnsHasLengthMismatchError()
 	}
 
 	operationPointsMap, err := st.GetOperationPointsMap(operationPoints)
-	expectedResult := 0
+	expectedResult := st.OperationPointsMaps{}
 
 	require.ErrorIs(suite.T(), err, st.ErrOperationPointsMismatch)
 	require.Equal(suite.T(), operationPointsMap, expectedResult, "Maps should match")
@@ -108,14 +108,12 @@ func (suite *TestSuite) TestGetOperationPointsMapReturnsReturnsDateMismatchOneIn
 		ShortOperationPoints: shortOperationPoints,
 	}
 
-
 	operationPointsMap, err := st.GetOperationPointsMap(operationPoints)
-	expectedResult := 0
+	expectedResult := st.OperationPointsMaps{}
 
 	require.ErrorIs(suite.T(), err, st.ErrOperationPointsMismatch)
 	require.Equal(suite.T(), operationPointsMap, expectedResult, "Maps should match")
 }
-
 
 func (suite *TestSuite) TestGetOperationPointsMapReturnsReturnsDateMismatchSeveralInstrumentError() {
 	var longOperationPoints = []db.LongOperationPoint{
@@ -198,7 +196,7 @@ func (suite *TestSuite) TestGetOperationPointsMapReturnsReturnsDateMismatchSever
 			Result:                    -100,
 			Tp:                        200,
 			Sl:                        100,
-			ShortBalance:               []int{1500, 1800, 2000},
+			ShortBalance:              []int{1500, 1800, 2000},
 			Risk:                      0.01,
 			MoneyManagementStrategyID: 1,
 		},
@@ -229,9 +227,8 @@ func (suite *TestSuite) TestGetOperationPointsMapReturnsReturnsDateMismatchSever
 		ShortOperationPoints: shortOperationPoints,
 	}
 
-
 	operationPointsMap, err := st.GetOperationPointsMap(operationPoints)
-	expectedResult := 0
+	expectedResult := st.OperationPointsMaps{}
 
 	require.ErrorIs(suite.T(), err, st.ErrOperationPointsMismatch)
 	require.Equal(suite.T(), operationPointsMap, expectedResult, "Maps should match")
