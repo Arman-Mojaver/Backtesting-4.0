@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Float, ForeignKey, Integer
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import object_session, relationship
 
 from database import Base, CRUDMixin
 
@@ -13,7 +13,12 @@ class Strategy(Base, CRUDMixin):
         "min_annual_roi",
         "annual_operation_count",
     )
-    serialize_rules = ("-id", "-money_management_strategy_id", "-indicator_id")
+    serialize_rules = (
+        "-id",
+        "-money_management_strategy_id",
+        "-indicator_id",
+        "-long_operation_points",
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     annual_roi = Column(Float, nullable=False)
@@ -29,6 +34,11 @@ class Strategy(Base, CRUDMixin):
         Integer,
         ForeignKey("indicator.id"),
         nullable=False,
+    )
+    long_operation_points = relationship(
+        "LongOperationPoint",
+        back_populates="strategies",
+        secondary="long_operation_points_strategies",
     )
 
     def delete(self) -> None:
