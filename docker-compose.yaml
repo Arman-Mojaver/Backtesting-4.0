@@ -9,6 +9,7 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
     depends_on:
+      - go-http
       - db-development
       - db-production
       - db-testing
@@ -25,6 +26,15 @@ services:
       - db-development
       - db-production
       - db-testing
+
+  go-http:
+    container_name: go-http
+    build: ./go_http
+    ports:
+      - "80:80"
+    volumes:
+      - ./go_http/logs:/app/logs
+    restart: unless-stopped
 
   db-development:
     container_name: db-development
