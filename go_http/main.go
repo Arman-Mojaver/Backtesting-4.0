@@ -24,6 +24,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/ping", pingHandler)
+	mux.HandleFunc("/process_strategies", processStrategiesHandler)
 
 	log.Println("Server starting on port 80...")
 	log.Fatal(http.ListenAndServe(":80", mux))
@@ -44,4 +45,35 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 
 	log.Println("GET /ping")
+}
+
+type RequestPayload struct {
+    Something  string `json:"something"`
+}
+
+func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		response := map[string]string{"error": "Method Not Allowed"}
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+    var payload RequestPayload
+    decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+
+    if err := decoder.Decode(&payload); err != nil {
+	    response := map[string]string{"error": "Invalid JSON"}
+	    w.WriteHeader(http.StatusBadRequest)
+	    json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	response := map[string]string{"message": "success"}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+
+	log.Printf("POST /process_strategies")
 }
