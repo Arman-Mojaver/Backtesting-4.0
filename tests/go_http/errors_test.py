@@ -42,7 +42,7 @@ def test_process_only_accepts_post_requests(http_method, endpoint):
         1.5,
         "random_string",
         (1, 2, 3),
-    ]
+    ],
 )
 def test_process_invalid_json(invalid_body, endpoint):
     response = requests.post(
@@ -59,13 +59,11 @@ def test_process_invalid_json(invalid_body, endpoint):
     "body_with_valid_fields",
     [
         {"something": "some_value"},
-    ]
+    ],
 )
 def test_process_valid_fields(body_with_valid_fields, endpoint):
     response = requests.post(
-        url=endpoint("process_strategies"),
-        json=body_with_valid_fields,
-        timeout=5
+        url=endpoint("process_strategies"), json=body_with_valid_fields, timeout=5
     )
 
     assert parse_response(response) == {"message": "success"}
