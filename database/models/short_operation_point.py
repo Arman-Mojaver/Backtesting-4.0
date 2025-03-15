@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -58,3 +59,6 @@ class ShortOperationPoint(Base, CRUDMixin):
         back_populates="short_operation_points",
         secondary="short_operation_points_strategies",
     )
+
+    def to_dict_with_ids(self) -> dict[str, Any]:
+        return self.to_dict(rules=("id", "money_management_strategy_id"))

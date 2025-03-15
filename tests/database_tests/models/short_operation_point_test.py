@@ -55,3 +55,28 @@ def test_create_point(short_operation_point_data, money_management_strategy, ses
 
     session.delete(point)
     session.commit()
+
+
+@pytest.fixture
+def short_operation_point(short_operation_point_data, money_management_strategy, session):
+    point = ShortOperationPoint(
+        **short_operation_point_data ,
+        money_management_strategy_id=money_management_strategy.id,
+    )
+
+    session.add(point)
+    session.commit()
+
+    yield point
+
+    session.delete(point)
+    session.commit()
+
+
+def test_to_dict_with_ids(short_operation_point):
+    result = short_operation_point.to_dict_with_ids()
+    assert short_operation_point.id == result["id"]
+    assert (
+        short_operation_point.money_management_strategy_id
+        == result["money_management_strategy_id"]
+    )
