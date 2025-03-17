@@ -60,7 +60,7 @@ def test_create_point(short_operation_point_data, money_management_strategy, ses
 @pytest.fixture
 def short_operation_point(short_operation_point_data, money_management_strategy, session):
     point = ShortOperationPoint(
-        **short_operation_point_data ,
+        **short_operation_point_data,
         money_management_strategy_id=money_management_strategy.id,
     )
 

@@ -18,7 +18,7 @@ class OperationItem:
 
 
 def calculate_max_draw_down(
-    operation_items: list[OperationItem] | list[LongOperationPoint | ShortOperationPoint]
+    operation_items: list[OperationItem] | list[LongOperationPoint | ShortOperationPoint],
 ) -> float:
     cumsum, cummax = 1, 1
     draw_downs = []

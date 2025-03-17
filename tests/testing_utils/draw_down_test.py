@@ -36,7 +36,7 @@ from testing_utils.draw_down import OperationItem, calculate_max_draw_down
                 risk=0.02,
             ),
         ],
-    ]
+    ],
 )
 def test_only_positive_results_returns_zero(operation_items):
     assert calculate_max_draw_down(operation_items) == 0
@@ -79,7 +79,7 @@ def test_three_negative_results():
             tp=30,
             sl=50,
             risk=0.02,
-        )
+        ),
     ]
 
     cumsum = 1
@@ -105,7 +105,7 @@ def test_positive_and_negative_items():
             tp=30,
             sl=20,
             risk=0.02,
-        )
+        ),
     ]
 
     cumsum = 1
@@ -174,7 +174,7 @@ def test_positive_and_several_negative_items():
             tp=30,
             sl=20,
             risk=0.02,
-        )
+        ),
     ]
 
     cumsum_list, cummax_list = [], []
