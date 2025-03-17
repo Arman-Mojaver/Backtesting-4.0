@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from testing_utils.draw_down import OperationItem, calculate_max_draw_down
+from testing_utils.finance_utils.draw_down import calculate_max_draw_down
+from testing_utils.finance_utils.models import OperationItem
 
 
 @pytest.mark.parametrize(

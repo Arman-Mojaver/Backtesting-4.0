@@ -1,20 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from database.models import LongOperationPoint, ShortOperationPoint
-
-
-@dataclass
-class OperationItem:
-    """Only used to simplify tests."""
-
-    result: int
-    tp: int
-    sl: int
-    risk: float
+    from testing_utils.finance_utils.models import OperationItem
 
 
 def calculate_max_draw_down(
