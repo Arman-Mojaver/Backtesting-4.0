@@ -36,7 +36,10 @@ def indicator_point(indicator_data, session):
     session.add(indicator)
     session.commit()
 
-    return indicator
+    yield indicator
+
+    session.delete(indicator)
+    session.commit()
 
 
 def test_delete_indicator(indicator_point, session):
@@ -56,3 +59,8 @@ def test_unique_identifier(indicator_data, session):
 
     with pytest.raises(IntegrityError):
         session.commit()
+
+
+def test_to_dict_with_ids(indicator_point):
+    result = indicator_point.to_dict_with_ids()
+    assert indicator_point.id == result["id"]

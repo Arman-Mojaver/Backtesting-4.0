@@ -63,3 +63,6 @@ class Indicator(Base, CRUDMixin):
     def delete(self) -> None:
         object_session(self).delete(self)
         object_session(self).flush()
+
+    def to_dict_with_ids(self) -> dict[str, Any]:
+        return self.to_dict(rules=("id",))
