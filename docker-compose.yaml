@@ -14,21 +14,9 @@ services:
       - db-production
       - db-testing
 
-  strategy:
-    container_name: strategy
-    image: armanmojaver/backtesting-strategy
-    stdin_open: true
-    tty: true
-    command: /bin/sh
-    environment:
-      - ENVIRONMENT=${ENVIRONMENT}
-    depends_on:
-      - db-development
-      - db-production
-      - db-testing
-
   go-http:
     container_name: go-http
+    image: armanmojaver/go-http
     build: ./go_http
     ports:
       - "80:80"

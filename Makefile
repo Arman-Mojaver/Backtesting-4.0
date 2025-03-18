@@ -1,8 +1,8 @@
 SHELL = /bin/bash
 
-.PHONY: help bash strategy run logs cov pytest gotest tests up in ing down clean ps \
-        build build-go build-no-cache push pull ruff format fmt mypy pyupgrade \
-        alembic-upgrade alembic-downgrade freeze  db-development db-production db-size \
+.PHONY: help bash run logs cov pytest gotest tests up in ing down clean ps \
+        build build-go build-no-cache push pull ruff format mypy pyupgrade \
+        alembic-upgrade alembic-downgrade freeze db-development db-production db-size \
         server
 
 .DEFAULT_GOAL := help
@@ -21,9 +21,6 @@ help: ## Show this help message
 # Dev tools
 bash:  ## Start a bash shell in api container
 	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history -v $(PWD):/app api bash
-
-strategy:  ## Start a bash shell in strategy container
-	docker compose -f docker-compose.yaml run --rm -it -v ~/.bash_history:/root/.bash_history -v $(PWD)/go_context:/app strategy bash
 
 run:  ## Run run_script.py file in api container
 	docker compose -f docker-compose.yaml run --rm -it \
@@ -45,12 +42,6 @@ pytest:  ## Run pytest
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
 	"python -m pytest"
 
-gotest:  ## Run go tests
-	docker compose -f docker-compose.yaml run --rm -it -v $(PWD)/go_context:/app strategy /bin/bash -c \
-	"go test ./... -gcflags=all=-l -v"
-
-tests: pytest gotest  ## Run all tests (pytest + go tests)
-
 
 
 # Docker commands
@@ -61,7 +52,7 @@ in:  ## Start a bash shell in started api container
 	docker compose -f docker-compose.yaml exec -it api /bin/bash
 
 ing:  ## Start a bash shell in started strategy container
-	docker compose -f docker-compose.yaml exec -it strategy /bin/bash
+	docker compose -f docker-compose.yaml exec -it go-http /bin/sh
 
 down:  ## Remove containers
 	docker compose -f docker-compose.yaml down
@@ -76,24 +67,24 @@ ps:  ## Display containers
 # Docker image commands
 build:  ## Build images (python + go)
 	docker image build -t armanmojaver/backtesting-api:latest .
-	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
+	docker image build -t armanmojaver/go-http:latest ./go_http
 
 build-go:  ## Build go image
-	docker image build -t armanmojaver/backtesting-strategy:latest ./go_context
+	docker image build -t armanmojaver/go-http:latest ./go_http
 
 build-no-cache:  ## Build images, no cache (python + go)
 	docker image build --no-cache -t armanmojaver/backtesting-api:latest .
-	docker image build --no-cache -t armanmojaver/backtesting-strategy:latest ./go_context
+	docker image build --no-cache -t armanmojaver/go-http:latest ./go_http
 
 push:  ## Push images (python + go)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker push armanmojaver/backtesting-api:latest
-	docker push armanmojaver/backtesting-strategy:latest
+	docker push armanmojaver/go-http:latest
 
 pull:  ## Pull images (python + go)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker pull armanmojaver/backtesting-api:latest
-	docker pull armanmojaver/backtesting-strategy:latest
+	docker pull armanmojaver/go-http:latest
 
 
 
@@ -103,9 +94,6 @@ ruff:  ## Run ruff check
 
 format:  ## Run ruff format
 	ruff format
-
-fmt:  ## Run go formatter
-	docker compose -f docker-compose.yaml run --rm -it -v $(PWD)/go_context:/app strategy bash -c "go fmt ./..."
 
 mypy: ## Run mypy
 	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
@@ -165,5 +153,5 @@ db-size:  ## Get size of db-development and db-production
 # go-http
 server:
 	docker compose -f docker-compose.yaml down go-http
-	docker compose -f docker-compose.yaml build go-http
+	docker image build -t armanmojaver/go-http:latest ./go_http
 	docker compose -f docker-compose.yaml up -d go-http
