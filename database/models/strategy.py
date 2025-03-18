@@ -10,7 +10,6 @@ class Strategy(Base, CRUDMixin):
         "id",
         "annual_roi",
         "max_draw_down",
-        "min_annual_roi",
         "annual_operation_count",
     )
     serialize_rules = (
@@ -24,7 +23,6 @@ class Strategy(Base, CRUDMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     annual_roi = Column(Float, nullable=False)
     max_draw_down = Column(Float, nullable=False)
-    min_annual_roi = Column(Float, nullable=False)
     annual_operation_count = Column(Float, nullable=False)
     money_management_strategy_id = Column(
         Integer,

@@ -55,7 +55,6 @@ def indicator(session):
 def strategy_data():
     return {
         "annual_roi": 0.15,
-        "min_annual_roi": 0.09,
         "max_draw_down": 0.19,
         "annual_operation_count": 4.2,
     }
