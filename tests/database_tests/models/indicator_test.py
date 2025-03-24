@@ -42,10 +42,14 @@ def indicator_point(indicator_data, session):
     session.commit()
 
 
-def test_delete_indicator(indicator_point, session):
-    indicator_id = indicator_point.id
+def test_delete_indicator(indicator_data, session):
+    indicator = Indicator(**indicator_data)
+    indicator_id = indicator.id
 
-    indicator_point.delete()
+    session.add(indicator)
+    session.commit()
+
+    indicator.delete()
     session.commit()
 
     assert not session.query(Indicator).filter_by(id=indicator_id).one_or_none()
