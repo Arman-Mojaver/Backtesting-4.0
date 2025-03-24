@@ -60,5 +60,7 @@ class ShortOperationPoint(Base, CRUDMixin):
         secondary="short_operation_points_strategies",
     )
 
-    def to_dict_with_ids(self) -> dict[str, Any]:
-        return self.to_dict(rules=("id", "money_management_strategy_id"))
+    def to_request_format(self) -> dict[str, Any]:
+        return self.to_dict(
+            rules=("id", "money_management_strategy_id", "-short_balance")
+        )

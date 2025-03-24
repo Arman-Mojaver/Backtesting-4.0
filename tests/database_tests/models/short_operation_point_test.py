@@ -73,8 +73,8 @@ def short_operation_point(short_operation_point_data, money_management_strategy,
     session.commit()
 
 
-def test_to_dict_with_ids(short_operation_point):
-    result = short_operation_point.to_dict_with_ids()
+def test_to_request_format(short_operation_point):
+    result = short_operation_point.to_request_format()
     assert short_operation_point.id == result["id"]
     assert (
         short_operation_point.money_management_strategy_id

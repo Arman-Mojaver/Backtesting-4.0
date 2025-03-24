@@ -73,8 +73,8 @@ def long_operation_point(long_operation_point_data, money_management_strategy, s
     session.commit()
 
 
-def test_to_dict_with_ids(long_operation_point):
-    result = long_operation_point.to_dict_with_ids()
+def test_to_request_format(long_operation_point):
+    result = long_operation_point.to_request_format()
     assert long_operation_point.id == result["id"]
     assert (
         long_operation_point.money_management_strategy_id
