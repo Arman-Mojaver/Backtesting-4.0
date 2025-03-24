@@ -154,4 +154,4 @@ db-size:  ## Get size of db-development and db-production
 server:
 	docker compose -f docker-compose.yaml down go-http
 	docker image build -t armanmojaver/go-http:latest ./go_http
-	docker compose -f docker-compose.yaml up -d go-http
+	docker compose -f docker-compose.yaml up go-http
