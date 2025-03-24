@@ -160,6 +160,10 @@ def test_annual_operation_count_with_long_and_short(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 2.0
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20
 
 
 def test_annual_operation_count_with_long(
@@ -203,6 +207,10 @@ def test_annual_operation_count_with_long(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 1.0
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20
 
 
 def test_annual_operation_count_with_short(
@@ -246,6 +254,10 @@ def test_annual_operation_count_with_short(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 1.0
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20
 
 
 # 2 Years
@@ -292,6 +304,10 @@ def test_annual_operation_count_with_long_and_short_2(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 1.0
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20
 
 
 def test_annual_operation_count_with_long_2(
@@ -335,6 +351,10 @@ def test_annual_operation_count_with_long_2(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 0.5
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20
 
 
 def test_annual_operation_count_with_short_2(
@@ -378,3 +398,7 @@ def test_annual_operation_count_with_short_2(
 
     assert len(response_content["data"]) == 1
     assert response_content["data"][0]["strategy_data"]["annual_operation_count"] == 0.5
+    assert (
+        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 10
+    )
+    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 20

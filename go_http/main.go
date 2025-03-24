@@ -103,9 +103,11 @@ type RequestPayload struct {
 
 // Response Structs
 type StrategyData struct {
-	AnnualROI            float64 `json:"annual_roi"`
-	MaxDrawDown          float64 `json:"max_draw_down"`
-	AnnualOperationCount float64 `json:"annual_operation_count"`
+	AnnualROI                 float64 `json:"annual_roi"`
+	MaxDrawDown               float64 `json:"max_draw_down"`
+	AnnualOperationCount      float64 `json:"annual_operation_count"`
+	MoneyManagementStrategyID int     `json:"money_management_strategy_id"`
+	IndicatorID               int     `json:"indicator_id"`
 }
 
 type StrategyItem struct {
@@ -139,11 +141,7 @@ func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var strategyItems []StrategyItem
 	for moneyManagementStrategyID, operationPoints := range payload.OperationPoints {
-		_ = moneyManagementStrategyID
-
 		for indicatorID, signals := range payload.Signals {
-			_ = indicatorID
-
 			longOperationPoints := []OperationPoint{}
 			longOperationPointIDs := []int{}
 			for _, signal := range signals.LongSignals {
@@ -174,6 +172,8 @@ func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
 				AnnualROI:            0.0,
 				MaxDrawDown:          0.0,
 				AnnualOperationCount: float64(len(operationPoints)) / differenceInYears,
+				MoneyManagementStrategyID: moneyManagementStrategyID,
+				IndicatorID: indicatorID,
 			}
 			strategyResponse := StrategyItem{
 				StrategyData:           strategy,
