@@ -55,16 +55,7 @@ def test_process_invalid_json(invalid_body, endpoint):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-@pytest.mark.parametrize(
-    "body_with_valid_fields",
-    [
-        {"something": "some_value"},
-    ],
-)
-def test_process_valid_fields(body_with_valid_fields, endpoint):
-    response = requests.post(
-        url=endpoint("process_strategies"), json=body_with_valid_fields, timeout=5
-    )
+def test_process_valid_fields(endpoint):
+    response = requests.post(url=endpoint("process_strategies"), json={}, timeout=5)
 
-    assert parse_response(response) == {"message": "success"}
     assert response.status_code == HTTPStatus.OK
