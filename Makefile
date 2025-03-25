@@ -95,6 +95,9 @@ ruff:  ## Run ruff check
 format:  ## Run ruff format
 	ruff format
 
+fmt:  ## Run go formatter
+	cd $(PWD)/go_http && go fmt ./...
+
 mypy: ## Run mypy
 	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
 
