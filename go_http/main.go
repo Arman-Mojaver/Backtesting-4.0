@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -67,8 +68,13 @@ func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Starting to process strategies")
+	start := time.Now()
 	strategyItems := ps.ProcessStrategies(&payload)
 	response := ps.Response{Data: strategyItems}
+
+	elapsed := time.Since(start)
+	log.Printf("Finished to process strategies. Elapsed time: %s", elapsed)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
