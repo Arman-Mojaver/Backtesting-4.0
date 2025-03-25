@@ -1,3 +1,3 @@
-module go-http
+module go_http
 
 go 1.23.4

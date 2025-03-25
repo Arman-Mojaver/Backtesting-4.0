@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"go_http/process_strategies"
 	"io"
 	"log"
 	"net/http"
@@ -55,7 +56,7 @@ func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var payload RequestPayload
+	var payload ps.RequestPayload
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 
@@ -66,8 +67,8 @@ func processStrategiesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	strategyItems := ProcessStrategies(payload)
-	response := Response{Data: strategyItems}
+	strategyItems := ps.ProcessStrategies(&payload)
+	response := ps.Response{Data: strategyItems}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
