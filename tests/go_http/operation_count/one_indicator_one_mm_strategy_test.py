@@ -1,5 +1,3 @@
-import json
-
 import pytest
 import requests
 
@@ -8,13 +6,10 @@ from database.models import (
     MoneyManagementStrategy,
     ShortOperationPoint,
 )
+from testing_utils.http_utils import parse_response
 from utils.date_utils import datetime_to_string
 
 INSTRUMENT = "EURUSD"
-
-
-def parse_response(response):
-    return json.loads(response.content.decode())
 
 
 @pytest.fixture

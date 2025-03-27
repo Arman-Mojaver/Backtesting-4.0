@@ -1,12 +1,9 @@
-import json
 from http import HTTPStatus
 
 import pytest
 import requests
 
-
-def parse_response(response):
-    return json.loads(response.content.decode())
+from testing_utils.http_utils import parse_response
 
 
 def test_non_existent_endpoint(endpoint):
