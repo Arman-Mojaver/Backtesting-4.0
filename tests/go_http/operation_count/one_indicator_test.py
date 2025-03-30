@@ -29,16 +29,18 @@ INSTRUMENT = "EURUSD"
         ("2026-01-01", [2], [2], 2.0),
     ],
 )
-def test_annual_operation_count(
+@pytest.mark.parametrize("money_management_strategy_count", [1, 2])
+def test_annual_operation_count(  # noqa: PLR0913
     end_date,
     long_signals_counts,
     short_signals_counts,
     expected_result,
+    money_management_strategy_count,
     endpoint,
 ):
     request_body = ProcessStrategiesRequestBodyFactory(
         instrument=INSTRUMENT,
-        mm_strategy_count=1,
+        mm_strategy_count=money_management_strategy_count,
         start_date="2024-01-01",
         long_signals_counts=long_signals_counts,
         short_signals_counts=short_signals_counts,
@@ -62,6 +64,6 @@ def test_annual_operation_count(
         for strategy_response in strategy_responses
     ]
 
-    assert len(response_content["data"]) == 1
+    assert len(response_content["data"]) == money_management_strategy_count
     assert set(strategy_responses) == set(expected_strategy_responses)
     assert set(annual_operation_counts) == {expected_result}
