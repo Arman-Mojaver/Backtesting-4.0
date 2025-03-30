@@ -6,13 +6,32 @@ from datetime import datetime, timedelta
 from database.models import LongOperationPoint, ShortOperationPoint
 
 
-def _generate_weekdays(start_date: datetime.date, count: int):
+def _generate_weekdays(
+    start_date: datetime.date,
+    end_date: datetime.date | None = None,
+    count: int | None = None,
+) -> list[datetime.date]:
+    if count and end_date:
+        err = "Pass either 'count' or 'end_date', not both."
+        raise ValueError(err)
+
+    if not (count or end_date):
+        err = "Pass either 'count' or 'end_date'."
+        raise ValueError(err)
+
     dates = []
     current_date = start_date
-    while len(dates) < count:
-        if current_date.weekday() < 5:  # Exclude weekends  # noqa: PLR2004
-            dates.append(current_date)
-        current_date += timedelta(days=1)
+
+    if count:
+        while len(dates) < count:
+            if current_date.weekday() < 5:  # Exclude weekends  # noqa: PLR2004
+                dates.append(current_date)
+            current_date += timedelta(days=1)
+    else:
+        while current_date <= end_date:
+            if current_date.weekday() < 5:  # Exclude weekends  # noqa: PLR2004
+                dates.append(current_date)
+            current_date += timedelta(days=1)
 
     return dates
 
@@ -53,7 +72,8 @@ def generate_random_long_operation_points(
     money_management_strategy_id: int,
     instrument: str,
     start_date: str,
-    count: int,
+    count: int | None = None,
+    end_date: str | None = None,
 ) -> list[LongOperationPoint]:
     """
     # noqa: D401
@@ -63,7 +83,9 @@ def generate_random_long_operation_points(
     To avoid this, the best start dates are between Tuesday and Thursday.
     """
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()  # noqa: DTZ007
-    dates = _generate_weekdays(start_date=start_date, count=count)
+    if end_date:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()  # noqa: DTZ007
+    dates = _generate_weekdays(start_date=start_date, end_date=end_date, count=count)
 
     return [
         generate_random_long_operation_point(
@@ -111,10 +133,13 @@ def generate_random_short_operation_points(
     money_management_strategy_id: int,
     instrument: str,
     start_date: str,
-    count: int,
+    count: int | None = None,
+    end_date: str | None = None,
 ) -> list[ShortOperationPoint]:
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()  # noqa: DTZ007
-    dates = _generate_weekdays(start_date=start_date, count=count)
+    if end_date:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()  # noqa: DTZ007
+    dates = _generate_weekdays(start_date=start_date, end_date=end_date, count=count)
 
     return [
         generate_random_short_operation_point(
