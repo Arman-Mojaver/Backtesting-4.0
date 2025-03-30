@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import random
 from datetime import datetime, timedelta
 
@@ -68,6 +69,7 @@ def generate_random_long_operation_point(
     )
 
 
+@functools.lru_cache
 def generate_random_long_operation_points(
     money_management_strategy_id: int,
     instrument: str,
@@ -129,6 +131,7 @@ def generate_random_short_operation_point(
     )
 
 
+@functools.lru_cache
 def generate_random_short_operation_points(
     money_management_strategy_id: int,
     instrument: str,
