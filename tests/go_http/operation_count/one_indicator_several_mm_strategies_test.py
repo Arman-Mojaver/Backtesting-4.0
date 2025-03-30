@@ -2,7 +2,10 @@ import pytest
 import requests
 
 from testing_utils.http_utils import parse_response
-from testing_utils.request_body_factory import ProcessStrategiesRequestBodyFactory
+from testing_utils.request_body_factory import (
+    ProcessStrategiesRequestBodyFactory,
+    StrategyResponse,
+)
 
 INSTRUMENT = "EURUSD"
 
@@ -49,13 +52,16 @@ def test_annual_operation_count(
     )
 
     response_content = parse_response(response)
+    strategy_responses = [
+        StrategyResponse.model_validate(data) for data in response_content["data"]
+    ]
+    expected_strategy_responses = request_body.strategy_responses()
+
+    annual_operation_counts = [
+        strategy_response.strategy_data.annual_operation_count
+        for strategy_response in strategy_responses
+    ]
 
     assert len(response_content["data"]) == 2
-    assert (
-        response_content["data"][0]["strategy_data"]["annual_operation_count"]
-        == expected_result
-    )
-    assert (
-        response_content["data"][1]["strategy_data"]["annual_operation_count"]
-        == expected_result
-    )
+    assert set(strategy_responses) == set(expected_strategy_responses)
+    assert set(annual_operation_counts) == {expected_result}

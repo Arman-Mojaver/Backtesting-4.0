@@ -3,6 +3,11 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
+from pydantic import BaseModel, field_validator
+
+from testing_utils.finance_utils.annual_operation_count import (
+    calculate_annual_operation_count,
+)
 from testing_utils.finance_utils.utils import get_lists_evenly_spaced_samples
 from testing_utils.operation_points_utils import (
     generate_random_long_operation_points,
@@ -12,6 +17,58 @@ from utils.date_utils import datetime_to_string
 
 if TYPE_CHECKING:
     from database.models import LongOperationPoint, ShortOperationPoint
+
+
+class StrategyData(BaseModel):
+    annual_operation_count: float
+    money_management_strategy_id: int
+    indicator_id: int
+
+    def __hash__(self):
+        return hash(
+            (
+                self.annual_operation_count,
+                self.money_management_strategy_id,
+                self.indicator_id,
+            )
+        )
+
+
+class StrategyResponse(BaseModel):
+    strategy_data: StrategyData
+    long_operation_point_ids: list[int] | None
+    short_operation_point_ids: list[int] | None
+
+    @field_validator(
+        "long_operation_point_ids",
+        "short_operation_point_ids",
+        mode="before",
+    )
+    @classmethod
+    def none_to_empty_list(cls, value: list[int] | None) -> list[int]:
+        if value is None:
+            return []
+        return value
+
+    def __hash__(self):
+        return hash(
+            (
+                hash(self.strategy_data),
+                frozenset(self.long_operation_point_ids),
+                frozenset(self.short_operation_point_ids),
+            )
+        )
+
+    def __eq__(self, other: StrategyResponse):
+        if isinstance(other, StrategyResponse):
+            return (
+                self.strategy_data == other.strategy_data
+                and frozenset(self.long_operation_point_ids)
+                == frozenset(other.long_operation_point_ids)
+                and frozenset(self.short_operation_point_ids)
+                == frozenset(other.short_operation_point_ids)
+            )
+        return False
 
 
 class ProcessStrategiesRequestBodyFactory:
@@ -130,10 +187,10 @@ class ProcessStrategiesRequestBodyFactory:
         return signals
 
     def mm_strategy_ids(self) -> list[int]:
-        return list(self.body["operation_points"].keys())
+        return sorted(self.body["operation_points"].keys())
 
     def indicator_ids(self) -> list[int]:
-        return list(self.body["signals"].keys())
+        return sorted(self.body["signals"].keys())
 
     def strategy_ids(self) -> set[tuple[int, int]]:
         return {
@@ -144,3 +201,53 @@ class ProcessStrategiesRequestBodyFactory:
 
     def strategy_count(self) -> int:
         return len(self.mm_strategy_ids()) * len(self.indicator_ids())
+
+    def strategy_responses(self) -> list[StrategyResponse]:
+        strategy_responses = []
+        for mm_strategy_id in self.mm_strategy_ids():
+            for indicator_id in self.indicator_ids():
+                long_signals = self.body["signals"][indicator_id]["long_signals"]
+                short_signals = self.body["signals"][indicator_id]["short_signals"]
+                all_long_operation_points = self.body["operation_points"][mm_strategy_id][
+                    "long_operation_points"
+                ]
+                all_short_operation_points = self.body["operation_points"][
+                    mm_strategy_id
+                ]["short_operation_points"]
+                long_operation_points = [
+                    all_long_operation_points[signal] for signal in long_signals
+                ]
+                short_operation_points = [
+                    all_short_operation_points[signal] for signal in short_signals
+                ]
+                operations_points = sorted(
+                    long_operation_points + short_operation_points,
+                    key=lambda x: x["datetime"],
+                )
+
+                long_operation_point_ids = [
+                    point["id"] for point in long_operation_points
+                ]
+                short_operation_point_ids = [
+                    point["id"] for point in short_operation_points
+                ]
+
+                strategy_data = StrategyData(
+                    annual_operation_count=calculate_annual_operation_count(
+                        operation_items=operations_points,
+                        start_date=self.start_date,
+                        end_date=self.end_date,
+                    ),
+                    money_management_strategy_id=mm_strategy_id,
+                    indicator_id=indicator_id,
+                )
+
+                strategy_response = StrategyResponse(
+                    strategy_data=strategy_data,
+                    long_operation_point_ids=long_operation_point_ids,
+                    short_operation_point_ids=short_operation_point_ids,
+                )
+
+                strategy_responses.append(strategy_response)
+
+        return strategy_responses
