@@ -101,8 +101,7 @@ from testing_utils.finance_utils.utils import get_lists_evenly_spaced_samples
 )
 def test_success(items, long_count, short_count, expected_result):
     assert (
-        get_lists_evenly_spaced_samples(items, long_count, short_count)
-        == expected_result
+        get_lists_evenly_spaced_samples(items, long_count, short_count) == expected_result
     )
 
 

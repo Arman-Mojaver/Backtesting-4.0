@@ -35,7 +35,7 @@ def test_annual_operation_count(
 ):
     request_body = ProcessStrategiesRequestBodyFactory(
         instrument=INSTRUMENT,
-        mm_strategy_count=1,
+        mm_strategy_count=2,
         start_date="2024-01-01",
         long_signals_counts=long_signals_counts,
         short_signals_counts=short_signals_counts,
@@ -50,12 +50,12 @@ def test_annual_operation_count(
 
     response_content = parse_response(response)
 
-    assert len(response_content["data"]) == 1
+    assert len(response_content["data"]) == 2
     assert (
         response_content["data"][0]["strategy_data"]["annual_operation_count"]
         == expected_result
     )
     assert (
-        response_content["data"][0]["strategy_data"]["money_management_strategy_id"] == 1
+        response_content["data"][1]["strategy_data"]["annual_operation_count"]
+        == expected_result
     )
-    assert response_content["data"][0]["strategy_data"]["indicator_id"] == 701
