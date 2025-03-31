@@ -3,7 +3,7 @@ import requests
 
 from testing_utils.http_utils import parse_response
 from testing_utils.request_body_factory.annual_operation_count import (
-    ProcessStrategiesRequestBodyFactory,
+    AnnualOperationCountRequestBodyFactory,
     StrategyResponseOperationCount,
 )
 
@@ -41,7 +41,7 @@ def test_annual_operation_count(  # noqa: PLR0913
     money_management_strategy_count,
     endpoint,
 ):
-    request_body = ProcessStrategiesRequestBodyFactory(
+    request_body = AnnualOperationCountRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_count=money_management_strategy_count,
         start_date="2024-01-01",

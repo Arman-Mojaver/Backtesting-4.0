@@ -73,7 +73,7 @@ class StrategyResponseOperationCount(BaseModel):
         return False
 
 
-class ProcessStrategiesRequestBodyFactory:
+class AnnualOperationCountRequestBodyFactory:
     ID_GAP = 701
 
     def __init__(  # noqa: PLR0913
