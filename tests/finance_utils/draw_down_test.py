@@ -1,57 +1,59 @@
 from __future__ import annotations
 
-import pytest
-
 from testing_utils.finance_utils.draw_down import calculate_max_draw_down
 from testing_utils.finance_utils.models import OperationItem
 
+DRAW_DOWN_RESULT_MAPPING = {
+    ((20, 20, 20),): 0,
+    ((20, 20, 20), (30, 30, 20), (40, 40, 20)): 0,
+    ((-20, 30, 20),): 2,
+    ((-20, 30, 20), (-35, 30, 35), (-50, 30, 50)): 6.0,
+    ((30, 30, 20), (-20, 30, 20)): 1.94,
+    ((-20, 30, 20), (30, 30, 20)): 2.0,
+    ((30, 30, 20), (-20, 30, 20), (-20, 30, 20)): 3.88,
+    ((-20, 30, 20), (-20, 30, 20), (30, 30, 20), (30, 30, 20), (30, 30, 20)): 4.0,
+    (
+        (-20, 30, 20),
+        (-20, 30, 20),
+        (30, 30, 20),
+        (25, 25, 20),
+        (-200, 300, 200),
+        (300, 300, 250),
+    ): 4.0,
+    (
+        (-20, 30, 20),
+        (-20, 30, 20),
+        (30, 30, 20),
+        (25, 25, 20),
+        (-200, 300, 200),
+        (-250, 300, 250),
+        (-250, 300, 250),
+    ): 5.91,
+}
 
-@pytest.mark.parametrize(
-    "operation_items",
-    [
-        [
-            OperationItem(
-                result=20,
-                tp=20,
-                sl=20,
-                risk=0.02,
-            )
-        ],
-        [
-            OperationItem(
-                result=20,
-                tp=20,
-                sl=20,
-                risk=0.02,
-            ),
-            OperationItem(
-                result=30,
-                tp=30,
-                sl=20,
-                risk=0.02,
-            ),
-            OperationItem(
-                result=40,
-                tp=40,
-                sl=20,
-                risk=0.02,
-            ),
-        ],
-    ],
-)
-def test_only_positive_results_returns_zero(operation_items):
+
+def test_only_positive_results_returns_zero_1():
+    parameters = ((20, 20, 20),)
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
+
     assert calculate_max_draw_down(operation_items) == 0
+    assert expected_result == 0
+
+
+def test_only_positive_results_returns_zero_2():
+    parameters = ((20, 20, 20), (30, 30, 20), (40, 40, 20))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
+
+    assert calculate_max_draw_down(operation_items) == 0
+    assert expected_result == 0
 
 
 def test_one_negative_result():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        )
-    ]
+    parameters = ((-20, 30, 20),)
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum = 1
     cumsum += (-20) * (0.02 / 20)
@@ -59,29 +61,13 @@ def test_one_negative_result():
     max_draw_down = round((1 - cumsum) / 1 * 100, 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_three_negative_results():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-35,
-            tp=30,
-            sl=35,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-50,
-            tp=30,
-            sl=50,
-            risk=0.02,
-        ),
-    ]
+    parameters = ((-20, 30, 20), (-35, 30, 35), (-50, 30, 50))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum = 1
     cumsum += (-20) * (0.02 / 20)
@@ -91,23 +77,13 @@ def test_three_negative_results():
     max_draw_down = round((1 - cumsum) / 1 * 100, 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_positive_and_negative_items():
-    operation_items = [
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-    ]
+    parameters = ((30, 30, 20), (-20, 30, 20))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum = 1
     cumsum += 30 * (0.02 / 20)
@@ -117,23 +93,13 @@ def test_positive_and_negative_items():
     max_draw_down = round((cummax - cumsum) / cummax * 100, 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_negative_and_positive_items():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-    ]
+    parameters = ((-20, 30, 20), (30, 30, 20))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum_list, cummax_list = [], []
 
@@ -154,29 +120,13 @@ def test_negative_and_positive_items():
     max_draw_down = round(draw_downs[0], 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_positive_and_several_negative_items():
-    operation_items = [
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-    ]
+    parameters = ((30, 30, 20), (-20, 30, 20), (-20, 30, 20))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum_list, cummax_list = [], []
     cumsum = 1
@@ -201,41 +151,13 @@ def test_positive_and_several_negative_items():
     max_draw_down = round(draw_downs[2], 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_several_negative_and_several_positive_items():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-    ]
+    parameters = ((-20, 30, 20), (-20, 30, 20), (30, 30, 20), (30, 30, 20), (30, 30, 20))
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum_list, cummax_list = [], []
     cumsum = 1
@@ -268,47 +190,20 @@ def test_several_negative_and_several_positive_items():
     max_draw_down = round(draw_downs[1], 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_mixed_order_of_positive_and_negative_items_1():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=25,
-            tp=25,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-200,
-            tp=300,
-            sl=200,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=300,
-            tp=300,
-            sl=250,
-            risk=0.02,
-        ),
-    ]
+    parameters = (
+        (-20, 30, 20),
+        (-20, 30, 20),
+        (30, 30, 20),
+        (25, 25, 20),
+        (-200, 300, 200),
+        (300, 300, 250),
+    )
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum_list, cummax_list = [], []
     cumsum = 1
@@ -345,53 +240,21 @@ def test_mixed_order_of_positive_and_negative_items_1():
     max_draw_down = round(draw_downs[1], 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
 
 
 def test_mixed_order_of_positive_and_negative_items_2():
-    operation_items = [
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-20,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=30,
-            tp=30,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=25,
-            tp=25,
-            sl=20,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-200,
-            tp=300,
-            sl=200,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-250,
-            tp=300,
-            sl=250,
-            risk=0.02,
-        ),
-        OperationItem(
-            result=-250,
-            tp=300,
-            sl=250,
-            risk=0.02,
-        ),
-    ]
+    parameters = (
+        (-20, 30, 20),
+        (-20, 30, 20),
+        (30, 30, 20),
+        (25, 25, 20),
+        (-200, 300, 200),
+        (-250, 300, 250),
+        (-250, 300, 250),
+    )
+    expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
+    operation_items = [OperationItem(*parameter, risk=0.02) for parameter in parameters]
 
     cumsum_list, cummax_list = [], []
     cumsum = 1
@@ -432,3 +295,4 @@ def test_mixed_order_of_positive_and_negative_items_2():
     max_draw_down = round(draw_downs[6], 2)
 
     assert calculate_max_draw_down(operation_items) == max_draw_down
+    assert max_draw_down == expected_result
