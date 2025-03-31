@@ -2,7 +2,7 @@ import pytest
 import requests
 
 from testing_utils.http_utils import parse_response
-from testing_utils.request_body_factory import (
+from testing_utils.request_body_factory.annual_operation_count import (
     ProcessStrategiesRequestBodyFactory,
     StrategyResponseOperationCount,
 )
