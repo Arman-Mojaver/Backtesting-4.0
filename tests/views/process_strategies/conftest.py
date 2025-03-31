@@ -8,8 +8,10 @@ from database.models import (
 )
 from fixtures.helpers import generate_identifier
 from fixtures.price_data import get_resampled_d1_data
-from testing_utils.operation_points_utils import (
+from testing_utils.operation_points_utils.long_operation_points import (
     generate_random_long_operation_points,
+)
+from testing_utils.operation_points_utils.short_operation_points import (
     generate_random_short_operation_points,
 )
 from utils.date_utils import string_to_datetime

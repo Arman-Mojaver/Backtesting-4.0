@@ -9,8 +9,10 @@ from testing_utils.finance_utils.annual_operation_count import (
     calculate_annual_operation_count,
 )
 from testing_utils.finance_utils.utils import get_lists_evenly_spaced_samples
-from testing_utils.operation_points_utils import (
+from testing_utils.operation_points_utils.long_operation_points import (
     generate_random_long_operation_points,
+)
+from testing_utils.operation_points_utils.short_operation_points import (
     generate_random_short_operation_points,
 )
 from utils.date_utils import datetime_to_string
@@ -19,7 +21,7 @@ if TYPE_CHECKING:
     from database.models import LongOperationPoint, ShortOperationPoint
 
 
-class StrategyData(BaseModel):
+class StrategyDataOperationCount(BaseModel):
     annual_operation_count: float
     money_management_strategy_id: int
     indicator_id: int
@@ -34,8 +36,8 @@ class StrategyData(BaseModel):
         )
 
 
-class StrategyResponse(BaseModel):
-    strategy_data: StrategyData
+class StrategyResponseOperationCount(BaseModel):
+    strategy_data: StrategyDataOperationCount
     long_operation_point_ids: list[int] | None
     short_operation_point_ids: list[int] | None
 
@@ -59,8 +61,8 @@ class StrategyResponse(BaseModel):
             )
         )
 
-    def __eq__(self, other: StrategyResponse):
-        if isinstance(other, StrategyResponse):
+    def __eq__(self, other: StrategyResponseOperationCount):
+        if isinstance(other, StrategyResponseOperationCount):
             return (
                 self.strategy_data == other.strategy_data
                 and frozenset(self.long_operation_point_ids)
@@ -202,7 +204,7 @@ class ProcessStrategiesRequestBodyFactory:
     def strategy_count(self) -> int:
         return len(self.mm_strategy_ids()) * len(self.indicator_ids())
 
-    def strategy_responses(self) -> list[StrategyResponse]:
+    def strategy_responses(self) -> list[StrategyResponseOperationCount]:
         strategy_responses = []
         for mm_strategy_id in self.mm_strategy_ids():
             for indicator_id in self.indicator_ids():
@@ -232,7 +234,7 @@ class ProcessStrategiesRequestBodyFactory:
                     point["id"] for point in short_operation_points
                 ]
 
-                strategy_data = StrategyData(
+                strategy_data = StrategyDataOperationCount(
                     annual_operation_count=calculate_annual_operation_count(
                         operation_items=operations_points,
                         start_date=self.start_date,
@@ -242,7 +244,7 @@ class ProcessStrategiesRequestBodyFactory:
                     indicator_id=indicator_id,
                 )
 
-                strategy_response = StrategyResponse(
+                strategy_response = StrategyResponseOperationCount(
                     strategy_data=strategy_data,
                     long_operation_point_ids=long_operation_point_ids,
                     short_operation_point_ids=short_operation_point_ids,

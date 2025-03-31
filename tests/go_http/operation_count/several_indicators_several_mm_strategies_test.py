@@ -4,7 +4,7 @@ import requests
 from testing_utils.http_utils import parse_response
 from testing_utils.request_body_factory import (
     ProcessStrategiesRequestBodyFactory,
-    StrategyResponse,
+    StrategyResponseOperationCount,
 )
 
 INSTRUMENT = "EURUSD"
@@ -58,7 +58,8 @@ def test_annual_operation_count(  # noqa: PLR0913
 
     response_content = parse_response(response)
     strategy_responses = [
-        StrategyResponse.model_validate(data) for data in response_content["data"]
+        StrategyResponseOperationCount.model_validate(data)
+        for data in response_content["data"]
     ]
     expected_strategy_responses = request_body.strategy_responses()
 
