@@ -6,6 +6,7 @@ from testing_utils.finance_utils.utils import get_lists_evenly_spaced_samples
 @pytest.mark.parametrize(
     ("items", "long_count", "short_count", "expected_result"),
     [
+        (("2024-01-01",), 0, 0, ([], [])),
         (("2024-01-01",), 1, 0, (["2024-01-01"], [])),
         (("2024-01-01",), 0, 1, ([], ["2024-01-01"])),
         (("2024-01-01", "2024-01-02"), 1, 1, (["2024-01-01"], ["2024-01-02"])),
@@ -109,7 +110,6 @@ def test_success(items, long_count, short_count, expected_result):
     ("items", "long_count", "short_count"),
     [
         ((), 1, 1),
-        (("2024-01-01",), 0, 0),
         (("2024-01-01",), -1, 1),
         (("2024-01-01",), 1, -1),
         (("2024-01-01",), 0, 2),

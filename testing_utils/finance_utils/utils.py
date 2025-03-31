@@ -49,10 +49,6 @@ def get_lists_evenly_spaced_samples(
         err = f"Invalid inputs: {items=}, {long_count=}, {short_count=}"
         raise ValueError(err)
 
-    if not (long_count or short_count):
-        err = "Both counts can not be 0"
-        raise ValueError(err)
-
     if abs(long_count - short_count) > 1:
         err = (
             "Absolute difference between counts can not be greater than 1: "
