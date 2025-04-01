@@ -19,6 +19,14 @@ class MoneyManagementStrategyQuery:
     def all() -> list[Any]:
         return list(session.query(MoneyManagementStrategy).all())
 
+    @staticmethod
+    def from_ids(ids: list[int]) -> list[MoneyManagementStrategy]:
+        return list(
+            session.query(MoneyManagementStrategy)
+            .filter(MoneyManagementStrategy.id.in_(ids))
+            .all()
+        )
+
 
 class MoneyManagementStrategy(Base, CRUDMixin):
     __tablename__ = "money_management_strategy"
