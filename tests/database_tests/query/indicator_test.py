@@ -39,3 +39,11 @@ def points(session):
 
 def test_all(session, points):
     assert lists_are_equal(Indicator.query.all(), points)
+
+
+def test_from_ids(session, points):
+    point_1, point_2 = points
+
+    assert lists_are_equal(Indicator.query.from_ids(ids=[point_1.id]), [point_1])
+    assert lists_are_equal(Indicator.query.from_ids(ids=[point_2.id]), [point_2])
+    assert lists_are_equal(Indicator.query.from_ids(ids=[point_1.id, point_2.id]), points)
