@@ -2,9 +2,11 @@ import pytest
 
 from database.models import (
     LongOperationPoint,
+    LongOperationPointStrategy,
     MoneyManagementStrategy,
     ResampledPointD1,
     ShortOperationPoint,
+    ShortOperationPointStrategy,
 )
 from fixtures.helpers import generate_identifier
 from fixtures.price_data import get_resampled_d1_data
@@ -120,6 +122,7 @@ def generate_long_operation_points(session):
 
     yield _generate_long_operation_points
 
+    session.query(LongOperationPointStrategy).delete()
     session.query(LongOperationPoint).delete()
     session.commit()
 
@@ -146,5 +149,6 @@ def generate_short_operation_points(session):
 
     yield _generate_short_operation_points
 
+    session.query(ShortOperationPointStrategy).delete()
     session.query(ShortOperationPoint).delete()
     session.commit()
