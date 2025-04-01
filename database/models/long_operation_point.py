@@ -33,6 +33,17 @@ class LongOperationPointQuery:
 
         return points_by_mm_strategy
 
+    @staticmethod
+    def from_ids_by_id(ids: list[int]) -> dict[int, LongOperationPoint]:
+        long_operation_points_by_id = {}
+        long_operation_points = list(
+            session.query(LongOperationPoint).filter(LongOperationPoint.id.in_(ids)).all()
+        )
+        for point in long_operation_points:
+            long_operation_points_by_id[point.id] = point
+
+        return long_operation_points_by_id
+
 
 class LongOperationPoint(Base, CRUDMixin):
     __tablename__ = "long_operation_point"

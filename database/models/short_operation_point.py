@@ -33,6 +33,19 @@ class ShortOperationPointQuery:
 
         return points_by_mm_strategy
 
+    @staticmethod
+    def from_ids_by_id(ids: list[int]) -> dict[int, ShortOperationPoint]:
+        short_operation_points_by_id = {}
+        short_operation_points = list(
+            session.query(ShortOperationPoint)
+            .filter(ShortOperationPoint.id.in_(ids))
+            .all()
+        )
+        for point in short_operation_points:
+            short_operation_points_by_id[point.id] = point
+
+        return short_operation_points_by_id
+
 
 class ShortOperationPoint(Base, CRUDMixin):
     __tablename__ = "short_operation_point"
