@@ -7,10 +7,11 @@ from database import Base, CRUDMixin
 class Strategy(Base, CRUDMixin):
     __tablename__ = "strategy"
     __repr_fields__ = (
-        "id",
         "annual_roi",
         "max_draw_down",
         "annual_operation_count",
+        "money_management_strategy_id",
+        "indicator_id",
     )
     serialize_rules = (
         "-id",
