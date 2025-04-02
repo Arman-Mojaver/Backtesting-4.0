@@ -1,5 +1,13 @@
 import pytest
 
+from database.models import (
+    Indicator,
+    LongOperationPoint,
+    MoneyManagementStrategy,
+    ShortOperationPoint,
+    Strategy,
+)
+
 
 @pytest.fixture
 def strategy_response_defaults():
@@ -20,3 +28,95 @@ def strategy_response_defaults():
         return values
 
     return _defaults
+
+
+@pytest.fixture
+def indicator_data():
+    return {
+        "type": "macd",
+        "parameters": {
+            "slow": {"type": "sma", "n": 12, "price_target": "close"},
+            "fast": {"type": "ema", "n": 5, "price_target": "close"},
+        },
+        "identifier": "macd.sma-12-close,ema-5-close",
+    }
+
+
+@pytest.fixture
+def indicator(indicator_data, session):
+    indicator = Indicator(**indicator_data)
+
+    session.add(indicator)
+    session.commit()
+
+    yield indicator
+
+    session.query(LongOperationPoint).delete()
+    session.query(ShortOperationPoint).delete()
+    session.query(Strategy).delete()
+    session.delete(indicator)
+    session.commit()
+
+
+@pytest.fixture
+def money_management_strategy_data():
+    return {
+        "type": "atr",
+        "tp_multiplier": 1.5,
+        "sl_multiplier": 1.0,
+        "parameters": {"atr_parameter": 14},
+        "identifier": "atr-1.5-1.0-14",
+        "risk": 0.02,
+    }
+
+
+@pytest.fixture
+def money_management_strategy(money_management_strategy_data, session):
+    point = MoneyManagementStrategy(**money_management_strategy_data)
+
+    session.add(point)
+    session.commit()
+
+    yield point
+
+    session.query(LongOperationPoint).delete()
+    session.query(ShortOperationPoint).delete()
+    session.query(Strategy).delete()
+    session.delete(point)
+    session.commit()
+
+
+@pytest.fixture
+def money_management_strategies(session):
+    money_management_strategy_data_1 = {
+        "type": "atr",
+        "tp_multiplier": 1.5,
+        "sl_multiplier": 1.0,
+        "parameters": {"atr_parameter": 14},
+        "identifier": "atr-1.5-1.0-14",
+        "risk": 0.02,
+    }
+
+    money_management_strategy_data_2 = {
+        "type": "atr",
+        "tp_multiplier": 1.7,
+        "sl_multiplier": 0.8,
+        "parameters": {"atr_parameter": 15},
+        "identifier": "atr-1.7-0.8-15",
+        "risk": 0.02,
+    }
+
+    point_1 = MoneyManagementStrategy(**money_management_strategy_data_1)
+    point_2 = MoneyManagementStrategy(**money_management_strategy_data_2)
+
+    session.add_all([point_1, point_2])
+    session.commit()
+
+    yield [point_1, point_2]
+
+    session.query(LongOperationPoint).delete()
+    session.query(ShortOperationPoint).delete()
+    session.query(Strategy).delete()
+    session.delete(point_1)
+    session.delete(point_2)
+    session.commit()
