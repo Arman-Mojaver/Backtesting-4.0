@@ -9,10 +9,15 @@ from database.models import (
     LongOperationPoint,
     MoneyManagementStrategy,
     ShortOperationPoint,
+    Strategy,
 )
 
 
 class NonExistentIdError(Exception):
+    pass
+
+
+class MismatchedIdError(Exception):
     pass
 
 
@@ -76,6 +81,7 @@ class CreateStrategiesView:
 
         self.short_operation_points_by_id = self._get_short_operation_points_by_id()
         self._validate_short_operation_point_ids()
+        self._validate_mismatched_ids()
 
     def _get_strategy_responses(self) -> StrategyResponses:
         try:
@@ -149,3 +155,42 @@ class CreateStrategiesView:
                 f"Symmetric difference: {symmetric_difference}"
             )
             raise NonExistentIdError(err)
+
+    @staticmethod
+    def _validate_money_management_strategy_id(
+        operation_point: LongOperationPoint | ShortOperationPoint,
+        strategy: Strategy,
+    ) -> None:
+        if (
+            operation_point.money_management_strategy_id
+            != strategy.money_management_strategy_id
+        ):
+            err = (
+                "Mismatch between Operation Point's "
+                "MoneyManagementStrategy ID and Strategy's MoneyManagementStrategy ID"
+                f"{operation_point.money_management_strategy_id=}, "
+                f"{strategy.money_management_strategy_id=}"
+            )
+            raise MismatchedIdError(err)
+
+    def _validate_mismatched_ids(self):
+        for strategy_response in self.strategy_responses.data:
+            strategy = Strategy(**strategy_response.strategy_data.model_dump())
+
+            for long_operation_point_id in strategy_response.long_operation_point_ids:
+                long_operation_point = self.long_operation_points_by_id[
+                    long_operation_point_id
+                ]
+                self._validate_money_management_strategy_id(
+                    operation_point=long_operation_point,
+                    strategy=strategy,
+                )
+
+            for short_operation_point_id in strategy_response.short_operation_point_ids:
+                short_operation_point = self.short_operation_points_by_id[
+                    short_operation_point_id
+                ]
+                self._validate_money_management_strategy_id(
+                    operation_point=short_operation_point,
+                    strategy=strategy,
+                )
