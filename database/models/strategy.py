@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Float, ForeignKey, Integer
-from sqlalchemy.orm import object_session, relationship
+from sqlalchemy.orm import object_session
 
 from database import Base, CRUDMixin
 
@@ -33,16 +33,6 @@ class Strategy(Base, CRUDMixin):
         Integer,
         ForeignKey("indicator.id"),
         nullable=False,
-    )
-    long_operation_points = relationship(
-        "LongOperationPoint",
-        back_populates="strategies",
-        secondary="long_operation_points_strategies",
-    )
-    short_operation_points = relationship(
-        "ShortOperationPoint",
-        back_populates="strategies",
-        secondary="short_operation_points_strategies",
     )
 
     def delete(self) -> None:

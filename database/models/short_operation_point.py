@@ -4,7 +4,6 @@ from collections import defaultdict
 from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 from database import Base, CRUDMixin, session
 
@@ -66,11 +65,6 @@ class ShortOperationPoint(Base, CRUDMixin):
         Integer,
         ForeignKey("money_management_strategy.id"),
         nullable=False,
-    )
-    strategies = relationship(
-        "Strategy",
-        back_populates="short_operation_points",
-        secondary="short_operation_points_strategies",
     )
 
     def to_request_format(self) -> dict[str, Any]:
