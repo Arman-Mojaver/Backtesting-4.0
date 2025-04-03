@@ -199,20 +199,3 @@ def generate_file():
     for file_path in folder.glob("*"):
         if file_path.is_file() and not str(file_path).endswith(".gitkeep"):
             file_path.unlink()
-
-
-@pytest.fixture
-def go_server():
-    """
-    Equivalent to calling "localhost" from outside the container.
-    Port is not needed since it is PORT=80.
-    """
-    return "http://host.docker.internal"
-
-
-@pytest.fixture
-def endpoint(go_server):
-    def _endpoint(url):
-        return f"{go_server}/{url}"
-
-    return _endpoint
