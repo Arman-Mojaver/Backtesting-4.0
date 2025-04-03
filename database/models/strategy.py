@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy import Column, Float, Integer
 from sqlalchemy.orm import object_session
 
 from database import Base, CRUDMixin
@@ -25,16 +25,8 @@ class Strategy(Base, CRUDMixin):
     annual_roi = Column(Float, nullable=False)
     max_draw_down = Column(Float, nullable=False)
     annual_operation_count = Column(Float, nullable=False)
-    money_management_strategy_id = Column(
-        Integer,
-        ForeignKey("money_management_strategy.id"),
-        nullable=False,
-    )
-    indicator_id = Column(
-        Integer,
-        ForeignKey("indicator.id"),
-        nullable=False,
-    )
+    money_management_strategy_id = Column(Integer, nullable=False)
+    indicator_id = Column(Integer, nullable=False)
 
     def delete(self) -> None:
         object_session(self).delete(self)
