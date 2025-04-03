@@ -7,6 +7,7 @@ Revises: 4b559a42f5ca
 Create Date: 2025-04-03 08:12:40.172073
 
 """
+
 from __future__ import annotations
 
 from typing import Sequence
