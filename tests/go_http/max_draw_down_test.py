@@ -5,7 +5,7 @@ from testing_utils.request_body_factory.max_draw_down import (
     MaxDrawDownRequestBodyFactory,
     StrategyResponseMaxDrawDown,
 )
-from tests.finance_utils.draw_down_test import DRAW_DOWN_RESULT_MAPPING
+from tests2.functional.finance_utils.draw_down_test import DRAW_DOWN_RESULT_MAPPING
 
 INSTRUMENT = "EURUSD"
 
