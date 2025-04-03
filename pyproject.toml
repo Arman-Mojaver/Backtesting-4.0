@@ -55,7 +55,7 @@ quote-style = "double"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"] # Ignore unused imports in __init__.py files
-"tests/*" = [
+"tests*/*" = [
     "ANN",      # Ignore missing type annotations in tests
 
     "ARG001",   # Unused function argument (pytest fixtures are passed as arguments, but not used in the test code)

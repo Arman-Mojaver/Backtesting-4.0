@@ -40,7 +40,7 @@ cov:  ## Run tests and make coverage report
 
 pytest:  ## Run pytest
 	docker compose -f docker-compose.yaml run --rm -it -v $(PWD):/app api /bin/bash -c \
-	"python -m pytest"
+	"python -m pytest tests && python -m pytest tests2 -n 4"
 
 
 
