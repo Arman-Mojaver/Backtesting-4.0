@@ -7,7 +7,7 @@ from utils.date_utils import string_to_datetime
 
 
 @pytest.fixture
-def resampled_points_d1(session):
+def resampled_points_d1():
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -19,15 +19,7 @@ def resampled_points_d1(session):
         point = ResampledPointD1(**point_data)
         points.append(point)
 
-    session.add_all(points)
-    session.commit()
-
-    yield points
-
-    for point in points:
-        session.delete(point)
-
-    session.commit()
+    return points
 
 
 TR_VALUES_2023_08_21__2023_09_01 = [
