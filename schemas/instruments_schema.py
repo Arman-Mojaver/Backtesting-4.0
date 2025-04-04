@@ -52,7 +52,7 @@ class InstrumentsSchema(BaseModel):
 
         return data
 
-    def validate_instruments_enabled(self, enabled_instruments: tuple[str]) -> None:
+    def validate_instruments_enabled(self, enabled_instruments: tuple[str, ...]) -> None:
         if set(enabled_instruments) != set(self.data.keys()):
             err = (
                 f"Mismatch between enabled instruments and file instruments: "

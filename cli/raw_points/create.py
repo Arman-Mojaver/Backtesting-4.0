@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
 from logger import log
-from views.raw_points_view import RawPointsCreateMultipleView
+from views.raw_points.raw_points_view import RawPointsCreateMultipleView
+from views.raw_points.utils import LoadFileData
 
 
 @click.command("create", help="Create Raw Points")
@@ -18,12 +19,18 @@ def create_raw_points() -> None:
         )
 
     try:
-        RawPointsCreateMultipleView().run()
+        file_data = LoadFileData().run()
 
     except FileNotFoundError as e:
         err = f"File not found: {e}"
         log.exception("File not found")
         raise click.ClickException(err) from e
+
+    try:
+        RawPointsCreateMultipleView(
+            data=file_data,
+            enabled_instruments=config.ENABLED_INSTRUMENTS,
+        ).run()
 
     except ValidationError as e:
         err = f"Validation error: {e}"
