@@ -15,27 +15,9 @@ from database.models import RawPointD1, RawPointH1
 from schemas.instruments_schema import InstrumentsSchema
 
 
-class RawPointsCreateMultipleView:
+class LoadFileData:
     def __init__(self):
         self.directory: Path = Path(Path.cwd()) / config.INSTRUMENT_DATA_PATH
-        self.file_names: list[Path] = self._get_file_names()
-        self.data: dict[str, Any] = {}
-        self.instruments_data: InstrumentsSchema = InstrumentsSchema()
-        self.raw_points_d1_by_instrument_by_date: defaultdict[Any, dict] = defaultdict(
-            dict
-        )
-
-    @log_on_end("Finished RawPointsCreateMultipleView")
-    def run(self) -> None:
-        self._validate_file_names()
-        self.data = self._get_file_data()
-        self.instruments_data = self._get_instrument_data()
-        self.instruments_data.validate_instruments_enabled(
-            enabled_instruments=config.ENABLED_INSTRUMENTS,
-        )
-        self._create_raw_d1_points()
-        self._create_raw_h1_points()
-        self._commit()
 
     def _get_file_names(self) -> list[Path]:
         files_names = [
@@ -45,15 +27,44 @@ class RawPointsCreateMultipleView:
         ]
         return sorted(files_names, key=lambda x: x.name, reverse=True)
 
-    def _validate_file_names(self) -> None:
-        if not self.file_names:
+    def _validate_file_names(self, file_names: list[Path]) -> None:
+        if not file_names:
             err = f"Directory <{self.directory!s}> did not have instrument_data files"
             raise FileNotFoundError(err)
 
-    def _get_file_data(self) -> dict[str, Any]:
-        file = self.file_names[0]
+    @staticmethod
+    def _get_file_data(file: Path) -> dict[str, Any]:
         with file.open() as f:
             return json.load(f)
+
+    def run(self) -> dict[str, Any]:
+        file_names = self._get_file_names()
+        self._validate_file_names(file_names)
+        return self._get_file_data(file_names[0])
+
+
+class RawPointsCreateMultipleView:
+    def __init__(
+        self,
+        data: dict[str, Any],
+        enabled_instruments: tuple[str, ...] = config.ENABLED_INSTRUMENTS,
+    ):
+        self.data: dict[str, Any] = data
+        self.enabled_instruments = enabled_instruments
+        self.instruments_data: InstrumentsSchema = InstrumentsSchema()
+        self.raw_points_d1_by_instrument_by_date: defaultdict[Any, dict] = defaultdict(
+            dict
+        )
+
+    @log_on_end("Finished RawPointsCreateMultipleView")
+    def run(self) -> None:
+        self.instruments_data = self._get_instrument_data()
+        self.instruments_data.validate_instruments_enabled(
+            enabled_instruments=self.enabled_instruments,
+        )
+        self._create_raw_d1_points()
+        self._create_raw_h1_points()
+        self._commit()
 
     def _get_instrument_data(self):
         try:
