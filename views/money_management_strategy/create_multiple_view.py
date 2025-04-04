@@ -3,16 +3,14 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import ValidationError
-from sqlalchemy.exc import SQLAlchemyError
 
 from config.logging_config.log_decorators import log_on_end, log_on_start
-from database import session
 from database.models import MoneyManagementStrategy
 from schemas.atr_schema import AtrSchema
 from utils.range_utils import InvalidRangeInputsError, frange
 
 
-class MoneyManagementStrategyCreateMultipleView:
+class MoneyManagementStrategyGenerator:
     SL_TP_STEP = 0.1
     INT_STEP = 1
 
@@ -31,7 +29,7 @@ class MoneyManagementStrategyCreateMultipleView:
         self.risk_percentage_range: tuple[int, int] = risk_percentage_range
 
     @log_on_end("Finished MoneyManagementStrategyCreateMultipleView")
-    def run(self) -> None:
+    def run(self) -> list[AtrSchema]:
         tp_values = self._get_tp_values()
         sl_values = self._get_sl_values()
         atr_values = self._get_atr_values()
@@ -42,9 +40,7 @@ class MoneyManagementStrategyCreateMultipleView:
             sl_values=sl_values,
             atr_values=atr_values,
         )
-        atr_schemas = self._get_atr_schemas(atr_schemas_data=atr_schemas_data)
-        self._create_money_management_strategies(atr_schemas=atr_schemas)
-        self._commit()
+        return self._get_atr_schemas(atr_schemas_data=atr_schemas_data)
 
     def _get_tp_values(self) -> list[float]:
         try:
@@ -136,20 +132,18 @@ class MoneyManagementStrategyCreateMultipleView:
             atr_schemas.append(atr_schema)
         return atr_schemas
 
-    @staticmethod
-    @log_on_start("Creating MoneyManagementStrategy")
-    def _create_money_management_strategies(atr_schemas: list[AtrSchema]) -> None:
-        for atr_schema in atr_schemas:
-            money_management_strategy = MoneyManagementStrategy(**atr_schema.model_dump())  # type: ignore[union-attr]
-            session.add(money_management_strategy)
 
-    @staticmethod
-    @log_on_end("Committed")
-    def _commit() -> None:
-        try:
-            session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+class MoneyManagementStrategyCreateMultipleView:
+
+    def __init__(self, atr_schemas: list[AtrSchema]):
+        self.atr_schemas: list[AtrSchema] = atr_schemas
+
+    def run(self) -> list[MoneyManagementStrategy]:
+        return self._create_money_management_strategies()
+
+    @log_on_start("Creating MoneyManagementStrategy")
+    def _create_money_management_strategies(self) -> list[MoneyManagementStrategy]:
+        return [
+            MoneyManagementStrategy(**atr_schema.model_dump())
+            for atr_schema in self.atr_schemas
+        ]

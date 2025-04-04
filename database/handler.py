@@ -1,0 +1,34 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from sqlalchemy.exc import SQLAlchemyError
+
+from config.logging_config.log_decorators import log_on_end
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
+
+    from database.models import MoneyManagementStrategy
+
+
+class DatabaseHandler:
+    def __init__(self, session: Session):
+        self._session = session
+
+    def commit_money_management_strategies(
+        self,
+        money_management_strategies: list[MoneyManagementStrategy],
+    ) -> None:
+        self._session.add_all(money_management_strategies)
+        self._commit()
+
+    @log_on_end("Committed")
+    def _commit(self) -> None:
+        try:
+            self._session.commit()
+        except SQLAlchemyError:
+            self._session.rollback()
+            raise
+        finally:
+            self._session.close()

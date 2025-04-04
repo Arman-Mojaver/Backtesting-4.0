@@ -12,10 +12,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.handler import DatabaseHandler
 from logger import log
 from utils.range_utils import InvalidRangeInputsError
 from views.money_management_strategy.create_multiple_view import (
     MoneyManagementStrategyCreateMultipleView,
+    MoneyManagementStrategyGenerator,
 )
 
 
@@ -94,7 +97,7 @@ def create_multiple_money_management_strategies(  # noqa: PLR0913
         )
 
     try:
-        MoneyManagementStrategyCreateMultipleView(
+        atr_schemas = MoneyManagementStrategyGenerator(
             type=type,
             tp_multiplier_range=tp_multiplier_range,
             sl_multiplier_range=sl_multiplier_range,
@@ -112,6 +115,26 @@ def create_multiple_money_management_strategies(  # noqa: PLR0913
         log.exception("Validation error")
         raise click.ClickException(err) from e
 
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    try:
+        money_management_strategies = MoneyManagementStrategyCreateMultipleView(
+            atr_schemas=atr_schemas
+        ).run()
+
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    try:
+        DatabaseHandler(session=session).commit_money_management_strategies(
+            money_management_strategies=money_management_strategies
+        )
+
     except SQLAlchemyError as e:
         err = f"DB error: {e}"
         log.exception("DB error")
@@ -122,7 +145,9 @@ def create_multiple_money_management_strategies(  # noqa: PLR0913
         log.exception("Unexpected error")
         raise click.ClickException(err) from e
 
-    log.info("Created money management strategies")
+    log.info(
+        f"Created money management strategies. Count: {len(money_management_strategies)}"
+    )
 
 
 if __name__ == "__main__":
