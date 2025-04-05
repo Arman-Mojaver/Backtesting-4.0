@@ -11,10 +11,12 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.handler import DatabaseHandler
+from database.models import MoneyManagementStrategy
 from logger import log
 from views.money_management_strategy.delete_multiple_view import (
     MoneyManagementStrategyDeleteMultipleView,
-    NonExistentIdentifierError,
 )
 
 
@@ -34,12 +36,40 @@ def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None
         )
 
     try:
-        MoneyManagementStrategyDeleteMultipleView(identifiers=set(identifiers)).run()
+        queried_money_management_strategies = (
+            MoneyManagementStrategy.query.from_identifiers(identifiers=set(identifiers))
+        )
 
-    except NonExistentIdentifierError as e:
+    except SQLAlchemyError as e:
+        err = f"DB error: {e}"
+        log.exception("DB error")
+        raise click.ClickException(err) from e
+
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    try:
+        money_management_strategies = MoneyManagementStrategyDeleteMultipleView(
+            identifiers=set(identifiers),
+            money_management_strategies=queried_money_management_strategies,
+        ).run()
+
+    except ValueError as e:
         log.exception(e)
         err = f"{e}"
         raise click.ClickException(err) from e
+
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    try:
+        DatabaseHandler(session=session).delete_money_management_strategies(
+            money_management_strategies=money_management_strategies
+        )
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"

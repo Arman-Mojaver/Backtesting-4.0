@@ -2,68 +2,44 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy.exc import SQLAlchemyError
-
-from config.logging_config.log_decorators import log_on_end, log_on_start
-from database import session
-from database.models import MoneyManagementStrategy
-
 if TYPE_CHECKING:
-    from sqlalchemy.orm import Query
-
-
-class NonExistentIdentifierError(Exception):
-    pass
+    from database.models import MoneyManagementStrategy
 
 
 class MoneyManagementStrategyDeleteMultipleView:
-    def __init__(self, identifiers: set[str] | None = None):
-        self.identifiers: set[str] | None = identifiers or set()
-        self.query: Query = session.query(MoneyManagementStrategy)
-        self.money_management_strategies: list[MoneyManagementStrategy] = []
+    def __init__(
+        self,
+        identifiers: set[str],
+        money_management_strategies: list[MoneyManagementStrategy],
+    ):
+        self.identifiers: set[str] = identifiers
+        self.money_management_strategies: list[MoneyManagementStrategy] = (
+            money_management_strategies
+        )
 
-    @log_on_end("Finished MoneyManagementStrategyDeleteMultipleView")
-    def run(self) -> None:
-        self._filter_by_identifiers()
-        self.money_management_strategies = self.query.all()
-        self._validate_identifiers()
-        self._delete_money_management_strategies()
-        self._commit()
+    def run(self) -> list[MoneyManagementStrategy]:
+        self._validate_arguments()
+        self._validates_identifiers_are_equal()
 
-    def _filter_by_identifiers(self) -> None:
-        if self.identifiers:
-            self.query = self.query.filter(
-                MoneyManagementStrategy.identifier.in_(self.identifiers)
-            )
+        return self.money_management_strategies
 
-    def _validate_identifiers(self) -> None:
-        identifiers = self._get_queried_identifiers()
-
-        if self.identifiers and set(self.identifiers) != set(identifiers):
+    def _validate_arguments(self):
+        if not (self.identifiers and self.money_management_strategies):
             err = (
-                "Identifier mismatch: Introduced identifiers: "
-                f"{self.identifiers}, Existing Identifiers: {identifiers}"
+                f"Invalid arguments: {self.identifiers}, "
+                f"{self.money_management_strategies}"
             )
-            raise NonExistentIdentifierError(err)
+            raise ValueError(err)
 
-    def _get_queried_identifiers(self) -> set[str]:
-        return {
-            money_management_strategy.identifier
-            for money_management_strategy in self.money_management_strategies
+    def _validates_identifiers_are_equal(self):
+        existing_identifiers = {
+            item.identifier for item in self.money_management_strategies
         }
+        symmetric_difference = existing_identifiers ^ self.identifiers
 
-    @log_on_start("Deleting MoneyManagementStrategy")
-    def _delete_money_management_strategies(self) -> None:
-        for money_management_strategy in self.money_management_strategies:
-            session.delete(money_management_strategy)
-
-    @staticmethod
-    @log_on_end("Committed")
-    def _commit() -> None:
-        try:
-            session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        if symmetric_difference:
+            err = (
+                "MoneyManagementStrategy identifiers did not match. "
+                f"Symmetric difference: {symmetric_difference}"
+            )
+            raise ValueError(err)
