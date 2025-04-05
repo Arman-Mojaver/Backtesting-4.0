@@ -14,18 +14,33 @@ class MoneyManagementStrategyType(Enum):
     atr = "atr"
 
 
+class NonExistentIdError(Exception):
+    pass
+
+
 class MoneyManagementStrategyQuery:
     @staticmethod
     def all() -> list[Any]:
         return list(session.query(MoneyManagementStrategy).all())
 
     @staticmethod
-    def from_ids(ids: list[int]) -> list[MoneyManagementStrategy]:
-        return list(
+    def from_ids(ids: set[int]) -> list[MoneyManagementStrategy]:
+        if not ids:
+            err = "No ids introduced"
+            raise NonExistentIdError(err)
+
+        items = list(
             session.query(MoneyManagementStrategy)
             .filter(MoneyManagementStrategy.id.in_(ids))
             .all()
         )
+
+        missing_ids = ids - {item.id for item in items}
+        if missing_ids:
+            err = f"Missing ids: {missing_ids}"
+            raise NonExistentIdError(err)
+
+        return items
 
 
 class MoneyManagementStrategy(Base, CRUDMixin):

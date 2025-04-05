@@ -134,7 +134,6 @@ class MoneyManagementStrategyGenerator:
 
 
 class MoneyManagementStrategyCreateMultipleView:
-
     def __init__(self, atr_schemas: list[AtrSchema]):
         self.atr_schemas: list[AtrSchema] = atr_schemas
 

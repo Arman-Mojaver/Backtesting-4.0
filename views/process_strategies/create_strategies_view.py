@@ -15,10 +15,7 @@ from database.models import (
     ShortOperationPointStrategy,
     Strategy,
 )
-
-
-class NonExistentIdError(Exception):
-    pass
+from database.models.money_management_strategy import NonExistentIdError
 
 
 class MismatchedIdError(Exception):
@@ -105,22 +102,12 @@ class CreateStrategiesView:
             raise
 
     def _validate_money_management_strategy_ids(self) -> None:
-        money_management_strategies = MoneyManagementStrategy.query.from_ids(
-            self.strategy_responses.money_management_strategy_ids()
-        )
-        money_management_strategy_ids = {item.id for item in money_management_strategies}
-
-        symmetric_difference = (
-            money_management_strategy_ids
-            ^ self.strategy_responses.money_management_strategy_ids()
-        )
-
-        if symmetric_difference:
-            err = (
-                "MoneyManagementStrategy IDs did not match. "
-                f"Symmetric difference: {symmetric_difference}"
+        try:
+            MoneyManagementStrategy.query.from_ids(
+                self.strategy_responses.money_management_strategy_ids()
             )
-            raise NonExistentIdError(err)
+        except NonExistentIdError:
+            raise
 
     def _validate_indicator_ids(self) -> None:
         indicators = Indicator.query.from_ids(self.strategy_responses.indicator_ids())
