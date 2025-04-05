@@ -15,9 +15,7 @@ from database import session
 from database.handler import DatabaseHandler
 from database.models import MoneyManagementStrategy
 from logger import log
-from views.money_management_strategy.delete_multiple_view import (
-    MoneyManagementStrategyDeleteMultipleView,
-)
+from views.delete_multiple_validator import DeleteMultipleValidator
 
 
 @click.command("delete", help="Delete multiple MoneyManagementStrategy")
@@ -51,9 +49,9 @@ def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None
         raise click.ClickException(err) from e
 
     try:
-        money_management_strategies = MoneyManagementStrategyDeleteMultipleView(
+        money_management_strategies = DeleteMultipleValidator(
             identifiers=set(identifiers),
-            money_management_strategies=queried_money_management_strategies,
+            items=queried_money_management_strategies,
         ).run()
 
     except ValueError as e:
