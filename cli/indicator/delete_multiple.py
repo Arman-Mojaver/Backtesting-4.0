@@ -11,11 +11,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.handler import DatabaseHandler
+from database.models import Indicator
 from logger import log
-from views.indicator.delete_multiple_view import (
-    IndicatorDeleteMultipleView,
-    NonExistentIdentifierError,
-)
+from views.delete_multiple_validator import DeleteMultipleValidator
 
 
 @click.command("delete", help="Delete multiple Indicator")
@@ -31,12 +31,9 @@ def delete_multiple_indicators(identifiers: tuple[str]) -> None:
         )
 
     try:
-        IndicatorDeleteMultipleView(identifiers=set(identifiers)).run()
-
-    except NonExistentIdentifierError as e:
-        log.exception(e)
-        err = f"{e}"
-        raise click.ClickException(err) from e
+        queried_indicators = Indicator.query.from_identifiers(
+            identifiers=set(identifiers)
+        )
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"
@@ -48,7 +45,36 @@ def delete_multiple_indicators(identifiers: tuple[str]) -> None:
         log.exception("Unexpected error")
         raise click.ClickException(err) from e
 
-    log.info("Deleted indicators")
+    try:
+        indicators = DeleteMultipleValidator(
+            identifiers=set(identifiers),
+            items=queried_indicators,
+        ).run()
+
+    except ValueError as e:
+        log.exception(e)
+        err = f"{e}"
+        raise click.ClickException(err) from e
+
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    try:
+        DatabaseHandler(session=session).delete_indicators(indicators=indicators)
+
+    except SQLAlchemyError as e:
+        err = f"DB error: {e}"
+        log.exception("DB error")
+        raise click.ClickException(err) from e
+
+    except Exception as e:
+        err = f"Unexpected error: {e}"
+        log.exception("Unexpected error")
+        raise click.ClickException(err) from e
+
+    log.info(f"Deleted indicators. Count: {len(indicators)}")
 
 
 if __name__ == "__main__":

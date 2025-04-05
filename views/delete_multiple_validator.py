@@ -23,7 +23,7 @@ class DeleteMultipleValidator:
 
     def _validate_arguments(self):
         if not (self.identifiers and self.items):
-            err = f"Invalid arguments: {self.identifiers}, " f"{self.items}"
+            err = f"Invalid arguments: {self.identifiers=}, " f"{self.items=}"
             raise ValueError(err)
 
     def _validates_identifiers_are_equal(self):
@@ -32,7 +32,8 @@ class DeleteMultipleValidator:
 
         if symmetric_difference:
             err = (
-                "MoneyManagementStrategy identifiers did not match. "
+                "Item identifiers did not match. "
+                f"{self.identifiers=}, {existing_identifiers=}, "
                 f"Symmetric difference: {symmetric_difference}"
             )
             raise ValueError(err)
