@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
@@ -13,39 +12,10 @@ if TYPE_CHECKING:
     from database.models import RawPointH1
 
 
-class MultipleValuesError(Exception):
-    """Error raised when there are multiple values for the same key."""
-
-
 class RawPointD1Query:
     @staticmethod
     def all() -> list[Any]:
         return list(session.query(RawPointD1).all())
-
-    @staticmethod
-    def dict_by_key(key: str = "id") -> dict[Any, Any]:
-        values = [
-            getattr(obj, key)
-            for obj in session.query(RawPointD1).all()
-            if getattr(obj, key)
-        ]
-        if len(values) != len(set(values)):
-            err = f"There where duplicated keys: {values}"
-            raise MultipleValuesError(err)
-
-        dictionary: dict[Any, Any] = defaultdict()
-        for obj in session.query(RawPointD1).all():
-            dictionary[getattr(obj, key)] = obj
-
-        return dictionary
-
-    @staticmethod
-    def dict_multi_by_key(key: str) -> dict[str, list[Any]]:
-        dictionary = defaultdict(list)
-        for obj in session.query(RawPointD1).all():
-            dictionary[getattr(obj, key)].append(obj)
-
-        return dictionary
 
 
 class RawPointD1(Base, CRUDMixin):

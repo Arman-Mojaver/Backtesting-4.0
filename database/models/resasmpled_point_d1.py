@@ -10,10 +10,6 @@ from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from database import Base, CRUDMixin, session
 
 
-class MultipleValuesError(Exception):
-    """Error raised when there are multiple values for the same key."""
-
-
 class HighLowOrder(Enum):
     high_first = "high_first"
     low_first = "low_first"
@@ -24,23 +20,6 @@ class ResampledPointD1Query:
     @staticmethod
     def all() -> list[Any]:
         return list(session.query(ResampledPointD1).all())
-
-    @staticmethod
-    def dict_by_key(key: str = "id") -> dict[Any, Any]:
-        values = [
-            getattr(obj, key)
-            for obj in session.query(ResampledPointD1).all()
-            if getattr(obj, key)
-        ]
-        if len(values) != len(set(values)):
-            err = f"There where duplicated keys: {values}"
-            raise MultipleValuesError(err)
-
-        dictionary: dict[Any, Any] = defaultdict()
-        for obj in session.query(ResampledPointD1).all():
-            dictionary[getattr(obj, key)] = obj
-
-        return dictionary
 
     @staticmethod
     def dict_multi_by_key(key: str) -> dict[str, list[Any]]:
