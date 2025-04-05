@@ -31,6 +31,12 @@ class IndicatorQuery:
     def from_ids(ids: list[int]) -> list[Indicator]:
         return list(session.query(Indicator).filter(Indicator.id.in_(ids)).all())
 
+    @staticmethod
+    def from_identifiers(identifiers: list[int]) -> list[Indicator]:
+        return list(
+            session.query(Indicator).filter(Indicator.identifier.in_(identifiers)).all()
+        )
+
 
 class Indicator(Base, CRUDMixin):
     __tablename__ = "indicator"
