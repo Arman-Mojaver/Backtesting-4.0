@@ -18,6 +18,10 @@ class NonExistentIdError(Exception):
     pass
 
 
+class NonExistentIdentifierError(Exception):
+    pass
+
+
 class MoneyManagementStrategyQuery:
     @staticmethod
     def all() -> list[Any]:
@@ -39,6 +43,25 @@ class MoneyManagementStrategyQuery:
         if missing_ids:
             err = f"Missing ids: {missing_ids}"
             raise NonExistentIdError(err)
+
+        return items
+
+    @staticmethod
+    def from_identifiers(identifiers: set[int]) -> list[MoneyManagementStrategy]:
+        if not identifiers:
+            err = "No identifiers introduced"
+            raise NonExistentIdentifierError(err)
+
+        items = list(
+            session.query(MoneyManagementStrategy)
+            .filter(MoneyManagementStrategy.identifier.in_(identifiers))
+            .all()
+        )
+
+        missing_identifiers = identifiers - {item.identifier for item in items}
+        if missing_identifiers:
+            err = f"Missing missing_identifiers: {missing_identifiers}"
+            raise NonExistentIdentifierError(err)
 
         return items
 
