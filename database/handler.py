@@ -9,7 +9,7 @@ from config.logging_config.log_decorators import log_on_end
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
-    from database.models import MoneyManagementStrategy
+    from database.models import Indicator, MoneyManagementStrategy
 
 
 class DatabaseHandler:
@@ -29,6 +29,11 @@ class DatabaseHandler:
     ) -> None:
         for money_management_strategy in money_management_strategies:
             self._session.delete(money_management_strategy)
+        self._commit()
+
+    def delete_indicators(self, indicators: list[Indicator]) -> None:
+        for indicator in indicators:
+            self._session.delete(indicator)
         self._commit()
 
     @log_on_end("Committed")
