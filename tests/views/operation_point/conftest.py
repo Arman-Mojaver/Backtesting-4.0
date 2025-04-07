@@ -1,26 +1,13 @@
 import pytest
 
-from database.models import (
-    LongOperationPoint,
-    MoneyManagementStrategy,
-    ResampledPointD1,
-    ShortOperationPoint,
-)
+from database.models import MoneyManagementStrategy, ResampledPointD1
 from fixtures.helpers import generate_identifier
 from fixtures.price_data import get_resampled_d1_data
 from utils.date_utils import string_to_datetime
 
 
 @pytest.fixture
-def delete_operation_points(session):
-    yield
-    session.query(LongOperationPoint).delete()
-    session.query(ShortOperationPoint).delete()
-    session.commit()
-
-
-@pytest.fixture
-def money_management_strategy(session):
+def money_management_strategy():
     money_management_strategy_data = {
         "type": "atr",
         "tp_multiplier": 0.4,
@@ -29,18 +16,10 @@ def money_management_strategy(session):
         "risk": 0.02,
     }
 
-    money_management_strategy_1 = MoneyManagementStrategy(
+    return MoneyManagementStrategy(
         **money_management_strategy_data,
         identifier=generate_identifier(money_management_strategy_data),
     )
-
-    session.add(money_management_strategy_1)
-    session.commit()
-
-    yield money_management_strategy_1
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
 
 
 @pytest.fixture
@@ -92,6 +71,8 @@ def generate_resampled_points(session):
 
         session.add_all(points)
         session.commit()
+
+        return points
 
     yield _generate_points
 

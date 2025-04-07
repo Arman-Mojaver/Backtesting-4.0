@@ -1,61 +1,50 @@
-from unittest.mock import patch
-
-import pytest
-
-from database.models import (
-    LongOperationPoint,
-    ShortOperationPoint,
-)
 from testing_utils.dict_utils import list_of_dicts_are_equal
 from views.operation_points_view import OperationPointsCreateMultipleView
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD", "USDCAD"))
-@pytest.mark.usefixtures("three_resampled_points_d1_two_instruments")
 def test_create(
     money_management_strategies,
-    delete_operation_points,
-    session,
+    three_resampled_points_d1_two_instruments,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        three_resampled_points_d1_two_instruments,
+        money_management_strategies,
+        enabled_instruments=("EURUSD", "USDCAD"),
+    ).run()
+
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     money_management_strategy_1, money_management_strategy_2 = money_management_strategies
 
     # EURUSD
 
-    long_operation_points_eurusd_1 = (
-        session.query(LongOperationPoint)
-        .filter_by(
-            instrument="EURUSD",
-            money_management_strategy_id=money_management_strategy_1.id,
-        )
-        .all()
-    )
-    long_operation_points_eurusd_2 = (
-        session.query(LongOperationPoint)
-        .filter_by(
-            instrument="EURUSD",
-            money_management_strategy_id=money_management_strategy_2.id,
-        )
-        .all()
-    )
-    short_operation_points_eurusd_1 = (
-        session.query(ShortOperationPoint)
-        .filter_by(
-            instrument="EURUSD",
-            money_management_strategy_id=money_management_strategy_1.id,
-        )
-        .all()
-    )
+    long_operation_points_eurusd_1 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+        and item.instrument == "EURUSD"
+    ]
 
-    short_operation_points_eurusd_2 = (
-        session.query(ShortOperationPoint)
-        .filter_by(
-            instrument="EURUSD",
-            money_management_strategy_id=money_management_strategy_2.id,
-        )
-        .all()
-    )
+    long_operation_points_eurusd_2 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+        and item.instrument == "EURUSD"
+    ]
+    short_operation_points_eurusd_1 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+        and item.instrument == "EURUSD"
+    ]
+
+    short_operation_points_eurusd_2 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+        and item.instrument == "EURUSD"
+    ]
 
     # money_management_strategy_1
 
@@ -132,39 +121,32 @@ def test_create(
 
     # USDCAD
 
-    long_operation_points_usdcad_1 = (
-        session.query(LongOperationPoint)
-        .filter_by(
-            instrument="USDCAD",
-            money_management_strategy_id=money_management_strategy_1.id,
-        )
-        .all()
-    )
-    long_operation_points_usdcad_2 = (
-        session.query(LongOperationPoint)
-        .filter_by(
-            instrument="USDCAD",
-            money_management_strategy_id=money_management_strategy_2.id,
-        )
-        .all()
-    )
-    short_operation_points_usdcad_1 = (
-        session.query(ShortOperationPoint)
-        .filter_by(
-            instrument="USDCAD",
-            money_management_strategy_id=money_management_strategy_1.id,
-        )
-        .all()
-    )
+    long_operation_points_usdcad_1 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+        and item.instrument == "USDCAD"
+    ]
 
-    short_operation_points_usdcad_2 = (
-        session.query(ShortOperationPoint)
-        .filter_by(
-            instrument="USDCAD",
-            money_management_strategy_id=money_management_strategy_2.id,
-        )
-        .all()
-    )
+    long_operation_points_usdcad_2 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+        and item.instrument == "USDCAD"
+    ]
+    short_operation_points_usdcad_1 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+        and item.instrument == "USDCAD"
+    ]
+
+    short_operation_points_usdcad_2 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+        and item.instrument == "USDCAD"
+    ]
 
     # money_management_strategy_1
 

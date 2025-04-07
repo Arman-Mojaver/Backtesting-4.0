@@ -1,28 +1,23 @@
-from unittest.mock import patch
-
 import pytest
 
-from database.models import (
-    LongOperationPoint,
-    MoneyManagementStrategy,
-    ShortOperationPoint,
-)
+from database.models import MoneyManagementStrategy
 from fixtures.helpers import generate_identifier
 from testing_utils.dict_utils import list_of_dicts_are_equal
 from views.operation_points_view import OperationPointsCreateMultipleView
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("three_resampled_points_d1")
 def test_create_one_pair_without_balance_overflow(
+    three_resampled_points_d1,
     money_management_strategy,
-    delete_operation_points,
-    session,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        three_resampled_points_d1,
+        [money_management_strategy],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    long_operation_points = session.query(LongOperationPoint).all()
-    short_operation_points = session.query(ShortOperationPoint).all()
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     atr = int(
         round(
@@ -92,17 +87,18 @@ def test_create_one_pair_without_balance_overflow(
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("four_resampled_points_d1")
 def test_create_two_pairs_without_balance_overflow(
     money_management_strategy,
-    delete_operation_points,
-    session,
+    four_resampled_points_d1,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        four_resampled_points_d1,
+        [money_management_strategy],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    long_operation_points = session.query(LongOperationPoint).all()
-    short_operation_points = session.query(ShortOperationPoint).all()
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     long_results = [i.to_dict() for i in long_operation_points]
     expected_long_results = [
@@ -184,17 +180,18 @@ def money_management_strategy_with_large_multipliers(session):
     session.commit()
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("four_resampled_points_d1")
 def test_do_not_create_with_balance_overflow(
     money_management_strategy_with_large_multipliers,
-    delete_operation_points,
-    session,
+    four_resampled_points_d1,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        four_resampled_points_d1,
+        [money_management_strategy_with_large_multipliers],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    assert session.query(LongOperationPoint).all() == []
-    assert session.query(ShortOperationPoint).all() == []
+    assert operation_points.long_operation_points == []
+    assert operation_points.short_operation_points == []
 
 
 @pytest.fixture
@@ -221,17 +218,18 @@ def money_management_strategy_with_symmetric_balance_overflow(session):
     session.commit()
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("four_resampled_points_d1_low_atr")
 def test_create_with_symmetric_balance_overflow(
     money_management_strategy_with_symmetric_balance_overflow,
-    delete_operation_points,
-    session,
+    four_resampled_points_d1_low_atr,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        four_resampled_points_d1_low_atr,
+        [money_management_strategy_with_symmetric_balance_overflow],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    long_operation_points = session.query(LongOperationPoint).all()
-    short_operation_points = session.query(ShortOperationPoint).all()
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     long_results = [i.to_dict() for i in long_operation_points]
     expected_long_results = [
@@ -273,17 +271,18 @@ def test_create_with_symmetric_balance_overflow(
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("five_resampled_points_d1_long_asymmetric_overflow")
 def test_create_with_long_asymmetric_balance_overflow(
     money_management_strategy_with_symmetric_balance_overflow,
-    delete_operation_points,
-    session,
+    five_resampled_points_d1_long_asymmetric_overflow,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        five_resampled_points_d1_long_asymmetric_overflow,
+        [money_management_strategy_with_symmetric_balance_overflow],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    long_operation_points = session.query(LongOperationPoint).all()
-    short_operation_points = session.query(ShortOperationPoint).all()
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     long_results = [i.to_dict() for i in long_operation_points]
     expected_long_results = [
@@ -343,17 +342,18 @@ def test_create_with_long_asymmetric_balance_overflow(
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("five_resampled_points_d1_short_asymmetric_overflow")
 def test_create_with_short_asymmetric_balance_overflow(
     money_management_strategy_with_symmetric_balance_overflow,
-    delete_operation_points,
-    session,
+    five_resampled_points_d1_short_asymmetric_overflow,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        five_resampled_points_d1_short_asymmetric_overflow,
+        [money_management_strategy_with_symmetric_balance_overflow],
+        enabled_instruments=("EURUSD",),
+    ).run()
 
-    long_operation_points = session.query(LongOperationPoint).all()
-    short_operation_points = session.query(ShortOperationPoint).all()
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     long_results = [i.to_dict() for i in long_operation_points]
     expected_long_results = [

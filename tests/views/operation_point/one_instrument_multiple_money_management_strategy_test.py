@@ -1,47 +1,45 @@
-from unittest.mock import patch
-
-import pytest
-
-from database.models import (
-    LongOperationPoint,
-    ShortOperationPoint,
-)
 from testing_utils.dict_utils import list_of_dicts_are_equal
 from views.operation_points_view import OperationPointsCreateMultipleView
 
 
-@patch("config.testing.TestingConfig.ENABLED_INSTRUMENTS", ("EURUSD",))
-@pytest.mark.usefixtures("three_resampled_points_d1")
 def test_create_one_pair_without_balance_overflow(
     money_management_strategies,
-    delete_operation_points,
-    session,
+    three_resampled_points_d1,
 ):
-    OperationPointsCreateMultipleView().run()
+    operation_points = OperationPointsCreateMultipleView(
+        three_resampled_points_d1,
+        money_management_strategies,
+        enabled_instruments=("EURUSD",),
+    ).run()
+
+    long_operation_points = operation_points.long_operation_points
+    short_operation_points = operation_points.short_operation_points
 
     money_management_strategy_1, money_management_strategy_2 = money_management_strategies
 
-    long_operation_points_1 = (
-        session.query(LongOperationPoint)
-        .filter_by(money_management_strategy_id=money_management_strategy_1.id)
-        .all()
-    )
-    long_operation_points_2 = (
-        session.query(LongOperationPoint)
-        .filter_by(money_management_strategy_id=money_management_strategy_2.id)
-        .all()
-    )
-    short_operation_points_1 = (
-        session.query(ShortOperationPoint)
-        .filter_by(money_management_strategy_id=money_management_strategy_1.id)
-        .all()
-    )
+    long_operation_points_1 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+    ]
 
-    short_operation_points_2 = (
-        session.query(ShortOperationPoint)
-        .filter_by(money_management_strategy_id=money_management_strategy_2.id)
-        .all()
-    )
+    long_operation_points_2 = [
+        item
+        for item in long_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+    ]
+
+    short_operation_points_1 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_1.id
+    ]
+
+    short_operation_points_2 = [
+        item
+        for item in short_operation_points
+        if item.money_management_strategy_id == money_management_strategy_2.id
+    ]
 
     # money_management_strategy_1
 

@@ -9,6 +9,7 @@ from database.models import (
     ShortOperationPoint,
 )
 from models.tr_point import AtrPoint, TrPoint
+from utils.date_utils import datetime_to_string
 
 
 class OperationPointsCreateOneController:
@@ -37,14 +38,14 @@ class OperationPointsCreateOneController:
         self.long_operation_points: list[LongOperationPoint] = []
         self.short_operation_points: list[ShortOperationPoint] = []
 
-    def run(self) -> list[LongOperationPoint | ShortOperationPoint]:
+    def run(self) -> tuple[list[LongOperationPoint], list[ShortOperationPoint]]:
         self.tr_points = self._get_tr_points()
         self.atr_points = self._get_atr_points()
         self.long_operation_points = self._get_long_operation_points()
         self.short_operation_points = self._get_short_operation_points()
         self._filter_out_balance_overflow_results()
 
-        return self.long_operation_points + self.short_operation_points
+        return self.long_operation_points, self.short_operation_points
 
     def _get_tr_points(self) -> list[TrPoint]:
         initial_point = self.resampled_points[0]
@@ -120,7 +121,7 @@ class OperationPointsCreateOneController:
             )
             long_operation_point = LongOperationPoint(
                 instrument=atr_point.instrument,
-                datetime=atr_point.datetime,
+                datetime=datetime_to_string(atr_point.datetime),
                 result=result,
                 tp=tp,
                 sl=sl,
@@ -147,7 +148,7 @@ class OperationPointsCreateOneController:
 
             short_operation_point = ShortOperationPoint(
                 instrument=atr_point.instrument,
-                datetime=atr_point.datetime,
+                datetime=datetime_to_string(atr_point.datetime),
                 result=result,
                 tp=tp,
                 sl=sl,

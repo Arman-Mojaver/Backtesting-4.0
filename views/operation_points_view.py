@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy.exc import SQLAlchemyError
+from typing import TYPE_CHECKING
 
 from config import config  # type: ignore[attr-defined]
 from config.logging_config.log_decorators import log_on_end, log_on_start
@@ -10,41 +10,57 @@ from controllers.create_multiple_balance_point_controller import (
 from controllers.create_multiple_operation_point_controller import (
     OperationPointsCreateOneController,
 )
-from database import session
-from database.models import (
-    LongOperationPoint,
-    MoneyManagementStrategy,
-    ResampledPointD1,
-    ShortOperationPoint,
-)
 from exceptions import (
     LargeAtrParameterError,
     NoMoneyManagementStrategiesError,
     NoResampledPointsError,
 )
 from logger import log
+from models.operation_point import OperationPoints
 from schemas.instruments_schema import EnabledInstrumentsMismatchError
+from utils.dict_utils import dict_multi_by_key
+
+if TYPE_CHECKING:
+    from database.models import (
+        LongOperationPoint,
+        MoneyManagementStrategy,
+        ResampledPointD1,
+        ShortOperationPoint,
+    )
 
 
 class OperationPointsCreateMultipleView:
-    def __init__(self):
-        self.resampled_points_by_instrument = ResampledPointD1.query.dict_multi_by_key(
-            "instrument"
+    def __init__(
+        self,
+        resampled_points: list[ResampledPointD1],
+        money_management_strategies: list[MoneyManagementStrategy],
+        enabled_instruments: tuple[str, ...] = config.ENABLED_INSTRUMENTS,
+    ):
+        self.resampled_points: list[ResampledPointD1] = resampled_points
+        self.resampled_points_by_instrument = dict_multi_by_key(
+            key="instrument",
+            items=self.resampled_points,
         )
-        self.money_management_strategies = MoneyManagementStrategy.query.all()
+        self.money_management_strategies: list[MoneyManagementStrategy] = (
+            money_management_strategies
+        )
+        self.enabled_instruments: tuple[str, ...] = enabled_instruments
 
-        self.all_operation_points: list[LongOperationPoint | ShortOperationPoint] = []
+        self.long_operation_points: list[LongOperationPoint] = []
+        self.short_operation_points: list[ShortOperationPoint] = []
 
     @log_on_start("Creating Operation Points")
     @log_on_end("Finished OperationPointsCreateMultipleView")
-    def run(self) -> None:
+    def run(self) -> OperationPoints:
         self._validate_resampled_points_exist()
         self._validate_money_management_strategy_exists()
         self._validate_atr_parameter()
         self._validate_enabled_instruments()
-        self.all_operation_points = self._run_controller()
-        self._add_to_session()
-        self._commit()
+        self.long_operation_points, self.short_operation_points = self._run_controller()
+        return OperationPoints(
+            long_operation_points=self.long_operation_points,
+            short_operation_points=self.short_operation_points,
+        )
 
     def _validate_resampled_points_exist(self):
         if not self.resampled_points_by_instrument:
@@ -74,15 +90,17 @@ class OperationPointsCreateMultipleView:
 
     def _validate_enabled_instruments(self):
         instruments = self.resampled_points_by_instrument.keys()
-        if set(config.ENABLED_INSTRUMENTS) != set(instruments):
+        if set(self.enabled_instruments) != set(instruments):
             err = (
                 f"Mismatch between enabled instruments and file instruments: "
                 f"{config.ENABLED_INSTRUMENTS=}, {instruments=}"
             )
             raise EnabledInstrumentsMismatchError(err)
 
-    def _run_controller(self):
-        all_operation_points = []
+    def _run_controller(
+        self,
+    ) -> tuple[list[LongOperationPoint], list[ShortOperationPoint]]:
+        all_long_operation_points, all_short_operation_points = [], []
         for instrument, resampled_points in self.resampled_points_by_instrument.items():
             log.info(f"Processing instrument: {instrument}")
             controller = BalancePointCreateMultipleController(
@@ -101,21 +119,8 @@ class OperationPointsCreateMultipleView:
                     long_balance_points_by_date=long_balance_points_by_date,
                     short_balance_points_by_date=short_balance_points_by_date,
                 )
-                operation_points = controller.run()
-                all_operation_points.extend(operation_points)
+                long_operation_points, short_operation_points = controller.run()
+                all_long_operation_points.extend(long_operation_points)
+                all_short_operation_points.extend(short_operation_points)
 
-        return all_operation_points
-
-    def _add_to_session(self):
-        session.add_all(self.all_operation_points)
-
-    @staticmethod
-    @log_on_end("Committed")
-    def _commit() -> None:
-        try:
-            session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        return all_long_operation_points, all_short_operation_points
