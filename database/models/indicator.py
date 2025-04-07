@@ -76,6 +76,3 @@ class Indicator(Base, CRUDMixin):
 
     def to_dict_with_ids(self) -> dict[str, Any]:
         return self.to_dict(rules=("id",))
-
-    def __eq__(self, other: Indicator) -> bool:
-        return self.to_dict() == other.to_dict()
