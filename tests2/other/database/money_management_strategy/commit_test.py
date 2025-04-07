@@ -18,7 +18,9 @@ def test_commit_empty_items_with_existing_tables_items_does_nothing(
 ):
     DatabaseHandler(session).commit_money_management_strategies([])
 
-    assert MoneyManagementStrategy.query.all() == other_money_management_strategies
+    assert lists_are_equal(
+        MoneyManagementStrategy.query.all(), other_money_management_strategies
+    )
 
 
 def test_commit_success_one_with_empty_table(
@@ -29,7 +31,9 @@ def test_commit_success_one_with_empty_table(
         [money_management_strategy]
     )
 
-    assert session.query(MoneyManagementStrategy).all() == [money_management_strategy]
+    assert lists_are_equal(
+        session.query(MoneyManagementStrategy).all(), [money_management_strategy]
+    )
 
 
 def test_commit_success_multiple_with_empty_table(
@@ -40,7 +44,9 @@ def test_commit_success_multiple_with_empty_table(
         money_management_strategies
     )
 
-    assert session.query(MoneyManagementStrategy).all() == money_management_strategies
+    assert lists_are_equal(
+        session.query(MoneyManagementStrategy).all(), money_management_strategies
+    )
 
 
 def test_commit_success_one_with_existing_tables_items(

@@ -58,6 +58,3 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     def delete(self) -> None:
         object_session(self).delete(self)
         object_session(self).flush()
-
-    def __eq__(self, other: MoneyManagementStrategy) -> bool:
-        return self.to_dict() == other.to_dict()
