@@ -9,7 +9,12 @@ from config.logging_config.log_decorators import log_on_end
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
-    from database.models import Indicator, MoneyManagementStrategy
+    from database.models import (
+        Indicator,
+        LongOperationPoint,
+        MoneyManagementStrategy,
+        ShortOperationPoint,
+    )
 
 
 class DatabaseHandler:
@@ -21,6 +26,20 @@ class DatabaseHandler:
         money_management_strategies: list[MoneyManagementStrategy],
     ) -> None:
         self._session.add_all(money_management_strategies)
+        self._commit()
+
+    def commit_long_operation_points(
+        self,
+        long_operation_points: list[LongOperationPoint],
+    ) -> None:
+        self._session.add_all(long_operation_points)
+        self._commit()
+
+    def commit_short_operation_points(
+        self,
+        short_operation_points: list[ShortOperationPoint],
+    ) -> None:
+        self._session.add_all(short_operation_points)
         self._commit()
 
     def delete_money_management_strategies(

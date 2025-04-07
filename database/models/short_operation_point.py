@@ -71,3 +71,6 @@ class ShortOperationPoint(Base, CRUDMixin):
         return self.to_dict(
             rules=("id", "money_management_strategy_id", "-short_balance")
         )
+
+    def __eq__(self, other: ShortOperationPoint) -> bool:
+        return self.to_dict() == other.to_dict()

@@ -67,3 +67,6 @@ class LongOperationPoint(Base, CRUDMixin):
 
     def to_request_format(self) -> dict[str, Any]:
         return self.to_dict(rules=("id", "money_management_strategy_id", "-long_balance"))
+
+    def __eq__(self, other: LongOperationPoint) -> bool:
+        return self.to_dict() == other.to_dict()
