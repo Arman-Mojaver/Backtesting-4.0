@@ -12,7 +12,7 @@ from views.operation_points_view import OperationPointsCreateMultipleView
 
 
 @pytest.fixture
-def money_management_strategy_with_large_atr_parameter(session):
+def money_management_strategy_with_large_atr_parameter():
     money_management_strategy_data_1 = {
         "type": "atr",
         "tp_multiplier": 0.4,
@@ -21,22 +21,14 @@ def money_management_strategy_with_large_atr_parameter(session):
         "risk": 0.02,
     }
 
-    money_management_strategy_1 = MoneyManagementStrategy(
+    return MoneyManagementStrategy(
         **money_management_strategy_data_1,
         identifier=generate_identifier(money_management_strategy_data_1),
     )
 
-    session.add(money_management_strategy_1)
-    session.commit()
-
-    yield money_management_strategy_1
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
-
 
 @pytest.fixture
-def money_management_strategies_with_large_atr_parameter(session):
+def money_management_strategies_with_large_atr_parameter():
     money_management_strategy_data_1 = {
         "type": "atr",
         "tp_multiplier": 0.4,
@@ -60,18 +52,10 @@ def money_management_strategies_with_large_atr_parameter(session):
         **money_management_strategy_data_2,
         identifier=generate_identifier(money_management_strategy_data_2),
     )
-    money_management_strategies = [
+    return [
         money_management_strategy_1,
         money_management_strategy_2,
     ]
-
-    session.add_all(money_management_strategies)
-    session.commit()
-
-    yield money_management_strategies
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
 
 
 def test_no_resampled_points_raises_error(money_management_strategy):

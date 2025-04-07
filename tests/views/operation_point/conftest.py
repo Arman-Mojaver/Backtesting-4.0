@@ -1,6 +1,7 @@
 import pytest
 
 from database.models import MoneyManagementStrategy, ResampledPointD1
+from database.models.resasmpled_point_d1 import HighLowOrder
 from fixtures.helpers import generate_identifier
 from fixtures.price_data import get_resampled_d1_data
 from utils.date_utils import string_to_datetime
@@ -22,6 +23,10 @@ def money_management_strategy():
     )
 
 
+# TODO: session can not be removed here because # noqa: TD002, TD003, FIX002
+#  the tests check explicitly for the id, and if there is not commit,
+#  there is no id (its value is None).
+#  Remove the need for checking the id, by refactoring production and test code
 @pytest.fixture
 def money_management_strategies(session):
     money_management_strategy_data_1 = {
@@ -62,26 +67,22 @@ def money_management_strategies(session):
 
 
 @pytest.fixture
-def generate_resampled_points(session):
+def generate_resampled_points():
     def _generate_points(points_data):
         points = []
         for point_data in points_data:
             point = ResampledPointD1(**point_data)
+            point.datetime = string_to_datetime(point_data["datetime"]).date()
+            point.high_low_order = HighLowOrder(point_data["high_low_order"])
             points.append(point)
-
-        session.add_all(points)
-        session.commit()
 
         return points
 
-    yield _generate_points
-
-    session.query(ResampledPointD1).delete()
-    session.commit()
+    return _generate_points
 
 
 @pytest.fixture
-def resampled_points_d1(generate_resampled_points, session):
+def resampled_points_d1(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -91,7 +92,7 @@ def resampled_points_d1(generate_resampled_points, session):
 
 
 @pytest.fixture
-def three_resampled_points_d1(generate_resampled_points, session):
+def three_resampled_points_d1(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -102,7 +103,7 @@ def three_resampled_points_d1(generate_resampled_points, session):
 
 
 @pytest.fixture
-def four_resampled_points_d1(generate_resampled_points, session):
+def four_resampled_points_d1(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -113,7 +114,7 @@ def four_resampled_points_d1(generate_resampled_points, session):
 
 
 @pytest.fixture
-def four_resampled_points_d1_low_atr(generate_resampled_points, session):
+def four_resampled_points_d1_low_atr(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -136,7 +137,7 @@ def four_resampled_points_d1_low_atr(generate_resampled_points, session):
 
 
 @pytest.fixture
-def five_resampled_points_d1_long_asymmetric_overflow(generate_resampled_points, session):
+def five_resampled_points_d1_long_asymmetric_overflow(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),
@@ -161,7 +162,6 @@ def five_resampled_points_d1_long_asymmetric_overflow(generate_resampled_points,
 @pytest.fixture
 def five_resampled_points_d1_short_asymmetric_overflow(
     generate_resampled_points,
-    session,
 ):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
@@ -185,7 +185,7 @@ def five_resampled_points_d1_short_asymmetric_overflow(
 
 
 @pytest.fixture
-def three_resampled_points_d1_two_instruments(generate_resampled_points, session):
+def three_resampled_points_d1_two_instruments(generate_resampled_points):
     points_data_eurusd = get_resampled_d1_data(
         instrument="EURUSD",
         from_date=string_to_datetime("2023-08-21"),

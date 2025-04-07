@@ -75,14 +75,6 @@ def test_create_one_pair_without_balance_overflow(
         }
     ]
 
-    assert (
-        i.money_management_strategy_id == money_management_strategy.id
-        for i in long_operation_points
-    )
-    assert (
-        i.money_management_strategy_id == money_management_strategy.id
-        for i in short_operation_points
-    )
     assert list_of_dicts_are_equal(long_results, expected_long_results)
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
@@ -144,21 +136,13 @@ def test_create_two_pairs_without_balance_overflow(
         },
     ]
 
-    assert (
-        i.money_management_strategy_id == money_management_strategy.id
-        for i in long_operation_points
-    )
-    assert (
-        i.money_management_strategy_id == money_management_strategy.id
-        for i in short_operation_points
-    )
     assert list_of_dicts_are_equal(long_results, expected_long_results)
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
 
 @pytest.fixture
-def money_management_strategy_with_large_multipliers(session):
-    money_management_strategy_data_1 = {
+def money_management_strategy_with_large_multipliers():
+    money_management_strategy_data = {
         "type": "atr",
         "tp_multiplier": 500,
         "sl_multiplier": 500,
@@ -166,18 +150,10 @@ def money_management_strategy_with_large_multipliers(session):
         "risk": 0.02,
     }
 
-    money_management_strategy_1 = MoneyManagementStrategy(
-        **money_management_strategy_data_1,
-        identifier=generate_identifier(money_management_strategy_data_1),
+    return MoneyManagementStrategy(
+        **money_management_strategy_data,
+        identifier=generate_identifier(money_management_strategy_data),
     )
-
-    session.add(money_management_strategy_1)
-    session.commit()
-
-    yield money_management_strategy_1
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
 
 
 def test_do_not_create_with_balance_overflow(
@@ -195,8 +171,8 @@ def test_do_not_create_with_balance_overflow(
 
 
 @pytest.fixture
-def money_management_strategy_with_symmetric_balance_overflow(session):
-    money_management_strategy_data_1 = {
+def money_management_strategy_with_symmetric_balance_overflow():
+    money_management_strategy_data = {
         "type": "atr",
         "tp_multiplier": 0.4,
         "sl_multiplier": 0.2,
@@ -204,18 +180,11 @@ def money_management_strategy_with_symmetric_balance_overflow(session):
         "risk": 0.02,
     }
 
-    money_management_strategy_1 = MoneyManagementStrategy(
-        **money_management_strategy_data_1,
-        identifier=generate_identifier(money_management_strategy_data_1),
+    return MoneyManagementStrategy(
+        **money_management_strategy_data,
+        identifier=generate_identifier(money_management_strategy_data),
     )
 
-    session.add(money_management_strategy_1)
-    session.commit()
-
-    yield money_management_strategy_1
-
-    session.query(MoneyManagementStrategy).delete()
-    session.commit()
 
 
 def test_create_with_symmetric_balance_overflow(
@@ -257,16 +226,6 @@ def test_create_with_symmetric_balance_overflow(
         }
     ]
 
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in long_operation_points
-    )
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in short_operation_points
-    )
     assert list_of_dicts_are_equal(long_results, expected_long_results)
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
@@ -328,16 +287,6 @@ def test_create_with_long_asymmetric_balance_overflow(
         },
     ]
 
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in long_operation_points
-    )
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in short_operation_points
-    )
     assert list_of_dicts_are_equal(long_results, expected_long_results)
     assert list_of_dicts_are_equal(short_results, expected_short_results)
 
@@ -399,15 +348,5 @@ def test_create_with_short_asymmetric_balance_overflow(
         },
     ]
 
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in long_operation_points
-    )
-    assert (
-        i.money_management_strategy_id
-        == money_management_strategy_with_symmetric_balance_overflow.id
-        for i in short_operation_points
-    )
     assert list_of_dicts_are_equal(long_results, expected_long_results)
     assert list_of_dicts_are_equal(short_results, expected_short_results)
