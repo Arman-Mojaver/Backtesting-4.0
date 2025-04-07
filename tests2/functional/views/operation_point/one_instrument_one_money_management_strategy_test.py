@@ -186,7 +186,6 @@ def money_management_strategy_with_symmetric_balance_overflow():
     )
 
 
-
 def test_create_with_symmetric_balance_overflow(
     money_management_strategy_with_symmetric_balance_overflow,
     four_resampled_points_d1_low_atr,
