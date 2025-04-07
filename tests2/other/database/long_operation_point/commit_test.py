@@ -15,7 +15,10 @@ def test_commit_empty_items_with_existing_tables_items_does_nothing(
 ):
     DatabaseHandler(session).commit_long_operation_points([])
 
-    assert session.query(LongOperationPoint).all() == other_long_operation_points
+    assert lists_are_equal(
+        session.query(LongOperationPoint).all(),
+        other_long_operation_points,
+    )
 
 
 def test_commit_success_one_with_empty_table(
@@ -24,7 +27,9 @@ def test_commit_success_one_with_empty_table(
 ):
     DatabaseHandler(session).commit_long_operation_points([long_operation_point])
 
-    assert session.query(LongOperationPoint).all() == [long_operation_point]
+    assert lists_are_equal(
+        session.query(LongOperationPoint).all(), [long_operation_point]
+    )
 
 
 def test_commit_success_multiple_with_empty_table(
@@ -33,7 +38,7 @@ def test_commit_success_multiple_with_empty_table(
 ):
     DatabaseHandler(session).commit_long_operation_points(long_operation_points)
 
-    assert session.query(LongOperationPoint).all() == long_operation_points
+    assert lists_are_equal(session.query(LongOperationPoint).all(), long_operation_points)
 
 
 def test_commit_success_one_with_existing_tables_items(
