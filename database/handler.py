@@ -14,6 +14,7 @@ if TYPE_CHECKING:
         LongOperationPoint,
         MoneyManagementStrategy,
         RawPointD1,
+        ResampledPointD1,
         ShortOperationPoint,
     )
 
@@ -45,6 +46,13 @@ class DatabaseHandler:
 
     def commit_raw_points(self, raw_points_d1: list[RawPointD1]) -> None:
         self._session.add_all(raw_points_d1)
+        self._commit()
+
+    def commit_resampled_points(
+        self,
+        resampled_points: list[ResampledPointD1],
+    ) -> None:
+        self._session.add_all(resampled_points)
         self._commit()
 
     def delete_money_management_strategies(
