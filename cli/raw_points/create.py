@@ -40,9 +40,7 @@ def create_raw_points() -> None:
         raise click.ClickException(err) from e
 
     try:
-        DatabaseHandler(session=session).commit_raw_points(
-            raw_points_d1=raw_points_d1
-        )
+        DatabaseHandler(session=session).commit_raw_points(raw_points_d1=raw_points_d1)
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"

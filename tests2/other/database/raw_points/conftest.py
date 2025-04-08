@@ -24,6 +24,7 @@ def raw_point_d1_data_1():
         to_date=string_to_datetime("2023-11-13"),
     )[0]
 
+
 @pytest.fixture
 def raw_point_d1_data_2():
     return get_points_data(
@@ -42,6 +43,7 @@ def raw_points_h1_data_1():
         from_date=string_to_datetime("2023-11-13"),
         to_date=string_to_datetime("2023-11-13"),
     )
+
 
 @pytest.fixture
 def raw_points_h1_data_2():

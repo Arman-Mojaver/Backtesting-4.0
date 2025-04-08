@@ -34,7 +34,6 @@ def money_management_strategy(money_management_strategy_data, session):
     return money_management_strategy
 
 
-
 @pytest.fixture
 def short_operation_points_data():
     return [

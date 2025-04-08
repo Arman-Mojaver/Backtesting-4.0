@@ -34,14 +34,14 @@ def test_make_hashable_mixed_structures():
         "list": [3, 1, 2],
         "dict": {"b": [2, 1], "a": {"x": 1}},
         "set": {1, 2, 3},
-        "tuple": (10, 20, 30)
+        "tuple": (10, 20, 30),
     }
     result = make_hashable(input_value)
     expected = (
         ("dict", (("a", (("x", 1),)), ("b", (2, 1)))),
         ("list", (3, 1, 2)),
         ("set", (1, 2, 3)),
-        ("tuple", (10, 20, 30))
+        ("tuple", (10, 20, 30)),
     )
     assert result == expected
 
