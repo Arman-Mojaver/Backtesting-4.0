@@ -5,6 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.handler import DatabaseHandler
+from database.models import ResampledPointD1
 from logger import log
 from views.resampled_points_view import (
     NoRawPointsError,
@@ -20,13 +23,22 @@ def create_resampled_points() -> None:
             "Do you wish to continue?"
         )
 
+    raw_points_d1 = ResampledPointD1.query.all()
+
     try:
-        ResampledPointsCreateMultipleView().run()
+        resampled_points = ResampledPointsCreateMultipleView(
+            raw_points_d1=raw_points_d1
+        ).run()
 
     except NoRawPointsError as e:
         err = f"No raw points in database: {e}"
         log.exception("No raw points in database")
         raise click.ClickException(err) from e
+
+    try:
+        DatabaseHandler(session=session).commit_resampled_points(
+            resampled_points=resampled_points
+        )
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"

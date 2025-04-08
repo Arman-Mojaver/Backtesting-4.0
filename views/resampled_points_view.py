@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy.exc import SQLAlchemyError
-
 from config.logging_config.log_decorators import log_on_end, log_on_start
-from database import session
 from database.models import RawPointD1, RawPointH1, ResampledPointD1
 
 
@@ -12,16 +9,14 @@ class NoRawPointsError(Exception):
 
 
 class ResampledPointsCreateMultipleView:
-    def __init__(self):
-        self.raw_points_d1: list[RawPointD1] = []
+    def __init__(self, raw_points_d1: list[RawPointD1]):
+        self.raw_points_d1: list[RawPointD1] = raw_points_d1
 
     @log_on_end("Finished ResampledPointsCreateMultipleView")
-    def run(self) -> None:
-        self.raw_points_d1 = RawPointD1.query.all()
+    def run(self) -> list[ResampledPointD1]:
         self._validate_raw_points_d1_exist()
         self._validate_raw_points_h1_exist()
-        self._create_resampled_points()
-        self._commit()
+        return self._create_resampled_points()
 
     def _validate_raw_points_d1_exist(self) -> None:
         self._validate_points_exist(points=self.raw_points_d1)
@@ -37,21 +32,11 @@ class ResampledPointsCreateMultipleView:
             raise NoRawPointsError(err)
 
     @log_on_start("Creating ResampledPointD1 points")
-    def _create_resampled_points(self) -> None:
-        for raw_point_d1 in self.raw_points_d1:
-            resampled_point = ResampledPointD1(
+    def _create_resampled_points(self) -> list[ResampledPointD1]:
+        return [
+            ResampledPointD1(
                 high_low_order=raw_point_d1.high_low_order(),
                 **raw_point_d1.to_dict(),
             )
-            session.add(resampled_point)
-
-    @staticmethod
-    @log_on_end("Committed")
-    def _commit() -> None:
-        try:
-            session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+            for raw_point_d1 in self.raw_points_d1
+        ]
