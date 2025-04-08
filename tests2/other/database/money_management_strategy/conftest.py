@@ -7,25 +7,9 @@ from database.models import MoneyManagementStrategy
 def _clean_table(session):
     yield
     session.rollback()
-    session.query(MoneyManagementStrategy).delete()
+    for item in session.query(MoneyManagementStrategy).all():
+        session.delete(item)
     session.commit()
-
-
-@pytest.fixture
-def money_management_strategy_data():
-    return {
-        "type": "atr",
-        "tp_multiplier": 1.5,
-        "sl_multiplier": 1.0,
-        "parameters": {"atr_parameter": 14},
-        "identifier": "atr-1.5-1.0-14",
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
-def money_management_strategy(money_management_strategy_data):
-    return MoneyManagementStrategy(**money_management_strategy_data)
 
 
 @pytest.fixture
