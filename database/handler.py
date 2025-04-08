@@ -13,6 +13,7 @@ if TYPE_CHECKING:
         Indicator,
         LongOperationPoint,
         MoneyManagementStrategy,
+        RawPointD1,
         ShortOperationPoint,
     )
 
@@ -40,6 +41,10 @@ class DatabaseHandler:
         short_operation_points: list[ShortOperationPoint],
     ) -> None:
         self._session.add_all(short_operation_points)
+        self._commit()
+
+    def commit_raw_points(self, raw_points_d1: list[RawPointD1]) -> None:
+        self._session.add_all(raw_points_d1)
         self._commit()
 
     def delete_money_management_strategies(
