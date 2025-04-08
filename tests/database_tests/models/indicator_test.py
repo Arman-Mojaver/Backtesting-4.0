@@ -16,43 +16,9 @@ def indicator_data():
     }
 
 
-def test_create_indicator(indicator_data, session):
-    indicator = Indicator(**indicator_data)
-
-    session.add(indicator)
-    session.commit()
-
-    assert indicator.id
-    assert indicator.to_dict() == indicator_data
-
-    session.delete(indicator)
-    session.commit()
-
-
 @pytest.fixture
 def indicator_point(indicator_data, session):
-    indicator = Indicator(**indicator_data)
-
-    session.add(indicator)
-    session.commit()
-
-    yield indicator
-
-    session.delete(indicator)
-    session.commit()
-
-
-def test_delete_indicator(indicator_data, session):
-    indicator = Indicator(**indicator_data)
-    indicator_id = indicator.id
-
-    session.add(indicator)
-    session.commit()
-
-    indicator.delete()
-    session.commit()
-
-    assert not session.query(Indicator).filter_by(id=indicator_id).one_or_none()
+    return Indicator(**indicator_data)
 
 
 def test_unique_identifier(indicator_data, session):

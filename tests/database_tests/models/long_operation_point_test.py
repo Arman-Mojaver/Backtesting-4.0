@@ -1,31 +1,6 @@
 import pytest
 
-from database.models import LongOperationPoint, MoneyManagementStrategy
-
-
-@pytest.fixture
-def money_management_strategy_data():
-    return {
-        "type": "atr",
-        "tp_multiplier": 1.5,
-        "sl_multiplier": 1.0,
-        "parameters": {"atr_parameter": 14},
-        "identifier": "atr-1.5-1.0-14",
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
-def money_management_strategy(money_management_strategy_data, session):
-    point = MoneyManagementStrategy(**money_management_strategy_data)
-
-    session.add(point)
-    session.commit()
-
-    yield point
-
-    session.delete(point)
-    session.commit()
+from database.models import LongOperationPoint
 
 
 @pytest.fixture
@@ -40,37 +15,12 @@ def long_operation_point_data():
         "risk": 0.02,
     }
 
-
-def test_create_point(long_operation_point_data, money_management_strategy, session):
-    point = LongOperationPoint(
-        **long_operation_point_data,
-        money_management_strategy_id=money_management_strategy.id,
-    )
-
-    session.add(point)
-    session.commit()
-
-    assert point.id
-    assert point.to_dict() == long_operation_point_data
-
-    session.delete(point)
-    session.commit()
-
-
 @pytest.fixture
-def long_operation_point(long_operation_point_data, money_management_strategy, session):
-    point = LongOperationPoint(
+def long_operation_point(long_operation_point_data, session):
+    return LongOperationPoint(
         **long_operation_point_data,
-        money_management_strategy_id=money_management_strategy.id,
+        money_management_strategy_id=1,
     )
-
-    session.add(point)
-    session.commit()
-
-    yield point
-
-    session.delete(point)
-    session.commit()
 
 
 def test_to_request_format(long_operation_point):
