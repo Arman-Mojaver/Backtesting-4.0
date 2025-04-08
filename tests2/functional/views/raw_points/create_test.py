@@ -1,15 +1,5 @@
-import pytest
-
 from database.models import RawPointD1, RawPointH1
 from views.raw_points.raw_points_view import RawPointsCreateMultipleView
-
-
-@pytest.fixture(autouse=True)
-def _clear_raw_point_tables(session):
-    yield
-    for point in session.query(RawPointH1).all():
-        session.delete(point)
-    session.commit()
 
 
 def test_create_raw_points(file_data):

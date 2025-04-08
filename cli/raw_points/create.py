@@ -6,6 +6,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
+from database import session
+from database.handler import DatabaseHandler
 from logger import log
 from views.raw_points.raw_points_view import RawPointsCreateMultipleView
 from views.raw_points.utils import LoadFileData
@@ -27,7 +29,7 @@ def create_raw_points() -> None:
         raise click.ClickException(err) from e
 
     try:
-        RawPointsCreateMultipleView(
+        raw_points_d1 = RawPointsCreateMultipleView(
             data=file_data,
             enabled_instruments=config.ENABLED_INSTRUMENTS,
         ).run()
@@ -36,6 +38,11 @@ def create_raw_points() -> None:
         err = f"Validation error: {e}"
         log.exception("Validation error")
         raise click.ClickException(err) from e
+
+    try:
+        DatabaseHandler(session=session).commit_raw_points(
+            raw_points_d1=raw_points_d1
+        )
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"
