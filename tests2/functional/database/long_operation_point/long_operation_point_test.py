@@ -16,7 +16,7 @@ def long_operation_point_data():
     }
 
 @pytest.fixture
-def long_operation_point(long_operation_point_data, session):
+def long_operation_point(long_operation_point_data):
     return LongOperationPoint(
         **long_operation_point_data,
         money_management_strategy_id=1,

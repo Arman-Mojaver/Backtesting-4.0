@@ -17,7 +17,7 @@ def short_operation_point_data():
 
 
 @pytest.fixture
-def short_operation_point(short_operation_point_data, session):
+def short_operation_point(short_operation_point_data):
     return ShortOperationPoint(
         **short_operation_point_data,
         money_management_strategy_id=1,
