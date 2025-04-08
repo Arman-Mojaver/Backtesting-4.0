@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import DeclarativeBase, scoped_session, sessionmaker
 from sqlalchemy_serializer import SerializerMixin
 
 from config import config  # type: ignore[attr-defined]
+from utils.hash_utils import make_hashable
 
 
 class Base(DeclarativeBase):
@@ -27,6 +28,9 @@ session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=en
 
 class CRUDMixin(SerializerMixin):
     __table_args__: ClassVar = {"extend_existing": True}
+
+    def to_tuple(self) -> tuple[Any, ...]:
+        return make_hashable(self.to_dict())
 
     def __repr__(self) -> str:
         fields = getattr(self, "__repr_fields__", ())
