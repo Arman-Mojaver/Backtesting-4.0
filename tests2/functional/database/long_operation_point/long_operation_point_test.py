@@ -15,6 +15,7 @@ def long_operation_point_data():
         "risk": 0.02,
     }
 
+
 @pytest.fixture
 def long_operation_point(long_operation_point_data):
     return LongOperationPoint(

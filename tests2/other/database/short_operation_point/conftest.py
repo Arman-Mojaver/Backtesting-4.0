@@ -34,26 +34,6 @@ def money_management_strategy(money_management_strategy_data, session):
     return money_management_strategy
 
 
-@pytest.fixture
-def short_operation_point_data():
-    return {
-        "instrument": "EURUSD",
-        "datetime": "2023-08-23",
-        "result": -58,
-        "tp": 50,
-        "sl": 30,
-        "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
-def short_operation_point(money_management_strategy, short_operation_point_data, session):
-    return ShortOperationPoint(
-        **short_operation_point_data,
-        money_management_strategy_id=money_management_strategy.id,
-    )
-
 
 @pytest.fixture
 def short_operation_points_data():
