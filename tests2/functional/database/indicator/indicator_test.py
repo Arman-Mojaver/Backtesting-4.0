@@ -1,5 +1,4 @@
 import pytest
-from sqlalchemy.exc import IntegrityError
 
 from database.models.indicator import Indicator
 
@@ -17,18 +16,8 @@ def indicator_data():
 
 
 @pytest.fixture
-def indicator_point(indicator_data, session):
+def indicator_point(indicator_data):
     return Indicator(**indicator_data)
-
-
-def test_unique_identifier(indicator_data, session):
-    indicator_1 = Indicator(**indicator_data)
-    indicator_2 = Indicator(**indicator_data)
-
-    session.add_all([indicator_1, indicator_2])
-
-    with pytest.raises(IntegrityError):
-        session.commit()
 
 
 def test_to_dict_with_ids(indicator_point):

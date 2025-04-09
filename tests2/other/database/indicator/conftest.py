@@ -12,8 +12,8 @@ def _clean_table(session):
 
 
 @pytest.fixture
-def other_indicators(session):
-    indicator_data_1 = {
+def indicator_data_1():
+    return {
         "type": "macd",
         "parameters": {
             "slow": {"type": "sma", "n": 12, "price_target": "close"},
@@ -22,7 +22,10 @@ def other_indicators(session):
         "identifier": "macd.sma-12-close,ema-5-close",
     }
 
-    indicator_data_2 = {
+
+@pytest.fixture
+def indicator_data_2():
+    return {
         "type": "macd",
         "parameters": {
             "slow": {"type": "sma", "n": 13, "price_target": "close"},
@@ -31,12 +34,17 @@ def other_indicators(session):
         "identifier": "macd.sma-13-close,ema-5-close",
     }
 
+
+@pytest.fixture
+def other_indicators(indicator_data_1, indicator_data_2, session):
     indicator_1 = Indicator(**indicator_data_1)
     indicator_2 = Indicator(**indicator_data_2)
 
-    session.add_all([indicator_1, indicator_2])
+    indicators = [indicator_1, indicator_2]
+
+    session.add_all(indicators)
     session.commit()
 
-    yield [indicator_1, indicator_2]
+    yield indicators
 
     session.query(Indicator).delete()
