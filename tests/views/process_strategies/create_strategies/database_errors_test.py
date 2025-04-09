@@ -16,7 +16,13 @@ def test_non_existent_money_management_strategies_raises_error(
     data["strategy_data"]["indicator_id"] = indicator.id
 
     with pytest.raises(NonExistentIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [],
+            [indicator.id],
+            [],
+            [],
+        ).run()
 
 
 def test_non_existent_indicator_id_raises_error(
@@ -47,7 +53,13 @@ def test_non_existent_indicator_id_raises_error(
     data["short_operation_point_ids"] = short_operation_point_ids
 
     with pytest.raises(NonExistentIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [money_management_strategy.id],
+            [],
+            [],
+            [],
+        ).run()
 
 
 def test_non_existent_long_operation_point_id_raises_error(
@@ -80,7 +92,13 @@ def test_non_existent_long_operation_point_id_raises_error(
     data["short_operation_point_ids"] = short_operation_point_ids
 
     with pytest.raises(NonExistentIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [money_management_strategy.id],
+            [indicator.id],
+            long_operation_points,
+            short_operation_points,
+        ).run()
 
 
 def test_non_existent_short_operation_point_id_raises_error(
@@ -113,4 +131,10 @@ def test_non_existent_short_operation_point_id_raises_error(
     data["short_operation_point_ids"] = [*short_operation_point_ids, NON_EXISTENT_ID]
 
     with pytest.raises(NonExistentIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [money_management_strategy.id],
+            [indicator.id],
+            long_operation_points,
+            short_operation_points,
+        ).run()

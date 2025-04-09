@@ -7,6 +7,8 @@ from datetime import datetime
 from database.models import ShortOperationPoint
 from testing_utils.operation_points_utils.utils import generate_weekdays
 
+SHORT_ID_GAP = 6300
+
 
 def generate_random_short_operation_point(
     money_management_strategy_id: int,
@@ -50,7 +52,7 @@ def generate_random_short_operation_points(
         end_date = datetime.strptime(end_date, "%Y-%m-%d").date()  # noqa: DTZ007
     dates = generate_weekdays(start_date=start_date, end_date=end_date, count=count)
 
-    return [
+    short_operation_points = [
         generate_random_short_operation_point(
             money_management_strategy_id=money_management_strategy_id,
             instrument=instrument,
@@ -58,3 +60,8 @@ def generate_random_short_operation_points(
         )
         for date in dates
     ]
+
+    for index, short_operation_point in enumerate(short_operation_points):
+        short_operation_point.id = index + SHORT_ID_GAP
+
+    return short_operation_points

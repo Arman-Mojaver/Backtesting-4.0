@@ -6,7 +6,13 @@ from views.process_strategies.create_strategies_view import CreateStrategiesView
 
 def test_empty_input_raises_error():
     with pytest.raises(ValidationError):
-        CreateStrategiesView([]).run()
+        CreateStrategiesView(
+            [],
+            [],
+            [],
+            [],
+            [],
+        ).run()
 
 
 @pytest.mark.parametrize(
@@ -76,4 +82,10 @@ def test_invalid_strategy_data(strategy_response_defaults, invalid_data):
     data = strategy_response_defaults(invalid_data)
 
     with pytest.raises(ValidationError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [],
+            [],
+            [],
+            [],
+        ).run()

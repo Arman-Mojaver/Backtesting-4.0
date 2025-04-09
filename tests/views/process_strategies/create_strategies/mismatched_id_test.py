@@ -38,7 +38,13 @@ def test_strategy_does_not_match_operation_points(
     data["short_operation_point_ids"] = short_operation_point_ids
 
     with pytest.raises(MismatchedIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [mm_strategy_2.id],
+            [indicator.id],
+            long_operation_points,
+            short_operation_points,
+        ).run()
 
 
 def test_long_operation_point_id_does_not_match_the_rest(
@@ -73,7 +79,13 @@ def test_long_operation_point_id_does_not_match_the_rest(
     data["short_operation_point_ids"] = short_operation_point_ids
 
     with pytest.raises(MismatchedIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [mm_strategy_1.id],
+            [indicator.id],
+            long_operation_points,
+            short_operation_points,
+        ).run()
 
 
 def test_short_operation_point_id_does_not_match_the_rest(
@@ -108,4 +120,10 @@ def test_short_operation_point_id_does_not_match_the_rest(
     data["short_operation_point_ids"] = short_operation_point_ids
 
     with pytest.raises(MismatchedIdError):
-        CreateStrategiesView([data]).run()
+        CreateStrategiesView(
+            [data],
+            [mm_strategy_1.id],
+            [indicator.id],
+            long_operation_points,
+            short_operation_points,
+        ).run()

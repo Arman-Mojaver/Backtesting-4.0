@@ -3,18 +3,13 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, ValidationError, conlist
-from sqlalchemy.exc import SQLAlchemyError
 
-from database import session
 from database.models import (
-    Indicator,
     LongOperationPoint,
-    LongOperationPointStrategy,
-    MoneyManagementStrategy,
     ShortOperationPoint,
-    ShortOperationPointStrategy,
     Strategy,
 )
+from utils.dict_utils import dict_by_key
 
 
 class NonExistentIdError(Exception):
@@ -68,35 +63,29 @@ class StrategyResponses(BaseModel):
 
 
 class CreateStrategiesView:
-    def __init__(self, data: list[dict[str, Any]]):
+    def __init__(
+        self,
+        data: list[dict[str, Any]],
+        money_management_strategy_ids: list[int],
+        indicators_ids: list[int],
+        long_operation_points: list[LongOperationPoint],
+        short_operation_points: list[ShortOperationPoint],
+    ):
         self.data: list[dict[str, Any]] = data
+        self.money_management_strategy_ids: list[int] = money_management_strategy_ids
+        self.indicators_ids: list[int] = indicators_ids
+        self.long_operation_points: list[LongOperationPoint] = long_operation_points
+        self.short_operation_points: list[ShortOperationPoint] = short_operation_points
 
         self.strategy_responses: StrategyResponses | None = None
-        self.long_operation_points_by_id: dict[int, LongOperationPoint] | None = None
-        self.short_operation_points_by_id: dict[int, ShortOperationPoint] | None = None
 
-    def run(self) -> None:
+    def run(self) -> list[Strategy]:
         self.strategy_responses = self._get_strategy_responses()
         self._validate_money_management_strategy_ids()
         self._validate_indicator_ids()
-
-        self.long_operation_points_by_id = self._get_long_operation_points_by_id()
         self._validate_long_operation_point_ids()
-
-        self.short_operation_points_by_id = self._get_short_operation_points_by_id()
         self._validate_short_operation_point_ids()
-
-        strategies, all_long_relationships, all_short_relationships = (
-            self._create_strategies_and_relationships()
-        )
-        session.add_all(
-            [
-                *strategies,
-                *all_long_relationships,
-                *all_short_relationships,
-            ]
-        )
-        self._commit()
+        return self._create_strategies()
 
     def _get_strategy_responses(self) -> StrategyResponses:
         try:
@@ -105,13 +94,8 @@ class CreateStrategiesView:
             raise
 
     def _validate_money_management_strategy_ids(self) -> None:
-        money_management_strategies = MoneyManagementStrategy.query.from_ids(
-            self.strategy_responses.money_management_strategy_ids()
-        )
-        money_management_strategy_ids = {item.id for item in money_management_strategies}
-
         symmetric_difference = (
-            money_management_strategy_ids
+            set(self.money_management_strategy_ids)
             ^ self.strategy_responses.money_management_strategy_ids()
         )
 
@@ -123,10 +107,9 @@ class CreateStrategiesView:
             raise NonExistentIdError(err)
 
     def _validate_indicator_ids(self) -> None:
-        indicators = Indicator.query.from_ids(self.strategy_responses.indicator_ids())
-        indicators_ids = {item.id for item in indicators}
-
-        symmetric_difference = indicators_ids ^ self.strategy_responses.indicator_ids()
+        symmetric_difference = (
+            set(self.indicators_ids) ^ self.strategy_responses.indicator_ids()
+        )
 
         if symmetric_difference:
             err = (
@@ -135,15 +118,11 @@ class CreateStrategiesView:
             )
             raise NonExistentIdError(err)
 
-    def _get_long_operation_points_by_id(self) -> dict[int, LongOperationPoint]:
-        return LongOperationPoint.query.from_ids_by_id(
-            ids=self.strategy_responses.long_operation_point_ids()
-        )
-
     def _validate_long_operation_point_ids(self) -> None:
+        long_operation_point_ids = {p.id for p in self.long_operation_points}
+
         symmetric_difference = (
-            set(self.long_operation_points_by_id.keys())
-            ^ self.strategy_responses.long_operation_point_ids()
+            long_operation_point_ids ^ self.strategy_responses.long_operation_point_ids()
         )
 
         if symmetric_difference:
@@ -153,14 +132,10 @@ class CreateStrategiesView:
             )
             raise NonExistentIdError(err)
 
-    def _get_short_operation_points_by_id(self) -> dict[int, ShortOperationPoint]:
-        return ShortOperationPoint.query.from_ids_by_id(
-            ids=self.strategy_responses.short_operation_point_ids()
-        )
-
     def _validate_short_operation_point_ids(self) -> None:
+        short_operation_point_ids = {p.id for p in self.short_operation_points}
         symmetric_difference = (
-            set(self.short_operation_points_by_id.keys())
+            short_operation_point_ids
             ^ self.strategy_responses.short_operation_point_ids()
         )
 
@@ -188,83 +163,38 @@ class CreateStrategiesView:
             )
             raise MismatchedIdError(err)
 
-    def _create_strategies_and_relationships(self):
-        strategies, all_long_relationships, all_short_relationships = [], [], []
+    def _create_strategies(self) -> list[Strategy]:
+        long_operation_points_by_id = dict_by_key(
+            items=self.long_operation_points, key="id"
+        )
+
+        short_operation_points_by_id = dict_by_key(
+            items=self.short_operation_points, key="id"
+        )
+
+        strategies = []
         for strategy_response in self.strategy_responses.data:
             strategy_data = strategy_response.strategy_data.model_dump()
             strategy = Strategy(**strategy_data)
-            session.add(strategy)
-            session.flush([strategy])
 
-            long_relationships = self._create_long_operation_point_strategy_relationships(
-                strategy=strategy,
-                long_operation_point_ids=strategy_response.long_operation_point_ids,
-            )
-            short_relationships = (
-                self._create_short_operation_point_strategy_relationships(
+            for long_operation_point_id in strategy_response.long_operation_point_ids:
+                long_operation_point = long_operation_points_by_id[
+                    long_operation_point_id
+                ]
+                self._validate_money_management_strategy_id(
+                    operation_point=long_operation_point,
                     strategy=strategy,
-                    short_operation_point_ids=strategy_response.short_operation_point_ids,
                 )
-            )
+                # strategy.long_operation_points.append(long_operation_point)  # noqa: ERA001, E501
 
-            strategies.append(strategy)
-            all_long_relationships.extend(long_relationships)
-            all_short_relationships.extend(short_relationships)
+            for short_operation_point_id in strategy_response.short_operation_point_ids:
+                short_operation_point = short_operation_points_by_id[
+                    short_operation_point_id
+                ]
+                self._validate_money_management_strategy_id(
+                    operation_point=short_operation_point,
+                    strategy=strategy,
+                )
+                # strategy.short_operation_points.append(short_operation_point)  # noqa: ERA001, E501
 
-        return strategies, all_long_relationships, all_short_relationships
-
-    def _create_short_operation_point_strategy_relationships(
-        self,
-        strategy: Strategy,
-        short_operation_point_ids: list[int],
-    ) -> list[ShortOperationPointStrategy]:
-        short_operation_point_strategy_relationships = []
-
-        for short_operation_point_id in short_operation_point_ids:
-            short_operation_point = self.short_operation_points_by_id[
-                short_operation_point_id
-            ]
-            self._validate_money_management_strategy_id(
-                operation_point=short_operation_point,
-                strategy=strategy,
-            )
-            short_relationship = ShortOperationPointStrategy(
-                short_operation_point_id=short_operation_point.id,
-                strategy_id=strategy.id,
-            )
-            short_operation_point_strategy_relationships.append(short_relationship)
-
-        return short_operation_point_strategy_relationships
-
-    def _create_long_operation_point_strategy_relationships(
-        self,
-        strategy: Strategy,
-        long_operation_point_ids: list[int],
-    ) -> list[LongOperationPointStrategy]:
-        long_operation_point_strategy_relationships = []
-        for long_operation_point_id in long_operation_point_ids:
-            long_operation_point = self.long_operation_points_by_id[
-                long_operation_point_id
-            ]
-            self._validate_money_management_strategy_id(
-                operation_point=long_operation_point,
-                strategy=strategy,
-            )
-
-            long_relationship = LongOperationPointStrategy(
-                long_operation_point_id=long_operation_point.id,
-                strategy_id=strategy.id,
-            )
-            long_operation_point_strategy_relationships.append(long_relationship)
-
-        return long_operation_point_strategy_relationships
-
-    @staticmethod
-    def _commit() -> None:
-        try:
-            session.commit()
-        except SQLAlchemyError:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        return strategies

@@ -1,12 +1,6 @@
 import pytest
 
-from database.models import (
-    Indicator,
-    LongOperationPoint,
-    MoneyManagementStrategy,
-    ShortOperationPoint,
-    Strategy,
-)
+from database.models import Indicator, MoneyManagementStrategy
 
 
 @pytest.fixture
@@ -44,18 +38,7 @@ def indicator_data():
 
 @pytest.fixture
 def indicator(indicator_data, session):
-    indicator = Indicator(**indicator_data)
-
-    session.add(indicator)
-    session.commit()
-
-    yield indicator
-
-    session.query(LongOperationPoint).delete()
-    session.query(ShortOperationPoint).delete()
-    session.query(Strategy).delete()
-    session.delete(indicator)
-    session.commit()
+    return Indicator(id=10, **indicator_data)
 
 
 @pytest.fixture
@@ -71,23 +54,12 @@ def money_management_strategy_data():
 
 
 @pytest.fixture
-def money_management_strategy(money_management_strategy_data, session):
-    point = MoneyManagementStrategy(**money_management_strategy_data)
-
-    session.add(point)
-    session.commit()
-
-    yield point
-
-    session.query(LongOperationPoint).delete()
-    session.query(ShortOperationPoint).delete()
-    session.query(Strategy).delete()
-    session.delete(point)
-    session.commit()
+def money_management_strategy(money_management_strategy_data):
+    return MoneyManagementStrategy(id=1, **money_management_strategy_data)
 
 
 @pytest.fixture
-def money_management_strategies(session):
+def money_management_strategies():
     money_management_strategy_data_1 = {
         "type": "atr",
         "tp_multiplier": 1.5,
@@ -106,17 +78,7 @@ def money_management_strategies(session):
         "risk": 0.02,
     }
 
-    point_1 = MoneyManagementStrategy(**money_management_strategy_data_1)
-    point_2 = MoneyManagementStrategy(**money_management_strategy_data_2)
+    point_1 = MoneyManagementStrategy(id=5, **money_management_strategy_data_1)
+    point_2 = MoneyManagementStrategy(id=6, **money_management_strategy_data_2)
 
-    session.add_all([point_1, point_2])
-    session.commit()
-
-    yield [point_1, point_2]
-
-    session.query(LongOperationPoint).delete()
-    session.query(ShortOperationPoint).delete()
-    session.query(Strategy).delete()
-    session.delete(point_1)
-    session.delete(point_2)
-    session.commit()
+    return [point_1, point_2]
