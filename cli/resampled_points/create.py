@@ -23,6 +23,7 @@ def create_resampled_points() -> None:
             "Do you wish to continue?"
         )
 
+    # RawPointH1 items also get queried here because the relationship is lazy="subquery"
     raw_points_d1 = RawPointD1.query.all()
 
     try:
