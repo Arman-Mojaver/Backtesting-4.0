@@ -5,13 +5,12 @@ from views.process_strategies.create_strategies_view import (
 # TODO: fix test once relationships are restored in the models  # noqa: FIX002, TD002, TD003, E501
 
 
-def test_create_one_strategy(  # noqa: PLR0913
+def test_create_one_strategy(
     strategy_response_defaults,
     money_management_strategy,
     indicator,
     generate_long_operation_points,
     generate_short_operation_points,
-    session,
 ):
     long_operation_points = generate_long_operation_points(
         money_management_strategy_id=money_management_strategy.id,
