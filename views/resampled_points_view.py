@@ -12,6 +12,7 @@ class ResampledPointsCreateMultipleView:
     def __init__(self, raw_points_d1: list[RawPointD1]):
         self.raw_points_d1: list[RawPointD1] = raw_points_d1
 
+    @log_on_start("Creating ResampledPointD1 points")
     @log_on_end("Finished ResampledPointsCreateMultipleView")
     def run(self) -> list[ResampledPointD1]:
         self._validate_raw_points_d1_exist()
@@ -31,7 +32,6 @@ class ResampledPointsCreateMultipleView:
             err = "No raw points in database"
             raise NoRawPointsError(err)
 
-    @log_on_start("Creating ResampledPointD1 points")
     def _create_resampled_points(self) -> list[ResampledPointD1]:
         return [
             ResampledPointD1(

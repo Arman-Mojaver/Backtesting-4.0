@@ -37,6 +37,7 @@ class RawPointD1(Base, CRUDMixin):
     raw_points_h1: Mapped[list[RawPointH1]] = relationship(
         back_populates="raw_point_d1",
         cascade="all",
+        lazy="subquery",
     )
 
     __table_args__ = (
