@@ -1,6 +1,6 @@
 import pytest
 
-from utils.dict_utils import dict_multi_by_key
+from utils.dict_utils import dict_by_key, dict_multi_by_key
 
 
 class FakeClass:
@@ -45,3 +45,29 @@ def test_dict_multi_by_key(items, key, expected):
     assert {k: [(i.attr1, i.attr2) for i in v] for k, v in result.items()} == {
         k: [(i.attr1, i.attr2) for i in v] for k, v in expected.items()
     }
+
+
+@pytest.mark.parametrize(
+    ("items", "key", "expected"),
+    [
+        ([], "id", {}),
+        ([FakeClass(1, 2), FakeClass(3, 4)], "non_existent_attribute", {}),
+        ([FakeClass(1, 2)], "attr1", {1: FakeClass(1, 2)}),
+        (
+            [FakeClass(1, 2), FakeClass(2, 4)],
+            "attr1",
+            {1: FakeClass(1, 2), 2: FakeClass(2, 4)},
+        ),
+    ],
+)
+def test_dict_by_key(items, key, expected):
+    result = dict_by_key(items, key)
+    assert {k: (v.attr1, v.attr2) for k, v in result.items()} == {
+        k: (v.attr1, v.attr2) for k, v in expected.items()
+    }
+
+
+def test_dict_by_key_collision():
+    items = [FakeClass(1, 2), FakeClass(1, 4)]
+    with pytest.raises(ValueError):
+        dict_by_key(items, "attr1")
