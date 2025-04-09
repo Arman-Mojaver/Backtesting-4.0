@@ -7,7 +7,7 @@ from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
 from database import session
 from database.handler import DatabaseHandler
-from database.models import ResampledPointD1
+from database.models import RawPointD1
 from logger import log
 from views.resampled_points_view import (
     NoRawPointsError,
@@ -23,7 +23,7 @@ def create_resampled_points() -> None:
             "Do you wish to continue?"
         )
 
-    raw_points_d1 = ResampledPointD1.query.all()
+    raw_points_d1 = RawPointD1.query.all()
 
     try:
         resampled_points = ResampledPointsCreateMultipleView(
