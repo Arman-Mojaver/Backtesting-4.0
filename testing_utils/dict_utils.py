@@ -9,23 +9,6 @@ def lists_are_equal(list_1: list[Any], list_2: list[Any]) -> bool:
     )
 
 
-def dicts_by_key_are_equal(dict_1: dict[Any, Any], dict_2: dict[Any, Any]) -> bool:
-    if dict_1.keys() != dict_2.keys():
-        return False
-
-    return all(dict_1[key].to_dict() == dict_2[key].to_dict() for key in dict_1)
-
-
-def dicts_multi_by_key_are_equal(
-    dict_1: dict[str, list[Any]],
-    dict_2: dict[str, list[Any]],
-) -> bool:
-    if dict_1.keys() != dict_2.keys():
-        return False
-
-    return all(lists_are_equal(dict_1[key], dict_2[key]) for key in dict_1)
-
-
 def _convert_lists_to_tuples(data: dict[str, Any]):
     if isinstance(data, dict):
         return {key: _convert_lists_to_tuples(value) for key, value in data.items()}

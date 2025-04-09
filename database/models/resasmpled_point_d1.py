@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from enum import Enum
 from typing import Any
 
@@ -20,14 +19,6 @@ class ResampledPointD1Query:
     @staticmethod
     def all() -> list[Any]:
         return list(session.query(ResampledPointD1).all())
-
-    @staticmethod
-    def dict_multi_by_key(key: str) -> dict[str, list[Any]]:
-        dictionary = defaultdict(list)
-        for obj in session.query(ResampledPointD1).all():
-            dictionary[getattr(obj, key)].append(obj)
-
-        return dictionary
 
 
 class ResampledPointD1(Base, CRUDMixin):

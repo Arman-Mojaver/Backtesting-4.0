@@ -1,10 +1,7 @@
 import pytest
 
 from database.models import ResampledPointD1
-from testing_utils.dict_utils import (
-    dicts_multi_by_key_are_equal,
-    lists_are_equal,
-)
+from testing_utils.dict_utils import lists_are_equal
 
 
 @pytest.fixture
@@ -46,24 +43,3 @@ def points(session):
 
 def test_all(session, points):
     assert lists_are_equal(ResampledPointD1.query.all(), points)
-
-
-def test_dict_multi_by_key_with_multiple_items_per_key(session, points):
-    point_1, point_2 = points
-
-    result = ResampledPointD1.query.dict_multi_by_key("instrument")
-    expected_result = {"EURUSD": [point_1, point_2]}
-
-    assert dicts_multi_by_key_are_equal(result, expected_result)
-
-
-def test_dict_multi_by_key_with_single_item_per_key(session, points):
-    point_1, point_2 = points
-
-    result = ResampledPointD1.query.dict_multi_by_key("id")
-    expected_result = {
-        point_1.id: [point_1],
-        point_2.id: [point_2],
-    }
-
-    assert dicts_multi_by_key_are_equal(result, expected_result)
