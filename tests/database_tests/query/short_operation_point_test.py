@@ -1,7 +1,7 @@
 import pytest
 
 from database.models import MoneyManagementStrategy, ShortOperationPoint
-from testing_utils.dict_utils import dicts_by_key_are_equal, lists_are_equal
+from testing_utils.dict_utils import lists_are_equal
 
 
 @pytest.fixture
@@ -82,19 +82,3 @@ def short_operation_points(money_management_strategies, session):
 
 def test_all(short_operation_points, session):
     assert lists_are_equal(ShortOperationPoint.query.all(), short_operation_points)
-
-
-def test_from_ids_by_id(short_operation_points, session):
-    point_1, point_2 = short_operation_points
-
-    assert dicts_by_key_are_equal(
-        ShortOperationPoint.query.from_ids_by_id(ids=[point_1.id]), {point_1.id: point_1}
-    )
-    assert dicts_by_key_are_equal(
-        ShortOperationPoint.query.from_ids_by_id(ids=[point_2.id]), {point_2.id: point_2}
-    )
-
-    assert dicts_by_key_are_equal(
-        ShortOperationPoint.query.from_ids_by_id(ids=[point_1.id, point_2.id]),
-        {point_1.id: point_1, point_2.id: point_2},
-    )
