@@ -9,7 +9,7 @@ sys.path.append(Path(__file__).resolve().parent.parent.as_posix())
 from .indicator.main import indicators_subcommands
 from .money_management_strategy.main import money_management_strategies_subcommands
 from .operation_points.main import operation_points_subcommands
-from .pytest.pytest_one import run_test
+from .pytest_cli.pytest_one import run_test
 from .raw_points.main import raw_points_subcommands
 from .resampled_points.main import resampled_points_subcommands
 
