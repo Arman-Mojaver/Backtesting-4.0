@@ -4,11 +4,13 @@ from views.delete_multiple_validator import DeleteMultipleValidator
 
 
 def test_empty_identifiers(money_management_strategies):
-    with pytest.raises(ValueError):
+    assert (
         DeleteMultipleValidator(
             set(),
             money_management_strategies,
         ).run()
+        == money_management_strategies
+    )
 
 
 def test_greater_identifiers_set(money_management_strategies):

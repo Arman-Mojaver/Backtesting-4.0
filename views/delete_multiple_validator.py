@@ -16,24 +16,25 @@ class DeleteMultipleValidator:
         self.items: list[MoneyManagementStrategy] | list[Indicator] = items
 
     def run(self) -> list[MoneyManagementStrategy] | list[Indicator]:
-        self._validate_arguments()
-        self._validates_identifiers_are_equal()
+        self._validate_identifiers()
+        self._validate_items()
 
         return self.items
 
-    def _validate_arguments(self):
-        if not (self.identifiers and self.items):
+    def _validate_items(self) -> None:
+        if not self.items:
             err = f"Invalid arguments: {self.identifiers=}, " f"{self.items=}"
             raise ValueError(err)
 
-    def _validates_identifiers_are_equal(self):
-        existing_identifiers = {item.identifier for item in self.items}
-        symmetric_difference = existing_identifiers ^ self.identifiers
+    def _validate_identifiers(self) -> None:
+        if self.identifiers:
+            existing_identifiers = {item.identifier for item in self.items}
+            symmetric_difference = existing_identifiers ^ self.identifiers
 
-        if symmetric_difference:
-            err = (
-                "Item identifiers did not match. "
-                f"{self.identifiers=}, {existing_identifiers=}, "
-                f"Symmetric difference: {symmetric_difference}"
-            )
-            raise ValueError(err)
+            if symmetric_difference:
+                err = (
+                    "Item identifiers did not match. "
+                    f"{self.identifiers=}, {existing_identifiers=}, "
+                    f"Symmetric difference: {symmetric_difference}"
+                )
+                raise ValueError(err)

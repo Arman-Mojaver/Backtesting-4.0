@@ -4,11 +4,7 @@ from views.delete_multiple_validator import DeleteMultipleValidator
 
 
 def test_empty_identifiers(indicators):
-    with pytest.raises(ValueError):
-        DeleteMultipleValidator(
-            set(),
-            indicators,
-        ).run()
+    assert DeleteMultipleValidator(set(), indicators).run() == indicators
 
 
 def test_greater_identifiers_set(indicators):

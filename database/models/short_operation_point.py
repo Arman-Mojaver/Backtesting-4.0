@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
@@ -12,25 +11,6 @@ class ShortOperationPointQuery:
     @staticmethod
     def all() -> list[ShortOperationPoint]:
         return list(session.query(ShortOperationPoint).all())
-
-    @staticmethod
-    def from_instrument(instrument: str) -> list[ShortOperationPoint]:
-        return list(
-            session.query(ShortOperationPoint).filter_by(instrument=instrument).all()
-        )
-
-    @staticmethod
-    def from_instrument_by_mm_strategy(
-        instrument: str,
-    ) -> dict[str, list[ShortOperationPoint]]:
-        points = list(
-            session.query(ShortOperationPoint).filter_by(instrument=instrument).all()
-        )
-        points_by_mm_strategy = defaultdict(list)
-        for point in points:
-            points_by_mm_strategy[point.money_management_strategy_id].append(point)
-
-        return points_by_mm_strategy
 
 
 class ShortOperationPoint(Base, CRUDMixin):

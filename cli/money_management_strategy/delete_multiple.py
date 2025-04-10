@@ -34,9 +34,14 @@ def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None
         )
 
     try:
-        queried_money_management_strategies = (
-            MoneyManagementStrategy.query.from_identifiers(identifiers=set(identifiers))
-        )
+        if identifiers:
+            queried_money_management_strategies = (
+                MoneyManagementStrategy.query.from_identifiers(
+                    identifiers=set(identifiers)
+                )
+            )
+        else:
+            queried_money_management_strategies = MoneyManagementStrategy.query.all()
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"
