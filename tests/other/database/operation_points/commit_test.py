@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from database.handler import DatabaseHandler
 from database.models import LongOperationPoint, ShortOperationPoint
 from models.operation_point import OperationPoints
-from testing_utils.dict_utils import lists_are_equal
+from testing_utils.set_utils import set_of_tuples
 
 
 def test_commit_success_multiple_with_empty_table(
@@ -15,9 +15,11 @@ def test_commit_success_multiple_with_empty_table(
     operation_points = OperationPoints(long_operation_points, short_operation_points)
     DatabaseHandler(session).commit_operation_points(operation_points)
 
-    assert lists_are_equal(session.query(LongOperationPoint).all(), long_operation_points)
-    assert lists_are_equal(
-        session.query(ShortOperationPoint).all(), short_operation_points
+    assert set_of_tuples(session.query(LongOperationPoint).all()) == set_of_tuples(
+        long_operation_points
+    )
+    assert set_of_tuples(session.query(ShortOperationPoint).all()) == set_of_tuples(
+        short_operation_points
     )
 
 
@@ -31,15 +33,13 @@ def test_commit_success_multiple_with_existing_tables_items(
     operation_points = OperationPoints(long_operation_points, short_operation_points)
     DatabaseHandler(session).commit_operation_points(operation_points)
 
-    assert lists_are_equal(
-        session.query(LongOperationPoint).all(),
+    assert set_of_tuples(session.query(LongOperationPoint).all()) == set_of_tuples(
         [
             *long_operation_points,
             *other_long_operation_points,
         ],
     )
-    assert lists_are_equal(
-        session.query(ShortOperationPoint).all(),
+    assert set_of_tuples(session.query(ShortOperationPoint).all()) == set_of_tuples(
         [
             *short_operation_points,
             *other_short_operation_points,

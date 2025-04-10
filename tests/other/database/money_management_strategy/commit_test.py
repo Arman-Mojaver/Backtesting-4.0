@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from database.handler import DatabaseHandler
 from database.models import MoneyManagementStrategy
-from testing_utils.dict_utils import lists_are_equal
+from testing_utils.set_utils import set_of_tuples
 
 
 def test_commit_success_multiple_with_empty_table(
@@ -14,9 +14,8 @@ def test_commit_success_multiple_with_empty_table(
         money_management_strategies
     )
 
-    assert lists_are_equal(
-        session.query(MoneyManagementStrategy).all(),
-        money_management_strategies,
+    assert set_of_tuples(session.query(MoneyManagementStrategy).all()) == set_of_tuples(
+        money_management_strategies
     )
 
 
@@ -29,8 +28,7 @@ def test_commit_success_multiple_with_existing_tables_items(
         money_management_strategies
     )
 
-    assert lists_are_equal(
-        session.query(MoneyManagementStrategy).all(),
+    assert set_of_tuples(session.query(MoneyManagementStrategy).all()) == set_of_tuples(
         [
             *money_management_strategies,
             *other_money_management_strategies,

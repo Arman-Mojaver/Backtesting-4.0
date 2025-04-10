@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from database.handler import DatabaseHandler
 from database.models import RawPointD1, RawPointH1
-from testing_utils.dict_utils import lists_are_equal
+from testing_utils.set_utils import set_of_tuples
 
 
 def test_commit_success_multiple_with_empty_tables(  # noqa: PLR0913
@@ -25,13 +25,11 @@ def test_commit_success_multiple_with_empty_tables(  # noqa: PLR0913
         RawPointH1(**raw_point_h1_data) for raw_point_h1_data in raw_points_h1_data_2
     ]
 
-    assert lists_are_equal(
-        session.query(RawPointD1).all(),
-        [raw_point_d1_1, raw_point_d1_2],
+    assert set_of_tuples(session.query(RawPointD1).all()) == set_of_tuples(
+        [raw_point_d1_1, raw_point_d1_2]
     )
-    assert lists_are_equal(
-        session.query(RawPointH1).all(),
-        [*raw_points_h1_1, *raw_points_h1_2],
+    assert set_of_tuples(session.query(RawPointH1).all()) == set_of_tuples(
+        [*raw_points_h1_1, *raw_points_h1_2]
     )
 
 
@@ -57,13 +55,11 @@ def test_commit_success_multiple_with_existing_tables_items(  # noqa: PLR0913
         RawPointH1(**raw_point_h1_data) for raw_point_h1_data in raw_points_h1_data_2
     ]
 
-    assert lists_are_equal(
-        session.query(RawPointD1).all(),
-        [raw_point_d1_1, raw_point_d1_2, raw_point_d1],
+    assert set_of_tuples(session.query(RawPointD1).all()) == set_of_tuples(
+        [raw_point_d1_1, raw_point_d1_2, raw_point_d1]
     )
-    assert lists_are_equal(
-        session.query(RawPointH1).all(),
-        [*raw_points_h1_1, *raw_points_h1_2, *raw_points_h1],
+    assert set_of_tuples(session.query(RawPointH1).all()) == set_of_tuples(
+        [*raw_points_h1_1, *raw_points_h1_2, *raw_points_h1]
     )
 
 

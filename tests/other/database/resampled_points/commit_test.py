@@ -3,13 +3,15 @@ from sqlalchemy.exc import IntegrityError
 
 from database.handler import DatabaseHandler
 from database.models import ResampledPointD1
-from testing_utils.dict_utils import lists_are_equal
+from testing_utils.set_utils import set_of_tuples
 
 
 def test_commit_success_multiple_with_empty_table(resampled_points, session):
     DatabaseHandler(session).commit_resampled_points(resampled_points)
 
-    assert lists_are_equal(session.query(ResampledPointD1).all(), resampled_points)
+    assert set_of_tuples(session.query(ResampledPointD1).all()) == set_of_tuples(
+        resampled_points
+    )
 
 
 def test_commit_success_multiple_with_existing_table(
@@ -19,9 +21,8 @@ def test_commit_success_multiple_with_existing_table(
 ):
     DatabaseHandler(session).commit_resampled_points(resampled_points)
 
-    assert lists_are_equal(
-        session.query(ResampledPointD1).all(),
-        [*resampled_points, *other_resampled_points],
+    assert set_of_tuples(session.query(ResampledPointD1).all()) == set_of_tuples(
+        [*resampled_points, *other_resampled_points]
     )
 
 

@@ -1,6 +1,6 @@
 from database.handler import DatabaseHandler
 from database.models import MoneyManagementStrategy
-from testing_utils.dict_utils import lists_are_equal
+from testing_utils.set_utils import set_of_tuples
 
 
 def test_delete_all_existing_items(
@@ -21,4 +21,4 @@ def test_delete_partial_existing_items(
     item_1, item_2 = other_money_management_strategies
     DatabaseHandler(session).delete_money_management_strategies([item_1])
 
-    assert lists_are_equal(MoneyManagementStrategy.query.all(), [item_2])
+    assert set_of_tuples(MoneyManagementStrategy.query.all()) == set_of_tuples([item_2])

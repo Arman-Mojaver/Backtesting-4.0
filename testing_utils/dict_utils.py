@@ -3,12 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 
-def lists_are_equal(list_1: list[Any], list_2: list[Any]) -> bool:
-    return all(
-        any(item1.to_dict() == item2.to_dict() for item2 in list_2) for item1 in list_1
-    )
-
-
 def _convert_lists_to_tuples(data: dict[str, Any]):
     if isinstance(data, dict):
         return {key: _convert_lists_to_tuples(value) for key, value in data.items()}
