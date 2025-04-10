@@ -12,6 +12,7 @@ from .operation_points.main import operation_points_subcommands
 from .pytest_cli.pytest_one import run_test
 from .raw_points.main import raw_points_subcommands
 from .resampled_points.main import resampled_points_subcommands
+from .strategies.main import strategies_subcommands
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -25,6 +26,7 @@ main.add_command(operation_points_subcommands)
 main.add_command(run_test)
 main.add_command(raw_points_subcommands)
 main.add_command(resampled_points_subcommands)
+main.add_command(strategies_subcommands)
 
 
 if __name__ == "__main__":
