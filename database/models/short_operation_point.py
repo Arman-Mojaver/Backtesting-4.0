@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
+
+if TYPE_CHECKING:
+    from database.models import MoneyManagementStrategy
 
 
 class ShortOperationPointQuery(Query):
@@ -15,7 +18,11 @@ class ShortOperationPointQuery(Query):
 class ShortOperationPoint(Base, CRUDMixin):
     __tablename__ = "short_operation_point"
     __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
-    serialize_rules = ("-id", "-money_management_strategy_id", "-strategies")
+    serialize_rules = (
+        "-id",
+        "-money_management_strategy_id",
+        "-money_management_strategy",
+    )
 
     query: ShortOperationPointQuery = session.query_property(
         query_cls=ShortOperationPointQuery
@@ -33,6 +40,10 @@ class ShortOperationPoint(Base, CRUDMixin):
         Integer,
         ForeignKey("money_management_strategy.id"),
         nullable=False,
+    )
+
+    money_management_strategy: Mapped[MoneyManagementStrategy] = relationship(
+        back_populates="short_operation_points",
     )
 
     def to_request_format(self) -> dict[str, Any]:
