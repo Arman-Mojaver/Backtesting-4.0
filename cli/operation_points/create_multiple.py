@@ -56,23 +56,8 @@ def create_operation_points() -> None:
         raise click.ClickException(err) from e
 
     try:
-        DatabaseHandler(session=session).commit_long_operation_points(
-            long_operation_points=operation_points.long_operation_points
-        )
-
-    except SQLAlchemyError as e:
-        err = f"DB error: {e}"
-        log.exception("DB error")
-        raise click.ClickException(err) from e
-
-    except Exception as e:
-        err = f"Unexpected error: {e}"
-        log.exception("Unexpected error")
-        raise click.ClickException(err) from e
-
-    try:
-        DatabaseHandler(session=session).commit_short_operation_points(
-            short_operation_points=operation_points.short_operation_points
+        DatabaseHandler(session=session).commit_operation_points(
+            operation_points=operation_points
         )
 
     except SQLAlchemyError as e:

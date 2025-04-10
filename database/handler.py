@@ -11,12 +11,11 @@ if TYPE_CHECKING:
 
     from database.models import (
         Indicator,
-        LongOperationPoint,
         MoneyManagementStrategy,
         RawPointD1,
         ResampledPointD1,
-        ShortOperationPoint,
     )
+    from models.operation_point import OperationPoints
 
 
 class DatabaseHandler:
@@ -30,18 +29,11 @@ class DatabaseHandler:
         self._session.add_all(money_management_strategies)
         self._commit()
 
-    def commit_long_operation_points(
-        self,
-        long_operation_points: list[LongOperationPoint],
-    ) -> None:
-        self._session.add_all(long_operation_points)
-        self._commit()
-
-    def commit_short_operation_points(
-        self,
-        short_operation_points: list[ShortOperationPoint],
-    ) -> None:
-        self._session.add_all(short_operation_points)
+    def commit_operation_points(self, operation_points: OperationPoints) -> None:
+        self._session.add_all(
+            operation_points.long_operation_points
+            + operation_points.short_operation_points
+        )
         self._commit()
 
     def commit_raw_points(self, raw_points_d1: list[RawPointD1]) -> None:
