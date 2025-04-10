@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import product
 from typing import Any
 
 from pydantic import ValidationError
@@ -104,21 +105,21 @@ class MoneyManagementStrategyGenerator:
         sl_values: list[float],
         atr_values: list[int],
     ) -> list[dict[str, Any]]:
-        atr_schemas_data = []
-        for risk_value in risk_values:
-            for tp_value in list(tp_values):
-                for sl_value in list(sl_values):
-                    for atr_value in list(atr_values):
-                        atr_schemas_data.append(  # noqa: PERF401
-                            {
-                                "type": self.type,
-                                "tp_multiplier": tp_value,
-                                "sl_multiplier": sl_value,
-                                "parameters": {"atr_parameter": atr_value},
-                                "risk": risk_value,
-                            }
-                        )
-        return atr_schemas_data
+        return [
+            {
+                "type": self.type,
+                "tp_multiplier": tp,
+                "sl_multiplier": sl,
+                "parameters": {"atr_parameter": atr},
+                "risk": risk,
+            }
+            for risk, tp, sl, atr in product(
+                risk_values,
+                tp_values,
+                sl_values,
+                atr_values,
+            )
+        ]
 
     @staticmethod
     def _get_atr_schemas(atr_schemas_data: list[dict[str, Any]]) -> list[AtrSchema]:
