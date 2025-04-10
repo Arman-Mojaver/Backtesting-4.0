@@ -1,7 +1,11 @@
 from sqlalchemy import Column, Float, Integer
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import Query, object_session
 
-from database import Base, CRUDMixin
+from database import Base, CRUDMixin, session
+
+
+class StrategyQuery(Query):
+    pass
 
 
 class Strategy(Base, CRUDMixin):
@@ -20,6 +24,8 @@ class Strategy(Base, CRUDMixin):
         "-long_operation_points",
         "-short_operation_points",
     )
+
+    query: StrategyQuery = session.query_property(query_cls=StrategyQuery)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     annual_roi = Column(Float, nullable=False)
