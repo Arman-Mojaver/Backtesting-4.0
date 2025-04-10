@@ -30,10 +30,12 @@ def delete_multiple_indicators(identifiers: tuple[str]) -> None:
             "Do you wish to continue?"
         )
 
+    query = Indicator.query
+    if identifiers:
+        query = query.from_identifiers(identifiers=set(identifiers))
+
     try:
-        queried_indicators = Indicator.query.from_identifiers(
-            identifiers=set(identifiers)
-        )
+        queried_indicators = query.all()
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"

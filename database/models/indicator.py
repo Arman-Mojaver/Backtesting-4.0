@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import ValidationError
 from sqlalchemy import JSON, Column, Integer, String, UniqueConstraint
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import Query, object_session
 
 from database import Base, CRUDMixin, session
 from schemas.indicator.macd_schema import MacdParametersSchema
@@ -22,20 +22,12 @@ class IndicatorType(Enum):
 PARAMETERS_VALIDATOR_MAPPER = {IndicatorType.macd: MacdParametersSchema}
 
 
-class IndicatorQuery:
-    @staticmethod
-    def all() -> list[Any]:
-        return list(session.query(Indicator).all())
+class IndicatorQuery(Query):
+    def from_ids(self, ids: set[int]) -> Query:
+        return self.filter(Indicator.id.in_(ids))
 
-    @staticmethod
-    def from_ids(ids: list[int]) -> list[Indicator]:
-        return list(session.query(Indicator).filter(Indicator.id.in_(ids)).all())
-
-    @staticmethod
-    def from_identifiers(identifiers: list[int]) -> list[Indicator]:
-        return list(
-            session.query(Indicator).filter(Indicator.identifier.in_(identifiers)).all()
-        )
+    def from_identifiers(self, identifiers: set[str]) -> Query:
+        return self.filter(Indicator.identifier.in_(identifiers))
 
 
 class Indicator(Base, CRUDMixin):
@@ -43,7 +35,7 @@ class Indicator(Base, CRUDMixin):
     __repr_fields__ = ("identifier",)
     serialize_rules = ("-id",)
 
-    query = IndicatorQuery
+    query: IndicatorQuery = session.query_property(query_cls=IndicatorQuery)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     type = Column(String, nullable=False)

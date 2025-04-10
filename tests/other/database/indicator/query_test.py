@@ -14,8 +14,8 @@ def test_all_with_table_items(session, other_indicators):
 
 
 def test_from_ids_with_empty_table(session):
-    assert Indicator.query.from_ids(ids=set()) == []
-    assert Indicator.query.from_ids(ids={NON_EXISTENT_ID}) == []
+    assert Indicator.query.from_ids(ids=set()).all() == []
+    assert Indicator.query.from_ids(ids={NON_EXISTENT_ID}).all() == []
 
 
 def test_from_ids_with_table_items(
@@ -24,22 +24,25 @@ def test_from_ids_with_table_items(
 ):
     item_1, item_2 = other_indicators
 
-    assert Indicator.query.from_ids(ids=set()) == []
-    assert Indicator.query.from_ids(ids={NON_EXISTENT_ID}) == []
-    assert lists_are_equal(Indicator.query.from_ids(ids={item_1.id}), [item_1])
-    assert lists_are_equal(Indicator.query.from_ids(ids={item_2.id}), [item_2])
+    assert Indicator.query.from_ids(ids=set()).all() == []
+    assert Indicator.query.from_ids(ids={NON_EXISTENT_ID}).all() == []
+    assert lists_are_equal(Indicator.query.from_ids(ids={item_1.id}).all(), [item_1])
+    assert lists_are_equal(Indicator.query.from_ids(ids={item_2.id}).all(), [item_2])
     assert lists_are_equal(
-        Indicator.query.from_ids(ids={item_1.id, item_2.id}), other_indicators
+        Indicator.query.from_ids(ids={item_1.id, item_2.id}).all(), other_indicators
     )
     assert lists_are_equal(
-        Indicator.query.from_ids(ids={NON_EXISTENT_ID, item_1.id, item_2.id}),
+        Indicator.query.from_ids(ids={NON_EXISTENT_ID, item_1.id, item_2.id}).all(),
         other_indicators,
     )
 
 
 def test_from_identifier_with_empty_table(session):
-    assert Indicator.query.from_identifiers(identifiers=set()) == []
-    assert Indicator.query.from_identifiers(identifiers={NON_EXISTENT_IDENTIFIER}) == []
+    assert Indicator.query.from_identifiers(identifiers=set()).all() == []
+    assert (
+        Indicator.query.from_identifiers(identifiers={NON_EXISTENT_IDENTIFIER}).all()
+        == []
+    )
 
 
 def test_from_identifier_with_table_items(
@@ -48,23 +51,26 @@ def test_from_identifier_with_table_items(
 ):
     item_1, item_2 = other_indicators
 
-    assert Indicator.query.from_identifiers(identifiers=set()) == []
-    assert Indicator.query.from_identifiers(identifiers={NON_EXISTENT_IDENTIFIER}) == []
-    assert lists_are_equal(
-        Indicator.query.from_identifiers(identifiers={item_1.identifier}), [item_1]
+    assert Indicator.query.from_identifiers(identifiers=set()).all() == []
+    assert (
+        Indicator.query.from_identifiers(identifiers={NON_EXISTENT_IDENTIFIER}).all()
+        == []
     )
     assert lists_are_equal(
-        Indicator.query.from_identifiers(identifiers={item_2.identifier}), [item_2]
+        Indicator.query.from_identifiers(identifiers={item_1.identifier}).all(), [item_1]
+    )
+    assert lists_are_equal(
+        Indicator.query.from_identifiers(identifiers={item_2.identifier}).all(), [item_2]
     )
     assert lists_are_equal(
         Indicator.query.from_identifiers(
             identifiers={item_1.identifier, item_2.identifier}
-        ),
+        ).all(),
         other_indicators,
     )
     assert lists_are_equal(
         Indicator.query.from_identifiers(
             identifiers={NON_EXISTENT_IDENTIFIER, item_1.identifier, item_2.identifier}
-        ),
+        ).all(),
         other_indicators,
     )
