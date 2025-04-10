@@ -65,7 +65,7 @@ def other_resampled_points(session):
 
     point_data_2 = {
         "datetime": string_to_datetime("2023-11-16").date(),
-        "instrument": "EURUSD",
+        "instrument": "USDCAD",
         "open": 1.08916,
         "high": 1.10872,
         "low": 1.08916,

@@ -16,7 +16,8 @@ class HighLowOrder(Enum):
 
 
 class ResampledPointD1Query(Query):
-    pass
+    def from_instrument(self, instrument: str) -> Query:
+        return self.filter_by(instrument=instrument)
 
 
 class ResampledPointD1(Base, CRUDMixin):
