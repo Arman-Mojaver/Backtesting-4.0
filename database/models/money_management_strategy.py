@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 from sqlalchemy import JSON, Column, Float, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import Query, object_session
 
 from database import Base, CRUDMixin, session
 
@@ -14,26 +13,12 @@ class MoneyManagementStrategyType(Enum):
     atr = "atr"
 
 
-class MoneyManagementStrategyQuery:
-    @staticmethod
-    def all() -> list[Any]:
-        return list(session.query(MoneyManagementStrategy).all())
+class MoneyManagementStrategyQuery(Query):
+    def from_ids(self, ids: set[int]) -> Query:
+        return self.filter(MoneyManagementStrategy.id.in_(ids))
 
-    @staticmethod
-    def from_ids(ids: set[int]) -> list[MoneyManagementStrategy]:
-        return list(
-            session.query(MoneyManagementStrategy)
-            .filter(MoneyManagementStrategy.id.in_(ids))
-            .all()
-        )
-
-    @staticmethod
-    def from_identifiers(identifiers: set[int]) -> list[MoneyManagementStrategy]:
-        return list(
-            session.query(MoneyManagementStrategy)
-            .filter(MoneyManagementStrategy.identifier.in_(identifiers))
-            .all()
-        )
+    def from_identifiers(self, identifiers: set[str]) -> Query:
+        return self.filter(MoneyManagementStrategy.identifier.in_(identifiers))
 
 
 class MoneyManagementStrategy(Base, CRUDMixin):
@@ -41,7 +26,9 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     __repr_fields__ = ("identifier",)
     serialize_rules = ("-id",)
 
-    query = MoneyManagementStrategyQuery
+    query: MoneyManagementStrategyQuery = session.query_property(
+        query_cls=MoneyManagementStrategyQuery
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     type = Column(PG_ENUM(MoneyManagementStrategyType), nullable=False)

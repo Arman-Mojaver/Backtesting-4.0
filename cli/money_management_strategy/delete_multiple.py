@@ -33,15 +33,12 @@ def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None
             "Do you wish to continue?"
         )
 
+    query = MoneyManagementStrategy.query
+    if identifiers:
+        query = query.from_identifiers(identifiers=set(identifiers))
+
     try:
-        if identifiers:
-            queried_money_management_strategies = (
-                MoneyManagementStrategy.query.from_identifiers(
-                    identifiers=set(identifiers)
-                )
-            )
-        else:
-            queried_money_management_strategies = MoneyManagementStrategy.query.all()
+        queried_money_management_strategies = query.all()
 
     except SQLAlchemyError as e:
         err = f"DB error: {e}"
