@@ -3,14 +3,13 @@ from __future__ import annotations
 from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import Query
 
 from database import Base, CRUDMixin, session
 
 
-class ShortOperationPointQuery:
-    @staticmethod
-    def all() -> list[ShortOperationPoint]:
-        return list(session.query(ShortOperationPoint).all())
+class ShortOperationPointQuery(Query):
+    pass
 
 
 class ShortOperationPoint(Base, CRUDMixin):
@@ -18,7 +17,9 @@ class ShortOperationPoint(Base, CRUDMixin):
     __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
     serialize_rules = ("-id", "-money_management_strategy_id", "-strategies")
 
-    query = ShortOperationPointQuery
+    query: ShortOperationPointQuery = session.query_property(
+        query_cls=ShortOperationPointQuery
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     instrument = Column(String, nullable=False)

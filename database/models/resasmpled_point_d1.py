@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
+from sqlalchemy.orm import Query
 
 from database import Base, CRUDMixin, session
 
@@ -15,10 +15,8 @@ class HighLowOrder(Enum):
     undefined = "undefined"
 
 
-class ResampledPointD1Query:
-    @staticmethod
-    def all() -> list[Any]:
-        return list(session.query(ResampledPointD1).all())
+class ResampledPointD1Query(Query):
+    pass
 
 
 class ResampledPointD1(Base, CRUDMixin):
@@ -26,7 +24,7 @@ class ResampledPointD1(Base, CRUDMixin):
     __repr_fields__ = ("instrument", "datetime", "high_low_order")
     serialize_rules = ("-id",)
 
-    query = ResampledPointD1Query
+    query: ResampledPointD1Query = session.query_property(query_cls=ResampledPointD1Query)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(Date, nullable=False)

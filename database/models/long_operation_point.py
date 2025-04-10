@@ -3,14 +3,13 @@ from __future__ import annotations
 from typing import Any
 
 from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import Query
 
 from database import Base, CRUDMixin, session
 
 
-class LongOperationPointQuery:
-    @staticmethod
-    def all() -> list[LongOperationPoint]:
-        return list(session.query(LongOperationPoint).all())
+class LongOperationPointQuery(Query):
+    pass
 
 
 class LongOperationPoint(Base, CRUDMixin):
@@ -18,7 +17,9 @@ class LongOperationPoint(Base, CRUDMixin):
     __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
     serialize_rules = ("-id", "-money_management_strategy_id", "-strategies")
 
-    query = LongOperationPointQuery
+    query: LongOperationPointQuery = session.query_property(
+        query_cls=LongOperationPointQuery
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     instrument = Column(String, nullable=False)

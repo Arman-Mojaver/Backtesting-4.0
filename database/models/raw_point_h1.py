@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Column,
@@ -11,7 +11,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
 
@@ -19,10 +19,8 @@ if TYPE_CHECKING:
     from database.models import RawPointD1
 
 
-class RawPointH1Query:
-    @staticmethod
-    def all() -> list[Any]:
-        return list(session.query(RawPointH1).all())
+class RawPointH1Query(Query):
+    pass
 
 
 class RawPointH1(Base, CRUDMixin):
@@ -30,7 +28,7 @@ class RawPointH1(Base, CRUDMixin):
     __repr_fields__ = ("instrument", "datetime")
     serialize_rules = ("-id", "-raw_point_d1_id", "-raw_point_d1")
 
-    query = RawPointH1Query
+    query: RawPointH1Query = session.query_property(query_cls=RawPointH1Query)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     raw_point_d1_id = Column(Integer, ForeignKey("raw_point_d1.id"), nullable=False)

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
 from database.models.resasmpled_point_d1 import HighLowOrder
@@ -12,10 +12,8 @@ if TYPE_CHECKING:
     from database.models import RawPointH1
 
 
-class RawPointD1Query:
-    @staticmethod
-    def all() -> list[Any]:
-        return list(session.query(RawPointD1).all())
+class RawPointD1Query(Query):
+    pass
 
 
 class RawPointD1(Base, CRUDMixin):
@@ -23,7 +21,7 @@ class RawPointD1(Base, CRUDMixin):
     __repr_fields__ = ("instrument", "datetime")
     serialize_rules = ("-id", "-raw_points_h1")
 
-    query = RawPointD1Query
+    query: RawPointD1Query = session.query_property(query_cls=RawPointD1Query)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(Date, nullable=False)
