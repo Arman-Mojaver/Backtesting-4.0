@@ -17,6 +17,23 @@ class MoneyManagementStrategyType(Enum):
     atr = "atr"
 
 
+class MoneyManagementStrategyList(list):
+    def long_operation_points(self) -> list[LongOperationPoint]:
+        points = []
+        for money_management_strategy in self:
+            points.extend(money_management_strategy.long_operation_points)
+        return points
+
+    def short_operation_points(self) -> list[ShortOperationPoint]:
+        points = []
+        for money_management_strategy in self:
+            points.extend(money_management_strategy.short_operation_points)
+        return points
+
+    def get_ids(self) -> list[int]:
+        return [item.id for item in self]
+
+
 class MoneyManagementStrategyQuery(Query):
     def from_ids(self, ids: set[int]) -> Query:
         return self.filter(MoneyManagementStrategy.id.in_(ids))
