@@ -14,6 +14,7 @@ if TYPE_CHECKING:
         MoneyManagementStrategy,
         RawPointD1,
         ResampledPointD1,
+        Strategy,
     )
     from models.operation_point import OperationPoints
 
@@ -45,6 +46,13 @@ class DatabaseHandler:
         resampled_points: list[ResampledPointD1],
     ) -> None:
         self._session.add_all(resampled_points)
+        self._commit()
+
+    def commit_strategies(
+        self,
+        strategies: list[Strategy],
+    ) -> None:
+        self._session.add_all(strategies)
         self._commit()
 
     def delete_money_management_strategies(
