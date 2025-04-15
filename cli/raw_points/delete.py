@@ -6,7 +6,7 @@ from sqlalchemy import delete
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
 from database import session
-from database.models import RawPointD1
+from database.models import RawPointD1, RawPointH1
 from logger import log
 
 
@@ -17,7 +17,7 @@ def delete_raw_points() -> None:
             "You are about to delete raw points in production. Do you wish to continue?"
         )
 
-    # RawPointH1 are cascade deleted when deleting RawPointD1 points
+    session.execute(delete(RawPointH1))
     session.execute(delete(RawPointD1))
 
     session.commit()
