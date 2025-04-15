@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import click
+from sqlalchemy import delete
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
@@ -17,8 +18,7 @@ def delete_raw_points() -> None:
         )
 
     # RawPointH1 are cascade deleted when deleting RawPointD1 points
-    for point in RawPointD1.query.all():
-        session.delete(point)
+    session.execute(delete(RawPointD1))
 
     session.commit()
 

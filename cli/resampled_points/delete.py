@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import click
+from sqlalchemy import delete
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
@@ -17,8 +18,7 @@ def delete_resampled_points() -> None:
             "Do you wish to continue?"
         )
 
-    for point in ResampledPointD1.query.all():
-        session.delete(point)
+    session.execute(delete(ResampledPointD1))
 
     session.commit()
 

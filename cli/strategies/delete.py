@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import click
+from sqlalchemy import delete
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
@@ -17,9 +18,7 @@ def delete_strategies() -> None:
             "Do you wish to continue?"
         )
 
-    for point in Strategy.query.all():
-        session.delete(point)
-
+    session.execute(delete(Strategy))
     session.commit()
 
     log.info("Deleted strategies")

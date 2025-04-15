@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import click
+from sqlalchemy import delete
 
 from cli.utils import confirm
 from config import config  # type: ignore[attr-defined]
@@ -17,12 +18,8 @@ def delete_multiple_operation_points() -> None:
             "Do you wish to continue?"
         )
 
-    for point in LongOperationPoint.query.all():
-        session.delete(point)
-
-    for point in ShortOperationPoint.query.all():
-        session.delete(point)
-
+    session.execute(delete(LongOperationPoint))
+    session.execute(delete(ShortOperationPoint))
     session.commit()
 
     log.info("Deleted Operation Points")
