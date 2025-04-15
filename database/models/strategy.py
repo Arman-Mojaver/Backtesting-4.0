@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Float, Integer
+from __future__ import annotations
+
+from sqlalchemy import Column, Float, Integer, UniqueConstraint
 from sqlalchemy.orm import Query, object_session
 
 from database import Base, CRUDMixin, session
@@ -33,6 +35,14 @@ class Strategy(Base, CRUDMixin):
     annual_operation_count = Column(Float, nullable=False)
     money_management_strategy_id = Column(Integer, nullable=False)
     indicator_id = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "money_management_strategy_id",
+            "indicator_id",
+            name="uq_mm_strategy_indicator",
+        ),
+    )
 
     def delete(self) -> None:
         object_session(self).delete(self)
