@@ -6,7 +6,7 @@ import (
 )
 
 func ProcessStrategies(payload *RequestPayload) []StrategyItem {
-	cpuCount := runtime.NumCPU()
+	cpuCount := runtime.NumCPU() - 1
 	workerMultiplier := 1
 	workerCount := cpuCount * workerMultiplier
 	inputChannelBufferSize := 10000
