@@ -2,8 +2,8 @@ SHELL = /bin/bash
 
 .PHONY: help bash run logs cov pytest gotest tests up in ing down clean ps \
         build build-go build-no-cache push pull ruff format mypy pyupgrade \
-        alembic-upgrade alembic-downgrade freeze timer db-development db-production \
-        db-size server
+        alembic-upgrade alembic-downgrade freeze timer clean-flower db-development \
+        db-production db-size server
 
 .DEFAULT_GOAL := help
 
@@ -135,6 +135,9 @@ freeze:  ## Run pip freeze (requirements.txt)
 timer: ## Run timer (Goes to sleep after 10 mins of inactivity)
 	sudo python utils/timer.py
 
+clean-flower: ## Delete current task existing in flower and restart service
+	rm -r compose/flower/flower_data
+	docker compose restart flower
 
 
 # DB
