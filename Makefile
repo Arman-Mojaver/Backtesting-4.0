@@ -2,8 +2,8 @@ SHELL = /bin/bash
 
 .PHONY: help bash run logs cov pytest gotest tests up in ing down clean ps \
         build build-go build-no-cache push pull ruff format mypy pyupgrade \
-        alembic-upgrade alembic-downgrade freeze db-development db-production db-size \
-        server
+        alembic-upgrade alembic-downgrade freeze timer db-development db-production \
+        db-size server
 
 .DEFAULT_GOAL := help
 
@@ -131,6 +131,9 @@ alembic-downgrade:  ## Run alembic downgrade -1 (development + production)
 # Other commands
 freeze:  ## Run pip freeze (requirements.txt)
 	pip freeze | grep -v "bt_cli" > requirements.txt
+
+timer: ## Run timer (Goes to sleep after 10 mins of inactivity)
+	sudo python utils/timer.py
 
 
 
