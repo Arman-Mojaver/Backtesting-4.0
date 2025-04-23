@@ -5,7 +5,7 @@ from .delete import delete_strategies
 from .terminate import terminate_strategies_task
 
 
-@click.group(name="strategies", help="Strategies CLI")
+@click.group(name="s", help="Strategy CLI")
 def strategies_subcommands() -> None:
     pass
 

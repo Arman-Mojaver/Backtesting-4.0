@@ -4,7 +4,7 @@ from .create_multiple import create_operation_points
 from .delete_multiple import delete_multiple_operation_points
 
 
-@click.group(name="operation_points", help="Operation Points CLI")
+@click.group(name="o", help="Operation Point CLI")
 def operation_points_subcommands() -> None:
     pass
 

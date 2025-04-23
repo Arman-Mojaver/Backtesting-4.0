@@ -4,7 +4,7 @@ from .create import create_raw_points
 from .delete import delete_raw_points
 
 
-@click.group(name="raw_points", help="Raw Points CLI")
+@click.group(name="r", help="Raw Point CLI")
 def raw_points_subcommands() -> None:
     pass
 

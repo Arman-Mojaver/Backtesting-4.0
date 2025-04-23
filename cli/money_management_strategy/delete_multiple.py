@@ -18,7 +18,7 @@ from logger import log
 from views.delete_multiple_validator import DeleteMultipleValidator
 
 
-@click.command("delete", help="Delete multiple MoneyManagementStrategy")
+@click.command("delete", help="Delete multiple Money Management Strategies")
 @click.argument("identifiers", nargs=-1)
 def delete_multiple_money_management_strategies(identifiers: tuple[str]) -> None:
     if not identifiers:

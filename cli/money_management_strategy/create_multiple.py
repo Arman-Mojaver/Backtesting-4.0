@@ -1,7 +1,7 @@
 """
 Example.
 
-bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2
+bt mms create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from views.money_management_strategy.create_multiple_view import (
 )
 
 
-@click.command("create", help="Create multiple MoneyManagementStrategy")
+@click.command("create", help="Create multiple Money Management Strategies")
 @click.option(
     "-t",
     "--type",
@@ -72,7 +72,7 @@ def create_multiple_money_management_strategies(  # noqa: PLR0913
     example: bool,
 ) -> None:
     if example:
-        click.echo("bt mm_strategies create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2")
+        click.echo("bt mms create -tp 1.5 1.5 -sl 1.0 1.0 -atr 14 14 -r 2 2")
         return
 
     if not all(

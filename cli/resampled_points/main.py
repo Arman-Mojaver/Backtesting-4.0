@@ -4,7 +4,7 @@ from .create import create_resampled_points
 from .delete import delete_resampled_points
 
 
-@click.group(name="resampled_points", help="Resampled Points CLI")
+@click.group(name="rr", help="Resampled Point CLI")
 def resampled_points_subcommands() -> None:
     pass
 

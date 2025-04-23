@@ -18,7 +18,7 @@ from logger import log
 from views.delete_multiple_validator import DeleteMultipleValidator
 
 
-@click.command("delete", help="Delete multiple Indicator")
+@click.command("delete", help="Delete multiple Indicators")
 @click.argument("identifiers", nargs=-1)
 def delete_multiple_indicators(identifiers: tuple[str]) -> None:
     if not identifiers:
