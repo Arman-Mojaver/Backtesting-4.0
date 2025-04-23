@@ -10,9 +10,12 @@ Create Date: 2025-04-03 08:12:40.172073
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 from alembic import op
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 # revision identifiers, used by Alembic.
 revision: str = "c9fbadc8d783"
