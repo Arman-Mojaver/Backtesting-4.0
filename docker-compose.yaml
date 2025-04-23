@@ -7,6 +7,8 @@ services:
     tty: true
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - ./:/app
     depends_on:
@@ -98,5 +100,56 @@ services:
       - db-production
       - db-testing
 
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - ./compose/redis/redis_data:/data
+    ports:
+      - "6379:6379"
+
+  worker:
+    container_name: worker
+    image: armanmojaver/backtesting-api
+    restart: unless-stopped
+    command: [
+      "celery",
+      "-A",
+      "tasks",
+      "worker",
+      "--loglevel=info",
+      "--hostname=worker",
+    ]
+    volumes:
+      - ./:/app
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  flower:
+    container_name: flower
+    image: mher/flower:2.0
+    restart: unless-stopped
+    command: [
+      "celery",
+      "flower",
+      "--basic_auth=admin:admin",
+      "--natural_time=True",
+      "--persistent=True",
+    ]
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - ./compose/flower/flower_data:/data
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - worker
+
 volumes:
     pgadmin_data:
+    redis_data:
+    flower_data:
