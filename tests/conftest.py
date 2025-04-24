@@ -175,3 +175,27 @@ def generate_file():
     for file_path in folder.glob("*"):
         if file_path.is_file() and not str(file_path).endswith(".gitkeep"):
             file_path.unlink()
+
+
+@pytest.fixture
+def money_management_strategy_data():
+    return {
+        "type": "atr",
+        "tp_multiplier": 0.4,
+        "sl_multiplier": 0.2,
+        "parameters": {"atr_parameter": 3},
+        "identifier": "atr-0.4-0.2-3",
+        "risk": 0.02,
+    }
+
+
+@pytest.fixture
+def money_management_strategy_data_2():
+    return {
+        "type": "atr",
+        "tp_multiplier": 0.6,
+        "sl_multiplier": 0.3,
+        "parameters": {"atr_parameter": 3},
+        "identifier": "atr-0.6-0.3-3",
+        "risk": 0.02,
+    }

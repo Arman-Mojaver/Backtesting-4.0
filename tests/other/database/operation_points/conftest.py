@@ -18,18 +18,6 @@ def _clean_table(session):
 
 
 @pytest.fixture
-def money_management_strategy_data():
-    return {
-        "type": "atr",
-        "tp_multiplier": 1.5,
-        "sl_multiplier": 1.0,
-        "parameters": {"atr_parameter": 14},
-        "identifier": "atr-1.5-1.0-14",
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
 def money_management_strategy(money_management_strategy_data, session):
     money_management_strategy = MoneyManagementStrategy(**money_management_strategy_data)
 

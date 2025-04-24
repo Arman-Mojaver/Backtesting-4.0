@@ -72,30 +72,6 @@ def indicator_3(indicator_data_3):
 
 
 @pytest.fixture
-def money_management_strategy_data():
-    return {
-        "type": "atr",
-        "tp_multiplier": 2.5,
-        "sl_multiplier": 2.0,
-        "parameters": {"atr_parameter": 14},
-        "identifier": "atr-2.5-2.0-14",
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
-def money_management_strategy_data_2():
-    return {
-        "type": "atr",
-        "tp_multiplier": 2.7,
-        "sl_multiplier": 2.8,
-        "parameters": {"atr_parameter": 15},
-        "identifier": "atr-2.7-2.8-15",
-        "risk": 0.02,
-    }
-
-
-@pytest.fixture
 def money_management_strategy_data_3():
     return {
         "type": "atr",
