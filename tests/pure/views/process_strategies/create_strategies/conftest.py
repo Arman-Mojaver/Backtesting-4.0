@@ -36,6 +36,11 @@ def indicator(indicator_data):
 
 
 @pytest.fixture
+def indicator_2(indicator_data_2):
+    return Indicator(id=11, **indicator_data_2)
+
+
+@pytest.fixture
 def generate_long_operation_points():
     def _generate_long_operation_points(
         money_management_strategy_id,

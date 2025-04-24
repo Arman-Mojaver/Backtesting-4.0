@@ -185,7 +185,7 @@ class CreateStrategiesView:
                     operation_point=long_operation_point,
                     strategy=strategy,
                 )
-                # strategy.long_operation_points.append(long_operation_point)  # noqa: ERA001, E501
+                strategy.long_operation_points.append(long_operation_point)
 
             for short_operation_point_id in strategy_response.short_operation_point_ids:
                 short_operation_point = short_operation_points_by_id[
@@ -195,6 +195,8 @@ class CreateStrategiesView:
                     operation_point=short_operation_point,
                     strategy=strategy,
                 )
-                # strategy.short_operation_points.append(short_operation_point)  # noqa: ERA001, E501
+                strategy.short_operation_points.append(short_operation_point)
+
+            strategies.append(strategy)
 
         return strategies
