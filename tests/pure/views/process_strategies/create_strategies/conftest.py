@@ -31,18 +31,6 @@ def strategy_response_defaults():
 
 
 @pytest.fixture
-def indicator_data():
-    return {
-        "type": "macd",
-        "parameters": {
-            "slow": {"type": "sma", "n": 12, "price_target": "close"},
-            "fast": {"type": "ema", "n": 5, "price_target": "close"},
-        },
-        "identifier": "macd.sma-12-close,ema-5-close",
-    }
-
-
-@pytest.fixture
 def indicator(indicator_data):
     return Indicator(id=10, **indicator_data)
 

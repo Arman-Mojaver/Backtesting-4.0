@@ -16,7 +16,6 @@ def money_management_strategies(
     money_management_strategy_data,
     money_management_strategy_data_2,
 ):
-
     money_management_strategy_1 = MoneyManagementStrategy(
         id=16,
         **money_management_strategy_data,

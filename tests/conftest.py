@@ -199,3 +199,27 @@ def money_management_strategy_data_2():
         "identifier": "atr-0.6-0.3-3",
         "risk": 0.02,
     }
+
+
+@pytest.fixture
+def indicator_data():
+    return {
+        "type": "macd",
+        "parameters": {
+            "slow": {"type": "sma", "n": 12, "price_target": "close"},
+            "fast": {"type": "ema", "n": 5, "price_target": "close"},
+        },
+        "identifier": "macd.sma-12-close,ema-5-close",
+    }
+
+
+@pytest.fixture
+def indicator_data_2():
+    return {
+        "type": "macd",
+        "parameters": {
+            "slow": {"type": "sma", "n": 13, "price_target": "close"},
+            "fast": {"type": "ema", "n": 5, "price_target": "close"},
+        },
+        "identifier": "macd.sma-13-close,ema-5-close",
+    }
