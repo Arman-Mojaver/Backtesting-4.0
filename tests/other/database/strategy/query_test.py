@@ -41,3 +41,13 @@ def test_long_operation_points_relationship(
     assert set_of_tuples(
         strategy_with_long_operation_points.long_operation_points
     ) == set_of_tuples([long_op_1])
+
+
+def test_short_operation_points_relationship(
+    strategy_with_short_operation_points,
+    other_short_operation_points,
+):
+    short_op_1, _ = other_short_operation_points
+    assert set_of_tuples(
+        strategy_with_short_operation_points.short_operation_points
+    ) == set_of_tuples([short_op_1])

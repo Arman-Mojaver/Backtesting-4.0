@@ -5,6 +5,7 @@ from database.models import (
     Indicator,
     LongOperationPoint,
     MoneyManagementStrategy,
+    ShortOperationPoint,
     Strategy,
 )
 from testing_utils.strategy_utils.random_data_generator import (
@@ -18,6 +19,7 @@ def _clean_table(session):
     session.rollback()
     session.execute(delete(Strategy))
     session.execute(delete(LongOperationPoint))
+    session.execute(delete(ShortOperationPoint))
     session.execute(delete(MoneyManagementStrategy))
     session.execute(delete(Indicator))
     session.commit()
@@ -171,6 +173,68 @@ def strategy_with_long_operation_points(
 
     long_op_1, _ = other_long_operation_points
     strategy.long_operation_points.append(long_op_1)
+
+    session.add(strategy)
+    session.commit()
+
+    return strategy
+
+
+@pytest.fixture
+def other_short_operation_points(money_management_strategy, session):
+    point_data_1 = {
+        "instrument": "EURUSD",
+        "datetime": "2023-08-26",
+        "result": -58,
+        "tp": 50,
+        "sl": 30,
+        "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.04,
+    }
+
+    point_data_2 = {
+        "instrument": "EURUSD",
+        "datetime": "2023-08-27",
+        "result": -58,
+        "tp": 50,
+        "sl": 30,
+        "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.04,
+    }
+
+    point_1 = ShortOperationPoint(
+        **point_data_1,
+        money_management_strategy_id=money_management_strategy.id,
+    )
+
+    point_2 = ShortOperationPoint(
+        **point_data_2,
+        money_management_strategy_id=money_management_strategy.id,
+    )
+
+    points = [point_1, point_2]
+
+    session.add_all(points)
+    session.add(money_management_strategy)
+    session.commit()
+
+    return points
+
+
+@pytest.fixture
+def strategy_with_short_operation_points(
+    money_management_strategy,
+    indicator,
+    other_short_operation_points,
+    session,
+):
+    strategy_data = generate_random_strategy_data()
+    strategy = Strategy(**strategy_data)
+    strategy.money_management_strategy = money_management_strategy
+    strategy.indicator = indicator
+
+    short_op_1, _ = other_short_operation_points
+    strategy.short_operation_points.append(short_op_1)
 
     session.add(strategy)
     session.commit()

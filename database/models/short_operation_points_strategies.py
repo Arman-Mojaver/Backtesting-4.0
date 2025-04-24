@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, ForeignKey, Integer
 
 from database import Base, CRUDMixin
 
@@ -11,5 +11,13 @@ class ShortOperationPointStrategy(Base, CRUDMixin):
     serialize_rules = ("-short_operation_point_id", "-strategy_id")
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    short_operation_point_id = Column(Integer, nullable=False)
-    strategy_id = Column(Integer, nullable=False)
+    short_operation_point_id = Column(
+        Integer,
+        ForeignKey("short_operation_point.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    strategy_id = Column(
+        Integer,
+        ForeignKey("strategy.id", ondelete="CASCADE"),
+        nullable=False,
+    )
