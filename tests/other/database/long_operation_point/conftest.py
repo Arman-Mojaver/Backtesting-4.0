@@ -1,6 +1,14 @@
 import pytest
 
-from database.models import LongOperationPoint, MoneyManagementStrategy
+from database.models import (
+    Indicator,
+    LongOperationPoint,
+    MoneyManagementStrategy,
+    Strategy,
+)
+from testing_utils.strategy_utils.random_data_generator import (
+    generate_random_strategy_data,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -9,6 +17,7 @@ def _clean_table(session):
     session.rollback()
     session.query(LongOperationPoint).delete()
     session.query(MoneyManagementStrategy).delete()
+    session.query(Indicator).delete()
     session.commit()
 
 
@@ -95,3 +104,29 @@ def other_long_operation_points(money_management_strategy, session):
     session.commit()
 
     return points
+
+
+@pytest.fixture
+def indicator(indicator_data):
+    return Indicator(id=10, **indicator_data)
+
+
+@pytest.fixture
+def strategy_with_long_operation_points(
+    money_management_strategy,
+    indicator,
+    other_long_operation_points,
+    session,
+):
+    strategy_data = generate_random_strategy_data()
+    strategy = Strategy(**strategy_data)
+    strategy.money_management_strategy = money_management_strategy
+    strategy.indicator = indicator
+
+    long_op_1, _ = other_long_operation_points
+    strategy.long_operation_points.append(long_op_1)
+
+    session.add(strategy)
+    session.commit()
+
+    return strategy

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, Query, relationship
 from database import Base, CRUDMixin, session
 
 if TYPE_CHECKING:
-    from database.models import MoneyManagementStrategy
+    from database.models import MoneyManagementStrategy, Strategy
 
 
 class LongOperationPointQuery(Query):
@@ -22,6 +22,7 @@ class LongOperationPoint(Base, CRUDMixin):
         "-id",
         "-money_management_strategy_id",
         "-money_management_strategy",
+        "-strategies",
     )
 
     query: LongOperationPointQuery = session.query_property(
@@ -44,6 +45,13 @@ class LongOperationPoint(Base, CRUDMixin):
 
     money_management_strategy: Mapped[MoneyManagementStrategy] = relationship(
         back_populates="long_operation_points",
+    )
+
+    strategies: Mapped[list[Strategy]] = relationship(
+        "Strategy",
+        back_populates="long_operation_points",
+        secondary="long_operation_points_strategies",
+        cascade="all, delete",
     )
 
     def to_request_format(self) -> dict[str, Any]:

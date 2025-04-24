@@ -1,9 +1,15 @@
-import random
-
 import pytest
 from sqlalchemy import delete
 
-from database.models import Indicator, MoneyManagementStrategy, Strategy
+from database.models import (
+    Indicator,
+    LongOperationPoint,
+    MoneyManagementStrategy,
+    Strategy,
+)
+from testing_utils.strategy_utils.random_data_generator import (
+    generate_random_strategy_data,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -11,6 +17,7 @@ def _clean_table(session):
     yield
     session.rollback()
     session.execute(delete(Strategy))
+    session.execute(delete(LongOperationPoint))
     session.execute(delete(MoneyManagementStrategy))
     session.execute(delete(Indicator))
     session.commit()
@@ -60,18 +67,6 @@ def money_management_strategy_3(money_management_strategy_data_3):
     return MoneyManagementStrategy(id=3, **money_management_strategy_data_3)
 
 
-def generate_random_strategy_data():
-    annual_roi = round(random.uniform(-0.2, 0.5) * 100, 2)  # noqa: S311
-    max_draw_down = round(random.uniform(0.05, 0.4) * 100, 2)  # noqa: S311
-    annual_operation_count = random.randint(10, 20)  # noqa: S311
-
-    return {
-        "annual_roi": annual_roi,
-        "max_draw_down": max_draw_down,
-        "annual_operation_count": annual_operation_count,
-    }
-
-
 @pytest.fixture
 def strategies_data():
     return [generate_random_strategy_data() for _ in range(1)]
@@ -119,3 +114,65 @@ def other_strategies(  # noqa: PLR0913
     session.commit()
 
     return items
+
+
+@pytest.fixture
+def other_long_operation_points(money_management_strategy, session):
+    point_data_1 = {
+        "instrument": "EURUSD",
+        "datetime": "2023-08-26",
+        "result": -58,
+        "tp": 50,
+        "sl": 30,
+        "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.04,
+    }
+
+    point_data_2 = {
+        "instrument": "EURUSD",
+        "datetime": "2023-08-27",
+        "result": -58,
+        "tp": 50,
+        "sl": 30,
+        "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
+        "risk": 0.04,
+    }
+
+    point_1 = LongOperationPoint(
+        **point_data_1,
+        money_management_strategy_id=money_management_strategy.id,
+    )
+
+    point_2 = LongOperationPoint(
+        **point_data_2,
+        money_management_strategy_id=money_management_strategy.id,
+    )
+
+    points = [point_1, point_2]
+
+    session.add(money_management_strategy)
+    session.add_all(points)
+    session.commit()
+
+    return points
+
+
+@pytest.fixture
+def strategy_with_long_operation_points(
+    money_management_strategy,
+    indicator,
+    other_long_operation_points,
+    session,
+):
+    strategy_data = generate_random_strategy_data()
+    strategy = Strategy(**strategy_data)
+    strategy.money_management_strategy = money_management_strategy
+    strategy.indicator = indicator
+
+    long_op_1, _ = other_long_operation_points
+    strategy.long_operation_points.append(long_op_1)
+
+    session.add(strategy)
+    session.commit()
+
+    return strategy

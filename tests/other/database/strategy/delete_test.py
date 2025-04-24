@@ -1,4 +1,4 @@
-from database.models import Strategy
+from database.models import LongOperationPointStrategy, Strategy
 
 
 def test_delete_through_indicator_relationship(other_strategies, indicator, session):
@@ -24,3 +24,16 @@ def test_delete_through_money_management_strategy_relationship(
         .all()
         == []
     )
+
+
+def test_delete_through_long_operation_point_relationship(
+    strategy_with_long_operation_points,
+    other_long_operation_points,
+    session,
+):
+    for point in other_long_operation_points:
+        session.delete(point)
+    session.commit()
+
+    assert session.query(Strategy).all() == []
+    assert session.query(LongOperationPointStrategy).all() == []

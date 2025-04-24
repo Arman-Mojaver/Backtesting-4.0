@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, Query, object_session, relationship
 from database import Base, CRUDMixin, session
 
 if TYPE_CHECKING:
-    from database.models import Indicator, MoneyManagementStrategy
+    from database.models import Indicator, LongOperationPoint, MoneyManagementStrategy
 
 
 class StrategyQuery(Query):
@@ -27,11 +27,11 @@ class Strategy(Base, CRUDMixin):
     serialize_rules = (
         "-id",
         "-money_management_strategy_id",
+        "-money_management_strategy",
         "-indicator_id",
+        "-indicator",
         "-long_operation_points",
         "-short_operation_points",
-        "-money_management_strategy",
-        "-indicator",
     )
 
     query: StrategyQuery = session.query_property(query_cls=StrategyQuery)
@@ -55,6 +55,12 @@ class Strategy(Base, CRUDMixin):
         back_populates="strategies"
     )
     indicator: Mapped[Indicator] = relationship(back_populates="strategies")
+
+    long_operation_points: Mapped[list[LongOperationPoint]] = relationship(
+        "LongOperationPoint",
+        back_populates="strategies",
+        secondary="long_operation_points_strategies",
+    )
 
     __table_args__ = (
         UniqueConstraint(
