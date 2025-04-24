@@ -162,6 +162,5 @@ compose/*
 
 arman*
 
-instrument_data/development/
 instrument_data/production/
 instrument_data/testing/
