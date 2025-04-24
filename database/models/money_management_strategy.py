@@ -30,18 +30,18 @@ class MoneyManagementStrategyList(list):
             points.extend(money_management_strategy.short_operation_points)
         return points
 
-    def get_ids(self) -> list[int]:
-        return [item.id for item in self]
+    def get_ids(self) -> set[int]:
+        return {item.id for item in self}
 
 
 class MoneyManagementStrategyQuery(Query):
-    def from_ids(self, ids: set[int]) -> Query:
+    def from_ids(self, ids: set[int]) -> MoneyManagementStrategyQuery:
         return self.filter(MoneyManagementStrategy.id.in_(ids))
 
-    def from_identifiers(self, identifiers: set[str]) -> Query:
+    def from_identifiers(self, identifiers: set[str]) -> MoneyManagementStrategyQuery:
         return self.filter(MoneyManagementStrategy.identifier.in_(identifiers))
 
-    def with_operation_points(self) -> Query:
+    def with_operation_points(self) -> MoneyManagementStrategyQuery:
         return self.options(
             selectinload(MoneyManagementStrategy.long_operation_points),
             selectinload(MoneyManagementStrategy.short_operation_points),

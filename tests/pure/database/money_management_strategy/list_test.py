@@ -46,7 +46,7 @@ def test_short_operation_points(money_management_strategies_with_short_operation
 
 
 def test_get_ids(money_management_strategies):
-    assert MoneyManagementStrategyList([]).get_ids() == []
-    assert MoneyManagementStrategyList(money_management_strategies).get_ids() == [
+    assert MoneyManagementStrategyList([]).get_ids() == set()
+    assert MoneyManagementStrategyList(money_management_strategies).get_ids() == {
         m.id for m in money_management_strategies
-    ]
+    }
