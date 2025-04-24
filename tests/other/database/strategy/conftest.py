@@ -1,6 +1,7 @@
 import random
 
 import pytest
+from sqlalchemy import delete
 
 from database.models import Indicator, MoneyManagementStrategy, Strategy
 
@@ -9,14 +10,9 @@ from database.models import Indicator, MoneyManagementStrategy, Strategy
 def _clean_table(session):
     yield
     session.rollback()
-    for item in session.query(Strategy).all():
-        session.delete(item)
-
-    for item in session.query(MoneyManagementStrategy).all():
-        session.delete(item)
-
-    for item in session.query(Indicator).all():
-        session.delete(item)
+    session.execute(delete(Strategy))
+    session.execute(delete(MoneyManagementStrategy))
+    session.execute(delete(Indicator))
     session.commit()
 
 
@@ -88,8 +84,8 @@ def strategies(
     money_management_strategy_3,
 ):
     items = [Strategy(**item) for item in strategies_data]
-    items[0].money_management_strategy_id = money_management_strategy_3.id
-    items[0].indicator_id = indicator_3.id
+    items[0].money_management_strategy = money_management_strategy_3
+    items[0].indicator = indicator_3
 
     return items
 
@@ -109,15 +105,15 @@ def other_strategies(  # noqa: PLR0913
     session,
 ):
     items = [Strategy(**item) for item in other_strategies_data]
-    items[0].money_management_strategy_id = money_management_strategy.id
-    items[1].money_management_strategy_id = money_management_strategy.id
-    items[2].money_management_strategy_id = money_management_strategy_2.id
-    items[3].money_management_strategy_id = money_management_strategy_2.id
+    items[0].money_management_strategy = money_management_strategy
+    items[1].money_management_strategy = money_management_strategy
+    items[2].money_management_strategy = money_management_strategy_2
+    items[3].money_management_strategy = money_management_strategy_2
 
-    items[0].indicator_id = indicator.id
-    items[1].indicator_id = indicator_2.id
-    items[2].indicator_id = indicator.id
-    items[3].indicator_id = indicator_2.id
+    items[0].indicator = indicator
+    items[1].indicator = indicator_2
+    items[2].indicator = indicator
+    items[3].indicator = indicator_2
 
     session.add_all(items)
     session.commit()

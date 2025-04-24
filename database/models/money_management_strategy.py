@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, Query, object_session, relationship
 from database import Base, CRUDMixin, session
 
 if TYPE_CHECKING:
-    from database.models import LongOperationPoint, ShortOperationPoint
+    from database.models import LongOperationPoint, ShortOperationPoint, Strategy
 
 
 class MoneyManagementStrategyType(Enum):
@@ -45,7 +45,12 @@ class MoneyManagementStrategyQuery(Query):
 class MoneyManagementStrategy(Base, CRUDMixin):
     __tablename__ = "money_management_strategy"
     __repr_fields__ = ("identifier",)
-    serialize_rules = ("-id", "-long_operation_points", "-short_operation_points")
+    serialize_rules = (
+        "-id",
+        "-long_operation_points",
+        "-short_operation_points",
+        "-strategies",
+    )
 
     query: MoneyManagementStrategyQuery = session.query_property(
         query_cls=MoneyManagementStrategyQuery
@@ -68,6 +73,11 @@ class MoneyManagementStrategy(Base, CRUDMixin):
         back_populates="money_management_strategy",
         cascade="all",
         lazy="subquery",
+    )
+
+    strategies: Mapped[list[Strategy]] = relationship(
+        back_populates="money_management_strategy",
+        cascade="all",
     )
 
     __table_args__ = (

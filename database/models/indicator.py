@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import ValidationError
 from sqlalchemy import JSON, Column, Integer, String, UniqueConstraint
-from sqlalchemy.orm import Query, object_session
+from sqlalchemy.orm import Mapped, Query, object_session, relationship
 
 from database import Base, CRUDMixin, session
 from schemas.indicator.macd_schema import MacdParametersSchema
+
+if TYPE_CHECKING:
+    from database.models import Strategy
 
 
 class IndicatorType(Enum):
@@ -33,7 +36,7 @@ class IndicatorQuery(Query):
 class Indicator(Base, CRUDMixin):
     __tablename__ = "indicator"
     __repr_fields__ = ("identifier",)
-    serialize_rules = ("-id",)
+    serialize_rules = ("-id", "-strategies")
 
     query: IndicatorQuery = session.query_property(query_cls=IndicatorQuery)
 
@@ -41,6 +44,11 @@ class Indicator(Base, CRUDMixin):
     type = Column(String, nullable=False)
     parameters = Column(JSON, nullable=False)
     identifier = Column(String, nullable=False)
+
+    strategies: Mapped[list[Strategy]] = relationship(
+        back_populates="indicator",
+        cascade="all",
+    )
 
     __table_args__ = (UniqueConstraint("identifier", name="uq_indicator_identifier"),)
 

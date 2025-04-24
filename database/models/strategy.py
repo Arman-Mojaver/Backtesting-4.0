@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, Float, Integer, UniqueConstraint
-from sqlalchemy.orm import Query, object_session
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Column, Float, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import Mapped, Query, object_session, relationship
 
 from database import Base, CRUDMixin, session
+
+if TYPE_CHECKING:
+    from database.models import Indicator, MoneyManagementStrategy
 
 
 class StrategyQuery(Query):
@@ -25,6 +30,8 @@ class Strategy(Base, CRUDMixin):
         "-indicator_id",
         "-long_operation_points",
         "-short_operation_points",
+        "-money_management_strategy",
+        "-indicator",
     )
 
     query: StrategyQuery = session.query_property(query_cls=StrategyQuery)
@@ -33,8 +40,21 @@ class Strategy(Base, CRUDMixin):
     annual_roi = Column(Float, nullable=False)
     max_draw_down = Column(Float, nullable=False)
     annual_operation_count = Column(Float, nullable=False)
-    money_management_strategy_id = Column(Integer, nullable=False)
-    indicator_id = Column(Integer, nullable=False)
+    money_management_strategy_id = Column(
+        Integer,
+        ForeignKey("money_management_strategy.id"),
+        nullable=False,
+    )
+    indicator_id = Column(
+        Integer,
+        ForeignKey("indicator.id"),
+        nullable=False,
+    )
+
+    money_management_strategy: Mapped[MoneyManagementStrategy] = relationship(
+        back_populates="strategies"
+    )
+    indicator: Mapped[Indicator] = relationship(back_populates="strategies")
 
     __table_args__ = (
         UniqueConstraint(
