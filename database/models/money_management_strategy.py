@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import JSON, Column, Float, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
-from sqlalchemy.orm import Mapped, Query, object_session, relationship
+from sqlalchemy.orm import Mapped, Query, object_session, relationship, selectinload
 
 from database import Base, CRUDMixin, session
 
@@ -41,6 +41,12 @@ class MoneyManagementStrategyQuery(Query):
     def from_identifiers(self, identifiers: set[str]) -> Query:
         return self.filter(MoneyManagementStrategy.identifier.in_(identifiers))
 
+    def with_operation_points(self) -> Query:
+        return self.options(
+            selectinload(MoneyManagementStrategy.long_operation_points),
+            selectinload(MoneyManagementStrategy.short_operation_points),
+        )
+
 
 class MoneyManagementStrategy(Base, CRUDMixin):
     __tablename__ = "money_management_strategy"
@@ -67,12 +73,10 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     long_operation_points: Mapped[list[LongOperationPoint]] = relationship(
         back_populates="money_management_strategy",
         cascade="all",
-        lazy="subquery",
     )
     short_operation_points: Mapped[list[ShortOperationPoint]] = relationship(
         back_populates="money_management_strategy",
         cascade="all",
-        lazy="subquery",
     )
 
     strategies: Mapped[list[Strategy]] = relationship(
