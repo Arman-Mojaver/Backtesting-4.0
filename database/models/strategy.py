@@ -17,7 +17,14 @@ if TYPE_CHECKING:
 
 
 class StrategyQuery(Query):
-    pass
+    @staticmethod
+    def distinct_money_management_strategy_ids() -> set[int]:
+        return {
+            row[0]
+            for row in session.query(Strategy.money_management_strategy_id)
+            .distinct()
+            .all()
+        }
 
 
 class Strategy(Base, CRUDMixin):

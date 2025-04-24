@@ -51,3 +51,15 @@ def test_short_operation_points_relationship(
     assert set_of_tuples(
         strategy_with_short_operation_points.short_operation_points
     ) == set_of_tuples([short_op_1])
+
+
+def test_distinct_money_management_strategy_ids_empty(money_management_strategies):
+    assert Strategy.query.distinct_money_management_strategy_ids() == set()
+
+
+def test_distinct_money_management_strategy_ids(
+    other_strategies, money_management_strategies
+):
+    assert Strategy.query.distinct_money_management_strategy_ids() == {
+        m.id for m in money_management_strategies
+    }
