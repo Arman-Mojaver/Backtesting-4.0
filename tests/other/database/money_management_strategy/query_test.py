@@ -15,6 +15,24 @@ def test_all_with_table_items(other_money_management_strategies):
     )
 
 
+def test_from_id_with_empty_table():
+    assert MoneyManagementStrategy.query.from_id(id=NON_EXISTENT_ID).one_or_none() is None
+
+
+def test_from_id_with_table_items(other_money_management_strategies):
+    item_1, item_2 = other_money_management_strategies
+
+    assert (
+        MoneyManagementStrategy.query.from_id(id=item_1.id).one_or_none().to_tuple()
+        == item_1.to_tuple()
+    )
+    assert (
+        MoneyManagementStrategy.query.from_id(id=item_2.id).one_or_none().to_tuple()
+        == item_2.to_tuple()
+    )
+    assert MoneyManagementStrategy.query.from_id(id=NON_EXISTENT_ID).one_or_none() is None
+
+
 def test_from_ids_with_empty_table():
     assert MoneyManagementStrategy.query.from_ids(ids=set()).all() == []
     assert MoneyManagementStrategy.query.from_ids(ids={NON_EXISTENT_ID}).all() == []

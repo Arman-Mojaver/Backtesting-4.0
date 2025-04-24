@@ -35,6 +35,9 @@ class MoneyManagementStrategyList(list):
 
 
 class MoneyManagementStrategyQuery(Query):
+    def from_id(self, id: int) -> MoneyManagementStrategyQuery:  # noqa: A002
+        return self.filter_by(id=id)
+
     def from_ids(self, ids: set[int]) -> MoneyManagementStrategyQuery:
         return self.filter(MoneyManagementStrategy.id.in_(ids))
 
