@@ -26,10 +26,10 @@ PARAMETERS_VALIDATOR_MAPPER = {IndicatorType.macd: MacdParametersSchema}
 
 
 class IndicatorQuery(Query):
-    def from_ids(self, ids: set[int]) -> Query:
+    def from_ids(self, ids: set[int]) -> IndicatorQuery:
         return self.filter(Indicator.id.in_(ids))
 
-    def from_identifiers(self, identifiers: set[str]) -> Query:
+    def from_identifiers(self, identifiers: set[str]) -> IndicatorQuery:
         return self.filter(Indicator.identifier.in_(identifiers))
 
 
