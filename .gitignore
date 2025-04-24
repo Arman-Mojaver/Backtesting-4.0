@@ -164,3 +164,5 @@ arman*
 
 instrument_data/production/
 instrument_data/testing/
+
+db_dumps/

@@ -3,7 +3,8 @@ SHELL = /bin/bash
 .PHONY: help bash run logs cov pytest gotest tests up in ing down clean ps \
         build build-go build-no-cache push pull ruff format mypy pyupgrade \
         alembic-upgrade alembic-downgrade freeze timer clean-flower db-development \
-        db-production db-size server
+        db-production db-size db-dump db-load db-dump-development db-load-development \
+        server
 
 .DEFAULT_GOAL := help
 
@@ -157,6 +158,19 @@ db-size:  ## Get size of db-development and db-production
 	@echo "db-production"
 	docker compose -f docker-compose.yaml exec -it db-production sh -c \
 	"psql -U postgres -c \"SELECT pg_size_pretty(pg_database_size('db-production'));\""
+
+
+db-dump:  ## Dump the production database to a custom format file
+	./scripts/db.sh dump production
+
+db-load:  ## Load the dump back into the production database
+	./scripts/db.sh load production
+
+db-dump-development:  ## Dump the development database to a custom format file
+	./scripts/db.sh dump development
+
+db-load-development:  ## Load the dump back into the development database
+	./scripts/db.sh load development
 
 
 # go-http
