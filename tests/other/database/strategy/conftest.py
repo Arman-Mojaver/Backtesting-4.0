@@ -60,16 +60,6 @@ def money_management_strategy_data_3():
 
 
 @pytest.fixture
-def money_management_strategy(money_management_strategy_data):
-    return MoneyManagementStrategy(id=1, **money_management_strategy_data)
-
-
-@pytest.fixture
-def money_management_strategy_2(money_management_strategy_data_2):
-    return MoneyManagementStrategy(id=2, **money_management_strategy_data_2)
-
-
-@pytest.fixture
 def money_management_strategy_3(money_management_strategy_data_3):
     return MoneyManagementStrategy(id=3, **money_management_strategy_data_3)
 

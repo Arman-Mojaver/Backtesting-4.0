@@ -1,33 +1,9 @@
 import pytest
 
-from database.models import MoneyManagementStrategy, ResampledPointD1
+from database.models import ResampledPointD1
 from database.models.resasmpled_point_d1 import HighLowOrder
 from fixtures.price_data import get_resampled_d1_data
 from utils.date_utils import string_to_datetime
-
-
-@pytest.fixture
-def money_management_strategy(money_management_strategy_data):
-    return MoneyManagementStrategy(**money_management_strategy_data)
-
-
-@pytest.fixture
-def money_management_strategies(
-    money_management_strategy_data,
-    money_management_strategy_data_2,
-):
-    money_management_strategy_1 = MoneyManagementStrategy(
-        id=16,
-        **money_management_strategy_data,
-    )
-    money_management_strategy_2 = MoneyManagementStrategy(
-        id=17,
-        **money_management_strategy_data_2,
-    )
-    return [
-        money_management_strategy_1,
-        money_management_strategy_2,
-    ]
 
 
 @pytest.fixture

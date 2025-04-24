@@ -8,6 +8,7 @@ import pytest
 os.environ["ENVIRONMENT"] = "testing"
 
 from config import config as project_config  # type: ignore[attr-defined]
+from database.models import MoneyManagementStrategy
 
 if not project_config.is_testing():
     err = f"Invalid testing environment: {project_config}"
@@ -190,6 +191,11 @@ def money_management_strategy_data():
 
 
 @pytest.fixture
+def money_management_strategy(money_management_strategy_data):
+    return MoneyManagementStrategy(id=101, **money_management_strategy_data)
+
+
+@pytest.fixture
 def money_management_strategy_data_2():
     return {
         "type": "atr",
@@ -199,6 +205,16 @@ def money_management_strategy_data_2():
         "identifier": "atr-0.6-0.3-3",
         "risk": 0.02,
     }
+
+
+@pytest.fixture
+def money_management_strategy_2(money_management_strategy_data_2):
+    return MoneyManagementStrategy(id=102, **money_management_strategy_data_2)
+
+
+@pytest.fixture
+def money_management_strategies(money_management_strategy, money_management_strategy_2):
+    return [money_management_strategy, money_management_strategy_2]
 
 
 @pytest.fixture

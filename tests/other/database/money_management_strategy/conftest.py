@@ -17,21 +17,6 @@ def _clean_table(session):
 
 
 @pytest.fixture
-def money_management_strategy(money_management_strategy_data):
-    return MoneyManagementStrategy(**money_management_strategy_data)
-
-
-@pytest.fixture
-def money_management_strategy_2(money_management_strategy_data_2):
-    return MoneyManagementStrategy(**money_management_strategy_data_2)
-
-
-@pytest.fixture
-def money_management_strategies(money_management_strategy, money_management_strategy_2):
-    return [money_management_strategy, money_management_strategy_2]
-
-
-@pytest.fixture
 def other_money_management_strategies_data():
     return [
         {

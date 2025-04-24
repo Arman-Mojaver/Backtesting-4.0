@@ -1,10 +1,6 @@
 import pytest
 
-from database.models import (
-    LongOperationPoint,
-    MoneyManagementStrategy,
-    ShortOperationPoint,
-)
+from database.models import LongOperationPoint, ShortOperationPoint
 
 
 @pytest.fixture
@@ -66,21 +62,6 @@ def long_operation_points_data_2():
 @pytest.fixture
 def long_op_points_2(long_operation_points_data_2):
     return [LongOperationPoint(**item) for item in long_operation_points_data_2]
-
-
-@pytest.fixture
-def money_management_strategy(money_management_strategy_data):
-    return MoneyManagementStrategy(id=1, **money_management_strategy_data)
-
-
-@pytest.fixture
-def money_management_strategy_2(money_management_strategy_data_2):
-    return MoneyManagementStrategy(id=2, **money_management_strategy_data_2)
-
-
-@pytest.fixture
-def money_management_strategies(money_management_strategy, money_management_strategy_2):
-    return [money_management_strategy, money_management_strategy_2]
 
 
 @pytest.fixture
