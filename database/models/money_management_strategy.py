@@ -18,18 +18,6 @@ class MoneyManagementStrategyType(Enum):
 
 
 class MoneyManagementStrategyList(list):
-    def long_operation_points(self) -> list[LongOperationPoint]:
-        points = []
-        for money_management_strategy in self:
-            points.extend(money_management_strategy.long_operation_points)
-        return points
-
-    def short_operation_points(self) -> list[ShortOperationPoint]:
-        points = []
-        for money_management_strategy in self:
-            points.extend(money_management_strategy.short_operation_points)
-        return points
-
     def get_ids(self) -> set[int]:
         return {item.id for item in self}
 

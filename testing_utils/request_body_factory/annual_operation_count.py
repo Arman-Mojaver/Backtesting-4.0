@@ -206,12 +206,8 @@ class AnnualOperationCountRequestBodyFactory:
                 key=lambda x: x["datetime"],
             )
 
-            long_operation_point_ids = [
-                point["id"] for point in long_operation_points
-            ]
-            short_operation_point_ids = [
-                point["id"] for point in short_operation_points
-            ]
+            long_operation_point_ids = [point["id"] for point in long_operation_points]
+            short_operation_point_ids = [point["id"] for point in short_operation_points]
 
             strategy_data = StrategyDataOperationCount(
                 annual_operation_count=calculate_annual_operation_count(
