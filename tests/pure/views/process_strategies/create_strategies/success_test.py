@@ -41,7 +41,7 @@ def test_create_one_strategy(
 
     strategies = CreateStrategiesView(
         [data],
-        [money_management_strategy.id],
+        money_management_strategy.id,
         [indicator.id],
         long_operation_points,
         short_operation_points,
@@ -112,7 +112,7 @@ def test_create_multiple_strategies(
 
     strategies = CreateStrategiesView(
         [data_1, data_2],
-        [money_management_strategy.id],
+        money_management_strategy.id,
         [indicator.id, indicator_2.id],
         long_operation_points,
         short_operation_points,

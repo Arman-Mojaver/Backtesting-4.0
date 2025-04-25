@@ -3,12 +3,14 @@ from pydantic import ValidationError
 
 from views.process_strategies.create_strategies_view import CreateStrategiesView
 
+NON_EXISTENT_ID = 123456789
+
 
 def test_empty_input_raises_error():
     with pytest.raises(ValidationError):
         CreateStrategiesView(
             [],
-            [],
+            NON_EXISTENT_ID,
             [],
             [],
             [],
@@ -84,7 +86,7 @@ def test_invalid_strategy_data(strategy_response_defaults, invalid_data):
     with pytest.raises(ValidationError):
         CreateStrategiesView(
             [data],
-            [],
+            NON_EXISTENT_ID,
             [],
             [],
             [],

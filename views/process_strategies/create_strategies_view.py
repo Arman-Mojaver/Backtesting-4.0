@@ -66,13 +66,13 @@ class CreateStrategiesView:
     def __init__(
         self,
         data: list[dict[str, Any]],
-        money_management_strategy_ids: list[int],
+        money_management_strategy_id: int,
         indicators_ids: list[int],
         long_operation_points: list[LongOperationPoint],
         short_operation_points: list[ShortOperationPoint],
     ):
         self.data: list[dict[str, Any]] = data
-        self.money_management_strategy_ids: list[int] = money_management_strategy_ids
+        self.money_management_strategy_id: int = money_management_strategy_id
         self.indicators_ids: list[int] = indicators_ids
         self.long_operation_points: list[LongOperationPoint] = long_operation_points
         self.short_operation_points: list[ShortOperationPoint] = short_operation_points
@@ -94,10 +94,9 @@ class CreateStrategiesView:
             raise
 
     def _validate_money_management_strategy_ids(self) -> None:
-        symmetric_difference = (
-            set(self.money_management_strategy_ids)
-            ^ self.strategy_responses.money_management_strategy_ids()
-        )
+        symmetric_difference = {
+            self.money_management_strategy_id
+        } ^ self.strategy_responses.money_management_strategy_ids()
 
         if symmetric_difference:
             err = (
@@ -165,11 +164,13 @@ class CreateStrategiesView:
 
     def _create_strategies(self) -> list[Strategy]:
         long_operation_points_by_id = dict_by_key(
-            items=self.long_operation_points, key="id"
+            items=self.long_operation_points,
+            key="id",
         )
 
         short_operation_points_by_id = dict_by_key(
-            items=self.short_operation_points, key="id"
+            items=self.short_operation_points,
+            key="id",
         )
 
         strategies = []
