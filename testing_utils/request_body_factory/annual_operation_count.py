@@ -79,14 +79,14 @@ class AnnualOperationCountRequestBodyFactory:
     def __init__(  # noqa: PLR0913
         self,
         instrument: str,
-        mm_strategy_count: int,
+        mm_strategy_id: int,
         start_date: str,
         end_date: str,
         long_signals_counts: list[int],
         short_signals_counts: list[int],
     ):
         self.instrument: str = instrument
-        self.mm_strategy_count: int = mm_strategy_count
+        self.mm_strategy_id: int = mm_strategy_id
         self.start_date: str = start_date
         self.end_date: str = end_date
         self.long_signals_counts: list[int] = long_signals_counts
@@ -108,14 +108,18 @@ class AnnualOperationCountRequestBodyFactory:
         long_operation_points, short_operation_points = (
             self._generate_operation_points_list()
         )
-        operation_points_dict, dates_str = self._generate_operation_points_dict(
-            long_operation_points,
-            short_operation_points,
+        long_operation_points_dict, short_operation_points_dict, dates_str = (
+            self._generate_operation_points_dict(
+                long_operation_points,
+                short_operation_points,
+            )
         )
         signals_dict = self._generate_signals_dict(dates_str)
 
         return {
-            "operation_points": operation_points_dict,
+            "money_management_strategy_id": self.mm_strategy_id,
+            "long_operation_points": long_operation_points_dict,
+            "short_operation_points": short_operation_points_dict,
             "signals": signals_dict,
             "start_date": self.start_date,
             "end_date": self.end_date,
@@ -124,24 +128,19 @@ class AnnualOperationCountRequestBodyFactory:
     def _generate_operation_points_list(
         self,
     ) -> tuple[list[LongOperationPoint], list[ShortOperationPoint]]:
-        long_operation_points, short_operation_points = [], []
-        for money_management_strategy_id in range(1, self.mm_strategy_count + 1):
-            points = generate_random_long_operation_points(
-                money_management_strategy_id=money_management_strategy_id,
-                instrument=self.instrument,
-                start_date=self.start_date,
-                end_date=self.end_date,
-            )
-            long_operation_points.extend(points)
+        long_operation_points = generate_random_long_operation_points(
+            money_management_strategy_id=self.mm_strategy_id,
+            instrument=self.instrument,
+            start_date=self.start_date,
+            end_date=self.end_date,
+        )
 
-        for money_management_strategy_id in range(1, self.mm_strategy_count + 1):
-            points = generate_random_short_operation_points(
-                money_management_strategy_id=money_management_strategy_id,
-                instrument=self.instrument,
-                start_date=self.start_date,
-                end_date=self.end_date,
-            )
-            short_operation_points.extend(points)
+        short_operation_points = generate_random_short_operation_points(
+            money_management_strategy_id=self.mm_strategy_id,
+            instrument=self.instrument,
+            start_date=self.start_date,
+            end_date=self.end_date,
+        )
 
         for index, point in enumerate(long_operation_points + short_operation_points, 1):
             point.id = index
@@ -153,19 +152,17 @@ class AnnualOperationCountRequestBodyFactory:
         long_operation_points: list[LongOperationPoint],
         short_operation_points: list[ShortOperationPoint],
     ):
-        operation_points = defaultdict(lambda: defaultdict(dict))
-        for point in long_operation_points:
-            operation_points[point.money_management_strategy_id]["long_operation_points"][
-                datetime_to_string(point.datetime)
-            ] = point.to_request_format()
+        long_operation_points_dict = {
+            datetime_to_string(point.datetime): point.to_request_format()
+            for point in long_operation_points
+        }
+        short_operation_points_dict = {
+            datetime_to_string(point.datetime): point.to_request_format()
+            for point in short_operation_points
+        }
 
-        for point in short_operation_points:
-            operation_points[point.money_management_strategy_id][
-                "short_operation_points"
-            ][datetime_to_string(point.datetime)] = point.to_request_format()
-
-        dates_str = tuple(operation_points[1]["long_operation_points"].keys())
-        return operation_points, dates_str
+        dates_str = tuple(long_operation_points_dict.keys())
+        return long_operation_points_dict, short_operation_points_dict, dates_str
 
     def _generate_signals_dict(self, dates_str: tuple[str, ...]):
         signals = defaultdict(dict)
@@ -188,68 +185,50 @@ class AnnualOperationCountRequestBodyFactory:
 
         return signals
 
-    def mm_strategy_ids(self) -> list[int]:
-        return sorted(self.body["operation_points"].keys())
-
     def indicator_ids(self) -> list[int]:
         return sorted(self.body["signals"].keys())
 
-    def strategy_ids(self) -> set[tuple[int, int]]:
-        return {
-            (mm_strategy_id, indicator_id)
-            for mm_strategy_id in self.mm_strategy_ids()
-            for indicator_id in self.indicator_ids()
-        }
-
-    def strategy_count(self) -> int:
-        return len(self.mm_strategy_ids()) * len(self.indicator_ids())
-
     def strategy_responses(self) -> list[StrategyResponseOperationCount]:
         strategy_responses = []
-        for mm_strategy_id in self.mm_strategy_ids():
-            for indicator_id in self.indicator_ids():
-                long_signals = self.body["signals"][indicator_id]["long_signals"]
-                short_signals = self.body["signals"][indicator_id]["short_signals"]
-                all_long_operation_points = self.body["operation_points"][mm_strategy_id][
-                    "long_operation_points"
-                ]
-                all_short_operation_points = self.body["operation_points"][
-                    mm_strategy_id
-                ]["short_operation_points"]
-                long_operation_points = [
-                    all_long_operation_points[signal] for signal in long_signals
-                ]
-                short_operation_points = [
-                    all_short_operation_points[signal] for signal in short_signals
-                ]
-                operations_points = sorted(
-                    long_operation_points + short_operation_points,
-                    key=lambda x: x["datetime"],
-                )
+        for indicator_id in self.indicator_ids():
+            long_signals = self.body["signals"][indicator_id]["long_signals"]
+            short_signals = self.body["signals"][indicator_id]["short_signals"]
+            all_long_operation_points = self.body["long_operation_points"]
+            all_short_operation_points = self.body["short_operation_points"]
+            long_operation_points = [
+                all_long_operation_points[signal] for signal in long_signals
+            ]
+            short_operation_points = [
+                all_short_operation_points[signal] for signal in short_signals
+            ]
+            operations_points = sorted(
+                long_operation_points + short_operation_points,
+                key=lambda x: x["datetime"],
+            )
 
-                long_operation_point_ids = [
-                    point["id"] for point in long_operation_points
-                ]
-                short_operation_point_ids = [
-                    point["id"] for point in short_operation_points
-                ]
+            long_operation_point_ids = [
+                point["id"] for point in long_operation_points
+            ]
+            short_operation_point_ids = [
+                point["id"] for point in short_operation_points
+            ]
 
-                strategy_data = StrategyDataOperationCount(
-                    annual_operation_count=calculate_annual_operation_count(
-                        operation_items=operations_points,
-                        start_date=self.start_date,
-                        end_date=self.end_date,
-                    ),
-                    money_management_strategy_id=mm_strategy_id,
-                    indicator_id=indicator_id,
-                )
+            strategy_data = StrategyDataOperationCount(
+                annual_operation_count=calculate_annual_operation_count(
+                    operation_items=operations_points,
+                    start_date=self.start_date,
+                    end_date=self.end_date,
+                ),
+                money_management_strategy_id=self.mm_strategy_id,
+                indicator_id=indicator_id,
+            )
 
-                strategy_response = StrategyResponseOperationCount(
-                    strategy_data=strategy_data,
-                    long_operation_point_ids=long_operation_point_ids,
-                    short_operation_point_ids=short_operation_point_ids,
-                )
+            strategy_response = StrategyResponseOperationCount(
+                strategy_data=strategy_data,
+                long_operation_point_ids=long_operation_point_ids,
+                short_operation_point_ids=short_operation_point_ids,
+            )
 
-                strategy_responses.append(strategy_response)
+            strategy_responses.append(strategy_response)
 
         return strategy_responses

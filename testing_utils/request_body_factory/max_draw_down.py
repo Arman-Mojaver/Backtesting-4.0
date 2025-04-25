@@ -101,14 +101,18 @@ class MaxDrawDownRequestBodyFactory:
         long_operation_points, short_operation_points = (
             self._generate_operation_points_list()
         )
-        operation_points_dict = self._generate_operation_points_dict(
-            long_operation_points,
-            short_operation_points,
+        long_operation_points_dict, short_operation_points_dict, dates_str = (
+            self._generate_operation_points_dict(
+                long_operation_points,
+                short_operation_points,
+            )
         )
         signals_dict = self._generate_signals_dict()
 
         return {
-            "operation_points": operation_points_dict,
+            "money_management_strategy_id": self.mm_strategy_id,
+            "long_operation_points": long_operation_points_dict,
+            "short_operation_points": short_operation_points_dict,
             "signals": signals_dict,
             "start_date": self.start_date,
             "end_date": self.end_date,
@@ -167,18 +171,17 @@ class MaxDrawDownRequestBodyFactory:
         long_operation_points: list[LongOperationPoint],
         short_operation_points: list[ShortOperationPoint],
     ):
-        operation_points = defaultdict(lambda: defaultdict(dict))
-        for point in long_operation_points:
-            operation_points[point.money_management_strategy_id]["long_operation_points"][
-                datetime_to_string(point.datetime)
-            ] = point.to_request_format()
+        long_operation_points_dict = {
+            datetime_to_string(point.datetime): point.to_request_format()
+            for point in long_operation_points
+        }
+        short_operation_points_dict = {
+            datetime_to_string(point.datetime): point.to_request_format()
+            for point in short_operation_points
+        }
 
-        for point in short_operation_points:
-            operation_points[point.money_management_strategy_id][
-                "short_operation_points"
-            ][datetime_to_string(point.datetime)] = point.to_request_format()
-
-        return operation_points
+        dates_str = tuple(long_operation_points_dict.keys())
+        return long_operation_points_dict, short_operation_points_dict, dates_str
 
     def _generate_signals_dict(self):
         signals = defaultdict(dict)

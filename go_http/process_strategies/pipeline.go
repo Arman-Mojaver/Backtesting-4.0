@@ -29,12 +29,11 @@ func sendToInputChannel(
 	inputCh chan ProcessData,
 ) {
 	go func() {
-		for moneyManagementStrategyID, operationPoints := range payload.OperationPoints {
-			for indicatorID, signals := range payload.Signals {
-				item := ProcessData{"EURUSD", moneyManagementStrategyID, indicatorID, operationPoints, signals, payload.StartDate, payload.EndDate}
-				inputCh <- item
-			}
+		for indicatorID, signals := range payload.Signals {
+			item := ProcessData{"EURUSD", payload.MoneyManagementStrategyID, indicatorID, payload.LongOperationPoints, payload.ShortOperationPoints, signals, payload.StartDate, payload.EndDate}
+			inputCh <- item
 		}
+
 		close(inputCh)
 	}()
 }

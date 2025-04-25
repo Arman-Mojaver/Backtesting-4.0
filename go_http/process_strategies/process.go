@@ -7,8 +7,8 @@ import (
 )
 
 func process(processData ProcessData) StrategyItem {
-	longOperationPoints, longOperationPointIDs := getPointsAndIDs(processData.Signals.LongSignals, processData.OperationPoints.LongOperationPoints)
-	shortOperationPoints, shortOperationPointIDs := getPointsAndIDs(processData.Signals.ShortSignals, processData.OperationPoints.ShortOperationPoints)
+	longOperationPoints, longOperationPointIDs := getPointsAndIDs(processData.Signals.LongSignals, processData.LongOperationPoints)
+	shortOperationPoints, shortOperationPointIDs := getPointsAndIDs(processData.Signals.ShortSignals, processData.ShortOperationPoints)
 
 	operationPoints := append(longOperationPoints, shortOperationPoints...)
 	sortOperationPoints(operationPoints)

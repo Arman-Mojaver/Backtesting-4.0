@@ -13,21 +13,18 @@ type OperationPoint struct {
 	MoneyManagementStrategyID int     `json:"money_management_strategy_id"`
 }
 
-type OperationPoints struct {
-	LongOperationPoints  map[string]OperationPoint `json:"long_operation_points"`
-	ShortOperationPoints map[string]OperationPoint `json:"short_operation_points"`
-}
-
 type Signals struct {
 	LongSignals  []string `json:"long_signals"`
 	ShortSignals []string `json:"short_signals"`
 }
 
 type RequestPayload struct {
-	OperationPoints map[int]OperationPoints `json:"operation_points"`
-	Signals         map[int]Signals         `json:"signals"`
-	StartDate       string                  `json:"start_date"`
-	EndDate         string                  `json:"end_date"`
+	MoneyManagementStrategyID int                       `json:"money_management_strategy_id"`
+	LongOperationPoints       map[string]OperationPoint `json:"long_operation_points"`
+	ShortOperationPoints      map[string]OperationPoint `json:"short_operation_points"`
+	Signals                   map[int]Signals           `json:"signals"`
+	StartDate                 string                    `json:"start_date"`
+	EndDate                   string                    `json:"end_date"`
 }
 
 // Response Structs
@@ -56,7 +53,8 @@ type ProcessData struct {
 	Instrument                string
 	MoneyManagementStrategyID int
 	IndicatorID               int
-	OperationPoints           OperationPoints
+	LongOperationPoints       map[string]OperationPoint
+	ShortOperationPoints      map[string]OperationPoint
 	Signals                   Signals
 	StartDate                 string
 	EndDate                   string
