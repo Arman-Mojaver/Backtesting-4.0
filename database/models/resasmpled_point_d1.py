@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any
 
 from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
@@ -44,3 +45,16 @@ class ResampledPointD1(Base, CRUDMixin):
             name="uq_datetime_instrument_resampled_d1",
         ),
     )
+
+    def to_request_data(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "datetime": str(self.datetime),
+            "instrument": self.instrument,
+            "open": self.open,
+            "high": self.high,
+            "low": self.low,
+            "close": self.close,
+            "volume": self.volume,
+            "high_low_order": HighLowOrder(self.high_low_order).value,
+        }
