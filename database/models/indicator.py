@@ -8,7 +8,7 @@ from sqlalchemy import JSON, Column, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, Query, object_session, relationship
 
 from database import Base, CRUDMixin, session
-from schemas.indicator.macd_schema import MacdParametersSchema
+from schemas.indicator import MacdParametersSchema, RsiParametersSchema
 
 if TYPE_CHECKING:
     from database.models import Strategy
@@ -16,13 +16,17 @@ if TYPE_CHECKING:
 
 class IndicatorType(Enum):
     macd = "macd"
+    rsi = "rsi"
 
     @classmethod
     def values(cls) -> list[str]:
         return [item.value for item in cls]
 
 
-PARAMETERS_VALIDATOR_MAPPER = {IndicatorType.macd: MacdParametersSchema}
+PARAMETERS_VALIDATOR_MAPPER = {
+    IndicatorType.macd: MacdParametersSchema,
+    IndicatorType.rsi: RsiParametersSchema,
+}
 
 
 class IndicatorQuery(Query):
