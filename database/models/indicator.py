@@ -29,6 +29,11 @@ PARAMETERS_VALIDATOR_MAPPER = {
 }
 
 
+class IndicatorList(list):
+    def to_request_data(self) -> list[dict[str, Any]]:
+        return [item.to_request_data() for item in self]
+
+
 class IndicatorQuery(Query):
     def from_ids(self, ids: set[int]) -> IndicatorQuery:
         return self.filter(Indicator.id.in_(ids))

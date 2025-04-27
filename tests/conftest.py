@@ -8,7 +8,7 @@ import pytest
 os.environ["ENVIRONMENT"] = "testing"
 
 from config import config as project_config  # type: ignore[attr-defined]
-from database.models import MoneyManagementStrategy
+from database.models import Indicator, MoneyManagementStrategy
 
 if not project_config.is_testing():
     err = f"Invalid testing environment: {project_config}"
@@ -239,3 +239,13 @@ def indicator_data_2():
         },
         "identifier": "macd.sma-13-close,ema-5-close",
     }
+
+
+@pytest.fixture
+def indicator(indicator_data):
+    return Indicator(**indicator_data)
+
+
+@pytest.fixture
+def indicator_2(indicator_data_2):
+    return Indicator(**indicator_data_2)
