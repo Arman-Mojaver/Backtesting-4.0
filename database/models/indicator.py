@@ -80,3 +80,11 @@ class Indicator(Base, CRUDMixin):
 
     def to_dict_with_ids(self) -> dict[str, Any]:
         return self.to_dict(rules=("id",))
+
+    def to_request_data(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "type": self.type,
+            "parameters": self.parameters,
+            "identifier": self.identifier,
+        }
