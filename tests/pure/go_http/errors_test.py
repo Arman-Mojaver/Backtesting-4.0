@@ -5,12 +5,21 @@ import requests
 
 from testing_utils.http_utils import parse_response
 
+ENDPOINT_PATHS = (
+    "process_strategies",
+)
+
+
+@pytest.fixture(params=ENDPOINT_PATHS)
+def endpoint_path(request):
+    return request.param
+
 
 @pytest.mark.parametrize("http_method", ["GET", "PUT", "DELETE"])
-def test_process_only_accepts_post_requests(http_method, endpoint):
+def test_only_accepts_post_requests(http_method, endpoint, endpoint_path):
     response = requests.request(
         method=http_method,
-        url=endpoint("process_strategies"),
+        url=endpoint(endpoint_path),
         timeout=5,
     )
 
@@ -27,9 +36,9 @@ def test_process_only_accepts_post_requests(http_method, endpoint):
         (1, 2, 3),
     ],
 )
-def test_process_invalid_json(invalid_body, endpoint):
+def test_invalid_json(invalid_body, endpoint, endpoint_path):
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=endpoint(endpoint_path),
         json=invalid_body,
         timeout=5,
     )
@@ -38,7 +47,7 @@ def test_process_invalid_json(invalid_body, endpoint):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_process_valid_fields(endpoint):
-    response = requests.post(url=endpoint("process_strategies"), json={}, timeout=5)
+def test_valid_fields(endpoint, endpoint_path):
+    response = requests.post(url=endpoint(endpoint_path), json={}, timeout=5)
 
     assert response.status_code == HTTPStatus.OK
