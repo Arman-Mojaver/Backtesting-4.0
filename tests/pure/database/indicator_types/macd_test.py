@@ -117,3 +117,19 @@ def test_invalid_type(invalid_macd_data):
 def test_invalid(invalid_macd_data):
     with pytest.raises(ValidationError):
         Indicator(**invalid_macd_data)
+
+
+def test_valid():
+    valid_data = {
+        "type": "macd",
+        "parameters": {
+            "slow": {"type": "sma", "n": 12, "price_target": "close"},
+            "fast": {"type": "ema", "n": 5, "price_target": "close"},
+        },
+        "identifier": "macd.sma-12-close,ema-5-close",
+    }
+    indicator = Indicator(**valid_data)
+
+    assert indicator.type == valid_data["type"]
+    assert indicator.parameters == valid_data["parameters"]
+    assert indicator.identifier == valid_data["identifier"]
