@@ -16,6 +16,11 @@ class HighLowOrder(Enum):
     undefined = "undefined"
 
 
+class ResampledPointD1List(list):
+    def to_request_data(self) -> list[dict[str, Any]]:
+        return [item.to_request_data() for item in self]
+
+
 class ResampledPointD1Query(Query):
     def from_instrument(self, instrument: str) -> ResampledPointD1Query:
         return self.filter_by(instrument=instrument)
