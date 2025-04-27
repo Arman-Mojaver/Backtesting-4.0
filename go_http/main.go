@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"go_http/indicators/rsi"
 	"go_http/process_strategies"
 	"io"
 	"log"
@@ -24,9 +25,14 @@ func main() {
 
 	// Setup server
 	mux := http.NewServeMux()
+
+	// General Handlers
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/ping", pingHandler)
 	mux.HandleFunc("/process_strategies", processStrategiesHandler)
+
+	// Indicator Handlers
+	mux.HandleFunc("/rsi", rsi.RSIHandler)
 
 	log.Println("Server starting on port 80...")
 	log.Fatal(http.ListenAndServe(":80", mux))
