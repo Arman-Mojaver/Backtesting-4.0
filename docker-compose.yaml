@@ -37,7 +37,7 @@ services:
       - cargo-git:/usr/local/cargo/git
       - target:/app/target
     working_dir: /app
-    command: cargo watch -x run
+    command: cargo watch -i logs/ -x run
     ports:
       - "81:81"
 

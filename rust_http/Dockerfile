@@ -29,4 +29,4 @@ COPY --from=builder /app/target /app/target
 
 WORKDIR /usr/src/app
 
-CMD ["cargo", "watch", "-x", "run"]
+CMD ["cargo", "watch", "-i", "/logs", "-x", "run"]
