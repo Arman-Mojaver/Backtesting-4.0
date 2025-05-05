@@ -13,6 +13,7 @@ services:
       - ./:/app
     depends_on:
       - go-http
+      - rust-http
       - db-development
       - db-production
       - db-testing
@@ -25,6 +26,20 @@ services:
       - ./go_http/logs:/app/logs
     ports:
       - "80:80"
+
+  rust-http:
+    container_name: rust-http
+    image: armanmojaver/rust-http
+    restart: unless-stopped
+    volumes:
+      - ./rust_http:/app
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-git:/usr/local/cargo/git
+      - target:/app/target
+    working_dir: /app
+    command: cargo watch -x run
+    ports:
+      - "81:81"
 
   db-development:
     container_name: db-development
@@ -150,6 +165,9 @@ services:
       - worker
 
 volumes:
+    cargo-registry:
+    cargo-git:
+    target:
     pgadmin_data:
     redis_data:
     flower_data:

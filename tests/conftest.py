@@ -31,6 +31,20 @@ def go_endpoint(go_server):
     return _endpoint
 
 
+@pytest.fixture
+def rust_server():
+    """Equivalent to calling "localhost" from outside the container."""
+    return "http://host.docker.internal:81"
+
+
+@pytest.fixture
+def rust_endpoint(rust_server):
+    def _endpoint(url):
+        return f"{rust_server}/{url}"
+
+    return _endpoint
+
+
 DATA = {
     "data": {
         "EURUSD": {
