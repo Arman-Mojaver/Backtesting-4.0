@@ -1,7 +1,4 @@
-use actix_web::{
-    dev::ServiceRequest, dev::ServiceResponse, get, http::Method, middleware::ErrorHandlerResponse,
-    middleware::ErrorHandlers, post, web, App, Error, HttpResponse, HttpServer, Responder,
-};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use chrono::Local;
 use fern::colors::{Color, ColoredLevelConfig};
 use log::info;
@@ -43,6 +40,33 @@ async fn ping() -> impl Responder {
     web::Json(PingResponse {
         message: "Ping!".into(),
     })
+}
+
+fn configure_routes(cfg: &mut web::ServiceConfig) {
+    cfg
+        // process_strategies
+        .route("/process_strategies", web::post().to(process_strategies))
+        .route("/process_strategies", web::get().to(method_not_allowed))
+        .route("/process_strategies", web::put().to(method_not_allowed))
+        .route("/process_strategies", web::delete().to(method_not_allowed))
+        // rsi
+        .route("/rsi", web::post().to(rsi))
+        .route("/rsi", web::get().to(method_not_allowed))
+        .route("/rsi", web::put().to(method_not_allowed))
+        .route("/rsi", web::delete().to(method_not_allowed))
+        // General routes
+        .service(ping)
+        .default_service(web::route().to(index))
+        // Invalid JSON error handler
+        .app_data(web::JsonConfig::default().error_handler(|err, _req| {
+            actix_web::error::InternalError::from_response(
+                err,
+                HttpResponse::BadRequest().json(serde_json::json!({
+                    "error": "Invalid JSON"
+                })),
+            )
+            .into()
+        }));
 }
 
 // -- logger setup --
@@ -103,30 +127,9 @@ async fn main() -> io::Result<()> {
     let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0:81".into());
     info!("Server starting on {}", &host);
 
-    HttpServer::new(|| {
-        App::new()
-            .app_data(web::JsonConfig::default().error_handler(|err, _req| {
-                actix_web::error::InternalError::from_response(
-                    err,
-                    HttpResponse::BadRequest().json(serde_json::json!({
-                        "error": "Invalid JSON"
-                    })),
-                )
-                .into()
-            }))
-            .route("/process_strategies", web::post().to(process_strategies))
-            .route("/process_strategies", web::get().to(method_not_allowed))
-            .route("/process_strategies", web::put().to(method_not_allowed))
-            .route("/process_strategies", web::delete().to(method_not_allowed))
-            .route("/rsi", web::post().to(rsi))
-            .route("/rsi", web::get().to(method_not_allowed))
-            .route("/rsi", web::put().to(method_not_allowed))
-            .route("/rsi", web::delete().to(method_not_allowed))
-            .service(ping)
-            .default_service(web::route().to(index))
-    })
-    .workers(7)
-    .bind(&host)?
-    .run()
-    .await
+    HttpServer::new(|| App::new().configure(configure_routes))
+        .workers(7)
+        .bind(&host)?
+        .run()
+        .await
 }
