@@ -1,9 +1,30 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    dev::ServiceRequest, dev::ServiceResponse, get, http::Method, middleware::ErrorHandlerResponse,
+    middleware::ErrorHandlers, post, web, App, Error, HttpResponse, HttpServer, Responder,
+};
 use chrono::Local;
 use fern::colors::{Color, ColoredLevelConfig};
 use log::info;
+use serde::Deserialize;
 use serde::Serialize;
 use std::io;
+
+#[derive(Debug, Deserialize)]
+struct RequestPayload {}
+
+async fn process_strategies(request_body: web::Json<RequestPayload>) -> impl Responder {
+    HttpResponse::Ok().json(serde_json::json!({ "data": [] }))
+}
+
+async fn rsi(request_body: web::Json<RequestPayload>) -> impl Responder {
+    HttpResponse::Ok().json(serde_json::json!({ "data": [] }))
+}
+
+async fn method_not_allowed() -> impl Responder {
+    HttpResponse::MethodNotAllowed().json(serde_json::json!({
+        "error": "Method Not Allowed"
+    }))
+}
 
 async fn index() -> impl Responder {
     HttpResponse::NotFound().json(PingResponse {
@@ -84,8 +105,25 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .default_service(web::route().to(index))
+            .app_data(web::JsonConfig::default().error_handler(|err, _req| {
+                actix_web::error::InternalError::from_response(
+                    err,
+                    HttpResponse::BadRequest().json(serde_json::json!({
+                        "error": "Invalid JSON"
+                    })),
+                )
+                .into()
+            }))
+            .route("/process_strategies", web::post().to(process_strategies))
+            .route("/process_strategies", web::get().to(method_not_allowed))
+            .route("/process_strategies", web::put().to(method_not_allowed))
+            .route("/process_strategies", web::delete().to(method_not_allowed))
+            .route("/rsi", web::post().to(rsi))
+            .route("/rsi", web::get().to(method_not_allowed))
+            .route("/rsi", web::put().to(method_not_allowed))
+            .route("/rsi", web::delete().to(method_not_allowed))
             .service(ping)
+            .default_service(web::route().to(index))
     })
     .workers(7)
     .bind(&host)?
