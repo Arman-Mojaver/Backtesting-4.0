@@ -24,7 +24,7 @@ def go_server():
 
 
 @pytest.fixture
-def endpoint(go_server):
+def go_endpoint(go_server):
     def _endpoint(url):
         return f"{go_server}/{url}"
 

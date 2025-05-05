@@ -17,10 +17,10 @@ def endpoint_path(request):
 
 
 @pytest.mark.parametrize("http_method", ["GET", "PUT", "DELETE"])
-def test_only_accepts_post_requests(http_method, endpoint, endpoint_path):
+def test_only_accepts_post_requests(http_method, go_endpoint, endpoint_path):
     response = requests.request(
         method=http_method,
-        url=endpoint(endpoint_path),
+        url=go_endpoint(endpoint_path),
         timeout=5,
     )
 
@@ -37,9 +37,9 @@ def test_only_accepts_post_requests(http_method, endpoint, endpoint_path):
         (1, 2, 3),
     ],
 )
-def test_invalid_json(invalid_body, endpoint, endpoint_path):
+def test_invalid_json(invalid_body, go_endpoint, endpoint_path):
     response = requests.post(
-        url=endpoint(endpoint_path),
+        url=go_endpoint(endpoint_path),
         json=invalid_body,
         timeout=5,
     )
@@ -48,7 +48,7 @@ def test_invalid_json(invalid_body, endpoint, endpoint_path):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_valid_fields(endpoint, endpoint_path):
-    response = requests.post(url=endpoint(endpoint_path), json={}, timeout=5)
+def test_valid_fields(go_endpoint, endpoint_path):
+    response = requests.post(url=go_endpoint(endpoint_path), json={}, timeout=5)
 
     assert response.status_code == HTTPStatus.OK

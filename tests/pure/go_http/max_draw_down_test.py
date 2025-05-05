@@ -10,7 +10,7 @@ from tests.pure.finance_utils.draw_down_test import DRAW_DOWN_RESULT_MAPPING
 INSTRUMENT = "EURUSD"
 
 
-def test_no_signals_returns_zero(endpoint):
+def test_no_signals_returns_zero(go_endpoint):
     request_body = MaxDrawDownRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_id=1,
@@ -27,7 +27,7 @@ def test_no_signals_returns_zero(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -42,7 +42,7 @@ def test_no_signals_returns_zero(endpoint):
     )
 
 
-def test_all_positives_returns_zero(endpoint):
+def test_all_positives_returns_zero(go_endpoint):
     request_body = MaxDrawDownRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_id=1,
@@ -59,7 +59,7 @@ def test_all_positives_returns_zero(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -74,7 +74,7 @@ def test_all_positives_returns_zero(endpoint):
     )
 
 
-def test_all_selected_positives_returns_zero(endpoint):
+def test_all_selected_positives_returns_zero(go_endpoint):
     request_body = MaxDrawDownRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_id=1,
@@ -91,7 +91,7 @@ def test_all_selected_positives_returns_zero(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -106,7 +106,7 @@ def test_all_selected_positives_returns_zero(endpoint):
     )
 
 
-def test_negative_and_positive(endpoint):
+def test_negative_and_positive(go_endpoint):
     request_body = MaxDrawDownRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_id=1,
@@ -123,7 +123,7 @@ def test_negative_and_positive(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -138,7 +138,7 @@ def test_negative_and_positive(endpoint):
     )
 
 
-def test_two_negatives(endpoint):
+def test_two_negatives(go_endpoint):
     request_body = MaxDrawDownRequestBodyFactory(
         instrument=INSTRUMENT,
         mm_strategy_id=1,
@@ -155,7 +155,7 @@ def test_two_negatives(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -170,7 +170,7 @@ def test_two_negatives(endpoint):
     )
 
 
-def test_positive_and_negative(endpoint):
+def test_positive_and_negative(go_endpoint):
     parameters = ((30, 30, 20), (-20, 30, 20))
     op_1, op_2 = parameters
     expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
@@ -191,7 +191,7 @@ def test_positive_and_negative(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -206,7 +206,7 @@ def test_positive_and_negative(endpoint):
     )
 
 
-def test_positive_and_two_negatives(endpoint):
+def test_positive_and_two_negatives(go_endpoint):
     parameters = ((30, 30, 20), (-20, 30, 20), (-20, 30, 20))
     op_1, op_2, op_3 = parameters
     expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
@@ -227,7 +227,7 @@ def test_positive_and_two_negatives(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -242,7 +242,7 @@ def test_positive_and_two_negatives(endpoint):
     )
 
 
-def test_two_negatives_and_several_positives(endpoint):
+def test_two_negatives_and_several_positives(go_endpoint):
     parameters = ((-20, 30, 20), (-20, 30, 20), (30, 30, 20), (30, 30, 20), (30, 30, 20))
     op_1, op_2, op_3, op_4, op_5 = parameters
     expected_result = DRAW_DOWN_RESULT_MAPPING[parameters]
@@ -263,7 +263,7 @@ def test_two_negatives_and_several_positives(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -278,7 +278,7 @@ def test_two_negatives_and_several_positives(endpoint):
     )
 
 
-def test_mix_of_positives_and_negatives_1(endpoint):
+def test_mix_of_positives_and_negatives_1(go_endpoint):
     parameters = (
         (-20, 30, 20),
         (-20, 30, 20),
@@ -306,7 +306,7 @@ def test_mix_of_positives_and_negatives_1(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
@@ -321,7 +321,7 @@ def test_mix_of_positives_and_negatives_1(endpoint):
     )
 
 
-def test_mix_of_positives_and_negatives_2(endpoint):
+def test_mix_of_positives_and_negatives_2(go_endpoint):
     parameters = (
         (-20, 30, 20),
         (-20, 30, 20),
@@ -350,7 +350,7 @@ def test_mix_of_positives_and_negatives_2(endpoint):
     )
 
     response = requests.post(
-        url=endpoint("process_strategies"),
+        url=go_endpoint("process_strategies"),
         json=request_body.body,
         timeout=5,
     )
