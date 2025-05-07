@@ -114,6 +114,16 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         .route(
             "/annual_operation_count",
             web::delete().to(routes::method_not_allowed),
+        )
+        .route(
+            "/max_draw_down",
+            web::post().to(strategies::max_draw_down::max_draw_down),
+        )
+        .route("/max_draw_down", web::get().to(routes::method_not_allowed))
+        .route("/max_draw_down", web::put().to(routes::method_not_allowed))
+        .route(
+            "/max_draw_down",
+            web::delete().to(routes::method_not_allowed),
         );
 }
 

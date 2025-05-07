@@ -1,10 +1,24 @@
 pub mod annual_operation_count;
+pub mod max_draw_down;
 
 use actix_web::{web, HttpResponse, Responder};
-use serde::Deserialize;
+use chrono::NaiveDate;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct RequestPayloadStrategy {}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OperationPoint {
+    instrument: String,
+    result: i32,
+    tp: i32,
+    risk: f64,
+    money_management_strategy_id: i32,
+    datetime: NaiveDate,
+    id: i32,
+    sl: i32,
+}
 
 pub async fn process_strategies(
     _request_body: web::Json<RequestPayloadStrategy>,
