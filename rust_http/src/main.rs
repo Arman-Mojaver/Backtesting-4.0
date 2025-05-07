@@ -74,7 +74,9 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
             "/process_strategies",
             web::delete().to(routes::method_not_allowed),
         )
+        //
         // rsi
+        //
         .route("/rsi", web::post().to(indicators::rsi::rsi))
         .route("/rsi", web::get().to(routes::method_not_allowed))
         .route("/rsi", web::put().to(routes::method_not_allowed))
@@ -82,7 +84,9 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         // General routes
         .service(routes::ping)
         .default_service(web::route().to(routes::index))
+        //
         // Invalid JSON error handler
+        //
         .app_data(web::JsonConfig::default().error_handler(|err, _req| {
             actix_web::error::InternalError::from_response(
                 err,
@@ -91,7 +95,26 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
                 })),
             )
             .into()
-        }));
+        }))
+        //
+        // Test endpoints
+        //
+        .route(
+            "/annual_operation_count",
+            web::post().to(strategies::annual_operation_count::annual_operation_count),
+        )
+        .route(
+            "/annual_operation_count",
+            web::get().to(routes::method_not_allowed),
+        )
+        .route(
+            "/annual_operation_count",
+            web::put().to(routes::method_not_allowed),
+        )
+        .route(
+            "/annual_operation_count",
+            web::delete().to(routes::method_not_allowed),
+        );
 }
 
 #[actix_web::main]

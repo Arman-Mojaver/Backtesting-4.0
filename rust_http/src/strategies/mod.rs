@@ -1,3 +1,5 @@
+pub mod annual_operation_count;
+
 use actix_web::{web, HttpResponse, Responder};
 use serde::Deserialize;
 

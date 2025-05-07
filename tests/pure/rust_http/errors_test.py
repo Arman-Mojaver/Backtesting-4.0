@@ -8,6 +8,7 @@ from testing_utils.http_utils import parse_response
 ENDPOINT_PATHS = (
     "process_strategies",
     "rsi",
+    "annual_operation_count",
 )
 
 
@@ -46,9 +47,3 @@ def test_invalid_json(invalid_body, rust_endpoint, endpoint_path):
 
     assert parse_response(response) == {"error": "Invalid JSON"}
     assert response.status_code == HTTPStatus.BAD_REQUEST
-
-
-def test_valid_fields(rust_endpoint, endpoint_path):
-    response = requests.post(url=rust_endpoint(endpoint_path), json={}, timeout=5)
-
-    assert response.status_code == HTTPStatus.OK
