@@ -131,7 +131,14 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         )
         .route("/global_roi", web::get().to(routes::method_not_allowed))
         .route("/global_roi", web::put().to(routes::method_not_allowed))
-        .route("/global_roi", web::delete().to(routes::method_not_allowed));
+        .route("/global_roi", web::delete().to(routes::method_not_allowed))
+        .route(
+            "/annual_roi",
+            web::post().to(strategies::annual_roi::annual_roi),
+        )
+        .route("/annual_roi", web::get().to(routes::method_not_allowed))
+        .route("/annual_roi", web::put().to(routes::method_not_allowed))
+        .route("/annual_roi", web::delete().to(routes::method_not_allowed));
 }
 
 #[actix_web::main]

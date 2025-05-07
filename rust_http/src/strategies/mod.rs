@@ -1,4 +1,5 @@
 pub mod annual_operation_count;
+pub mod annual_roi;
 pub mod global_roi;
 pub mod max_draw_down;
 

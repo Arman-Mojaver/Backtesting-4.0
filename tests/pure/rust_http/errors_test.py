@@ -12,6 +12,7 @@ ENDPOINT_PATHS = (
     "annual_operation_count",
     "max_draw_down",
     "global_roi",
+    "annual_roi",
 )
 
 
