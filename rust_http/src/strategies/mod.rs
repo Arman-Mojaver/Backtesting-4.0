@@ -1,4 +1,5 @@
 pub mod annual_operation_count;
+pub mod global_roi;
 pub mod max_draw_down;
 
 use actix_web::{web, HttpResponse, Responder};

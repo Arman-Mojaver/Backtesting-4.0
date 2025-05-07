@@ -11,6 +11,7 @@ ENDPOINT_PATHS = (
     # Tests
     "annual_operation_count",
     "max_draw_down",
+    "global_roi",
 )
 
 
