@@ -1,13 +1,7 @@
-use crate::strategies::OperationPoint;
+use crate::strategies::{OperationPoint, OperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct MaxDrawDownPayload {
-    operation_points: Vec<OperationPoint>,
-}
-
-pub async fn max_draw_down(payload: web::Json<MaxDrawDownPayload>) -> impl Responder {
+pub async fn max_draw_down(payload: web::Json<OperationPointsPayload>) -> impl Responder {
     let max_draw_down = get_max_draw_down(&payload.operation_points);
     HttpResponse::Ok().json(serde_json::json!({ "data": max_draw_down }))
 }

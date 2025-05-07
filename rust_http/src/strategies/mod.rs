@@ -7,6 +7,18 @@ use actix_web::{web, HttpResponse, Responder};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OperationPointsWithDatesPayload {
+    operation_points: Vec<OperationPoint>,
+    start_date: NaiveDate,
+    end_date: NaiveDate,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OperationPointsPayload {
+    operation_points: Vec<OperationPoint>,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct RequestPayloadStrategy {}
 
