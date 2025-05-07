@@ -37,7 +37,7 @@ def test_annual_operation_count(
     long_signals_counts,
     short_signals_counts,
     expected_results,
-        go_endpoint,
+    go_endpoint,
 ):
     money_management_strategy_id = 1001
     request_body = AnnualOperationCountRequestBodyFactory(
