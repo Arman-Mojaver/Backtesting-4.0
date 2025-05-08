@@ -8,5 +8,10 @@ pub async fn global_roi(payload: web::Json<OperationPointsPayload>) -> impl Resp
 }
 
 pub fn get_global_roi(operation_points: &Vec<OperationPoint>) -> f64 {
-    0.0
+    let mut cumsum: f64 = 1.0;
+    for point in operation_points {
+        let result = point.result as f64 * (point.risk / point.sl as f64);
+        cumsum += result;
+    }
+    ((cumsum - 1.0) * 10000.0).round() / 100.0
 }
