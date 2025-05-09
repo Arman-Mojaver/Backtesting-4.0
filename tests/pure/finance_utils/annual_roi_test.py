@@ -3,7 +3,7 @@ import pytest
 from testing_utils.finance_utils.annual_roi import calculate_annual_roi
 
 END_DATE_GLOBAL_ROI = [
-    ("2024-01-01", 10),  # 1 year
+    ("2024-01-01", 10.0),  # 1 year
     ("2025-01-01", 21.0),  # 2 years. round(((1.1 * 1.1) - 1) * 100, 2)
     ("2026-01-01", 33.1),  # 3 years. round(((1.1 * 1.1 * 1.1) - 1) * 100, 2)
     ("2027-01-01", 46.41),  # 4 years. round(((1.1 * 1.1 * 1.1 * 1.1) - 1) * 100, 2)
