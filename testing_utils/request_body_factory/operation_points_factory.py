@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from database.models import LongOperationPoint, ShortOperationPoint
 
 
-class OperationPoints(list):
+class OperationPointList(list):
     def to_request_format(self) -> list[LongOperationPoint | ShortOperationPoint]:
         return [item.to_request_format() for item in self]
 
@@ -36,7 +36,7 @@ class OperationPointsFactory:
         )
         self.operation_points = self._generate_operation_points_list()
 
-    def _generate_operation_points_list(self) -> OperationPoints:
+    def _generate_operation_points_list(self) -> OperationPointList:
         operation_points = []
         for index, (long_point, short_point) in enumerate(
             zip(self.long_operation_points, self.short_operation_points, strict=True)
@@ -46,7 +46,7 @@ class OperationPointsFactory:
             else:
                 operation_points.append(short_point)
 
-        return OperationPoints(operation_points)
+        return OperationPointList(operation_points)
 
     def _generate_long_short_operation_points_list(
         self,
@@ -70,16 +70,16 @@ class OperationPointsFactory:
 
         return long_operation_points, short_operation_points
 
-    def get_evenly_spaced(self, count: int) -> OperationPoints:
+    def get_evenly_spaced(self, count: int) -> OperationPointList:
         if count > len(self.operation_points):
             err = "Count can not be greater than generated operation_points"
             raise ValueError(err)
 
         if count == 0:
-            return OperationPoints([])
+            return OperationPointList([])
 
         if count == len(self.operation_points):
-            return OperationPoints(self.operation_points)
+            return OperationPointList(self.operation_points)
 
         step = int(len(self.operation_points) / count)
 
@@ -89,7 +89,7 @@ class OperationPointsFactory:
             err = "Mismatch on count and operation_points size"
             raise ValueError(err)
 
-        return OperationPoints(operation_points)
+        return OperationPointList(operation_points)
 
 
 class OperationPointsFromDataFactory:
@@ -111,7 +111,7 @@ class OperationPointsFromDataFactory:
         )
         self.operation_points = self._generate_operation_points_list()
 
-    def _generate_operation_points_list(self) -> OperationPoints:
+    def _generate_operation_points_list(self) -> OperationPointList:
         operation_points = []
         for index, (long_point, short_point) in enumerate(
             zip(self.long_operation_points, self.short_operation_points, strict=True)
@@ -121,7 +121,7 @@ class OperationPointsFromDataFactory:
             else:
                 operation_points.append(short_point)
 
-        return OperationPoints(operation_points)
+        return OperationPointList(operation_points)
 
     def _generate_long_short_operation_points_list(
         self,
@@ -145,7 +145,7 @@ class OperationPointsFromDataFactory:
 
         return long_operation_points, short_operation_points
 
-    def operation_points_from_data(self) -> OperationPoints:
+    def operation_points_from_data(self) -> OperationPointList:
         if len(self.data) != len(self.operation_points):
             err = "Mismatch between data and operation points sizes"
             raise ValueError(err)
@@ -155,4 +155,4 @@ class OperationPointsFromDataFactory:
             self.operation_points[index].tp = tp
             self.operation_points[index].sl = sl
 
-        return OperationPoints(self.operation_points)
+        return OperationPointList(self.operation_points)
