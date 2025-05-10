@@ -2,6 +2,7 @@ pub mod annual_operation_count;
 pub mod annual_roi;
 pub mod global_roi;
 pub mod max_draw_down;
+pub mod operation_points_map;
 
 use actix_web::{web, HttpResponse, Responder};
 use chrono::NaiveDate;

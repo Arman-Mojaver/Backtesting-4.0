@@ -138,7 +138,23 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         )
         .route("/annual_roi", web::get().to(routes::method_not_allowed))
         .route("/annual_roi", web::put().to(routes::method_not_allowed))
-        .route("/annual_roi", web::delete().to(routes::method_not_allowed));
+        .route("/annual_roi", web::delete().to(routes::method_not_allowed))
+        .route(
+            "/operation_points_map",
+            web::post().to(strategies::operation_points_map::operation_points_map),
+        )
+        .route(
+            "/operation_points_map",
+            web::get().to(routes::method_not_allowed),
+        )
+        .route(
+            "/operation_points_map",
+            web::put().to(routes::method_not_allowed),
+        )
+        .route(
+            "/operation_points_map",
+            web::delete().to(routes::method_not_allowed),
+        );
 }
 
 #[actix_web::main]
