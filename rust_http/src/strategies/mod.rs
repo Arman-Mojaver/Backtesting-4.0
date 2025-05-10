@@ -2,6 +2,7 @@ pub mod annual_operation_count;
 pub mod annual_roi;
 pub mod global_roi;
 pub mod max_draw_down;
+pub mod operation_points_filter;
 pub mod operation_points_map;
 
 use actix_web::{web, HttpResponse, Responder};
@@ -20,10 +21,16 @@ pub struct OperationPointsPayload {
     operation_points: Vec<OperationPoint>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SignalGroup {
+    pub long_signals: Vec<String>,
+    pub short_signals: Vec<String>,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct RequestPayloadStrategy {}
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct OperationPoint {
     instrument: String,
     result: i32,

@@ -8,7 +8,7 @@ from testing_utils.request_body_factory.operation_points_factory import (
 
 
 @pytest.mark.parametrize(
-    "end_date", ["2024-01-01",  "2024-01-02",  "2024-02-01", "2025-01-01"]
+    "end_date", ["2024-01-01", "2024-01-02", "2024-02-01", "2025-01-01"]
 )
 @pytest.mark.parametrize(
     "operation_points_type", ["long_operation_points", "short_operation_points"]

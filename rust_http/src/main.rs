@@ -154,6 +154,22 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         .route(
             "/operation_points_map",
             web::delete().to(routes::method_not_allowed),
+        )
+        .route(
+            "/operation_points_filter",
+            web::post().to(strategies::operation_points_filter::operation_points_filter),
+        )
+        .route(
+            "/operation_points_filter",
+            web::get().to(routes::method_not_allowed),
+        )
+        .route(
+            "/operation_points_filter",
+            web::put().to(routes::method_not_allowed),
+        )
+        .route(
+            "/operation_points_filter",
+            web::delete().to(routes::method_not_allowed),
         );
 }
 
