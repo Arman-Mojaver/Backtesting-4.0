@@ -9,8 +9,8 @@ pub struct GlobalRoiWithDatesPayload {
     end_date: NaiveDate,
 }
 
-pub async fn annual_roi(payload: web::Json<GlobalRoiWithDatesPayload>) -> impl Responder {
-    let annual_roi: f64 = get_annual_roi(payload.global_roi, payload.start_date, payload.end_date);
+pub async fn annual_roi_from_global_roi(payload: web::Json<GlobalRoiWithDatesPayload>) -> impl Responder {
+    let annual_roi: f64 = get_annual_roi_from_global_roi(payload.global_roi, payload.start_date, payload.end_date);
     HttpResponse::Ok().json(serde_json::json!({ "data": annual_roi }))
 }
 
@@ -25,7 +25,7 @@ fn get_difference_in_years(start: NaiveDate, end: NaiveDate) -> f64 {
     round(years, 2)
 }
 
-pub fn get_annual_roi(global_roi: f64, start_date: NaiveDate, end_date: NaiveDate) -> f64 {
+pub fn get_annual_roi_from_global_roi(global_roi: f64, start_date: NaiveDate, end_date: NaiveDate) -> f64 {
     let years = get_difference_in_years(start_date, end_date);
     if years == 0.0 {
         return 0.0;
