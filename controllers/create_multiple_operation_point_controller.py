@@ -128,6 +128,7 @@ class OperationPointsCreateOneController:
                 long_balance=partial_long_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
                 risk=self.money_management_strategy.risk,
+                timestamp=int(atr_point.datetime.timestamp()),
             )
             long_operation_points.append(long_operation_point)
 
@@ -155,6 +156,7 @@ class OperationPointsCreateOneController:
                 short_balance=partial_short_balance,
                 money_management_strategy_id=self.money_management_strategy.id,
                 risk=self.money_management_strategy.risk,
+                timestamp=int(atr_point.datetime.timestamp()),
             )
             short_operation_points.append(short_operation_point)
 

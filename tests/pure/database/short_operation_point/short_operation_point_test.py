@@ -1,6 +1,7 @@
 import pytest
 
 from database.models import ShortOperationPoint
+from utils.date_utils import string_to_datetime
 
 
 @pytest.fixture
@@ -13,6 +14,7 @@ def short_operation_point_data():
         "sl": 30,
         "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
         "risk": 0.02,
+        "timestamp": int(string_to_datetime("2023-08-24").timestamp()),
     }
 
 

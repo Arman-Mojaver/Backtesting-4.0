@@ -1,4 +1,5 @@
 from testing_utils.dict_utils import list_of_dicts_are_equal
+from utils.date_utils import string_to_datetime
 from views.operation_points_view import OperationPointsCreateMultipleView
 
 
@@ -58,6 +59,7 @@ def test_create(
             "sl": 14,
             "long_balance": [27, -42],
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-08-23").timestamp()),
         }
     ]
 
@@ -71,6 +73,7 @@ def test_create(
             "sl": 14,
             "short_balance": [-27],  # [-27, 42]
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-08-23").timestamp()),
         }
     ]
 
@@ -86,6 +89,7 @@ def test_create(
             "sl": 22,
             "long_balance": [27, -42],
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-08-23").timestamp()),
         }
     ]
 
@@ -99,6 +103,7 @@ def test_create(
             "sl": 22,
             "short_balance": [-27],  # [-27, 42]
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-08-23").timestamp()),
         }
     ]
 
@@ -161,6 +166,7 @@ def test_create(
             "sl": 18,
             "long_balance": [26, -29],
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-11-15").timestamp()),
         }
     ]
 
@@ -174,6 +180,7 @@ def test_create(
             "sl": 18,
             "short_balance": [-26],  # [-26, 29]
             "risk": 0.02,
+            "timestamp": int(string_to_datetime("2023-11-15").timestamp()),
         }
     ]
 

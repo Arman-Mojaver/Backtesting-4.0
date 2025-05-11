@@ -9,6 +9,7 @@ from database.models import (
 from testing_utils.strategy_utils.random_data_generator import (
     generate_random_strategy_data,
 )
+from utils.date_utils import string_to_datetime
 
 
 @pytest.fixture(autouse=True)
@@ -42,6 +43,7 @@ def short_operation_points_data():
             "sl": 30,
             "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
             "risk": 0.03,
+            "timestamp": int(string_to_datetime("2023-08-24").timestamp()),
         },
         {
             "instrument": "EURUSD",
@@ -51,6 +53,7 @@ def short_operation_points_data():
             "sl": 30,
             "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
             "risk": 0.03,
+            "timestamp": int(string_to_datetime("2023-08-25").timestamp()),
         },
     ]
 
@@ -76,6 +79,7 @@ def other_short_operation_points(money_management_strategy, session):
         "sl": 30,
         "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
         "risk": 0.04,
+        "timestamp": int(string_to_datetime("2023-08-26").timestamp()),
     }
 
     point_data_2 = {
@@ -86,6 +90,7 @@ def other_short_operation_points(money_management_strategy, session):
         "sl": 30,
         "short_balance": [14, -58, -21, -98, -70, -41, -81, 29],
         "risk": 0.04,
+        "timestamp": int(string_to_datetime("2023-08-27").timestamp()),
     }
 
     point_1 = ShortOperationPoint(

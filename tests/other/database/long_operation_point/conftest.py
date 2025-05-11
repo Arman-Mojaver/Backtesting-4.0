@@ -9,6 +9,7 @@ from database.models import (
 from testing_utils.strategy_utils.random_data_generator import (
     generate_random_strategy_data,
 )
+from utils.date_utils import string_to_datetime
 
 
 @pytest.fixture(autouse=True)
@@ -76,6 +77,7 @@ def other_long_operation_points(money_management_strategy, session):
         "sl": 30,
         "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
         "risk": 0.04,
+        "timestamp": int(string_to_datetime("2023-08-26").timestamp()),
     }
 
     point_data_2 = {
@@ -86,6 +88,7 @@ def other_long_operation_points(money_management_strategy, session):
         "sl": 30,
         "long_balance": [14, -58, -21, -98, -70, -41, -81, 29],
         "risk": 0.04,
+        "timestamp": int(string_to_datetime("2023-08-27").timestamp()),
     }
 
     point_1 = LongOperationPoint(

@@ -37,6 +37,7 @@ class LongOperationPoint(Base, CRUDMixin):
     sl = Column(Integer, nullable=False)
     long_balance = Column(ARRAY(Integer), nullable=False)
     risk = Column(Float, nullable=False)
+    timestamp = Column(Integer, nullable=False)
     money_management_strategy_id = Column(
         Integer,
         ForeignKey("money_management_strategy.id"),

@@ -6,6 +6,7 @@ from datetime import datetime
 
 from database.models import LongOperationPoint
 from testing_utils.operation_points_utils.utils import generate_weekdays
+from utils.date_utils import datetime_to_string, string_to_datetime
 
 LONG_ID_GAP = 1300
 
@@ -13,7 +14,7 @@ LONG_ID_GAP = 1300
 def generate_random_long_operation_point(
     money_management_strategy_id: int,
     instrument: str,
-    date: datetime.date,
+    date: str,
 ) -> LongOperationPoint:
     result = random.choice(list(range(30, 71)) + list(range(-70, -29)))  # noqa: S311
     long_balance = [random.randint(-20, 20) for _ in range(random.randint(2, 10))]  # noqa: S311
@@ -29,13 +30,14 @@ def generate_random_long_operation_point(
 
     return LongOperationPoint(
         instrument=instrument,
-        datetime=date,
+        datetime=string_to_datetime(date).date(),
         result=result,
         tp=tp,
         sl=sl,
         long_balance=long_balance,
         risk=0.02,
         money_management_strategy_id=money_management_strategy_id,
+        timestamp=int(string_to_datetime(date).timestamp()),
     )
 
 
@@ -58,6 +60,7 @@ def generate_random_long_operation_points(
     if end_date:
         end_date = datetime.strptime(end_date, "%Y-%m-%d").date()  # noqa: DTZ007
     dates = generate_weekdays(start_date=start_date, end_date=end_date, count=count)
+    str_dates = [datetime_to_string(date) for date in dates]
 
     long_operation_points = [
         generate_random_long_operation_point(
@@ -65,7 +68,7 @@ def generate_random_long_operation_points(
             instrument=instrument,
             date=date,
         )
-        for date in dates
+        for date in str_dates
     ]
 
     for index, long_operation_point in enumerate(long_operation_points):
