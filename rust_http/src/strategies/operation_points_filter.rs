@@ -1,12 +1,12 @@
-use crate::strategies::{OperationPoint, OperationPointsPayload, SignalGroup};
+use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsFilterPayload {
-    long_operation_points_map: HashMap<String, OperationPoint>,
-    short_operation_points_map: HashMap<String, OperationPoint>,
+    long_operation_points_map: HashMap<u32, OperationPoint>,
+    short_operation_points_map: HashMap<u32, OperationPoint>,
     signal_group: SignalGroup,
 }
 
@@ -24,8 +24,8 @@ pub async fn operation_points_filter(
 }
 
 pub fn get_operation_points_filter<'a>(
-    long_operation_points_map: &'a HashMap<String, OperationPoint>,
-    short_operation_points_map: &'a HashMap<String, OperationPoint>,
+    long_operation_points_map: &'a HashMap<u32, OperationPoint>,
+    short_operation_points_map: &'a HashMap<u32, OperationPoint>,
     signal_group: &SignalGroup,
 ) -> Vec<&'a OperationPoint> {
     let mut operation_points: Vec<&OperationPoint> = Vec::new();

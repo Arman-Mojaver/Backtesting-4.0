@@ -26,10 +26,10 @@ def test_operation_points_filter_1(rust_endpoint):
     )
 
     long_operation_points_map = {
-        item["datetime"]: item for item in long_operation_points.to_request_format()
+        item["timestamp"]: item for item in long_operation_points.to_request_format()
     }
     short_operation_points_map = {
-        item["datetime"]: item for item in short_operation_points.to_request_format()
+        item["timestamp"]: item for item in short_operation_points.to_request_format()
     }
 
     data = {
@@ -88,10 +88,10 @@ def test_operation_points_filter_2(rust_endpoint):
     )
 
     long_operation_points_map = {
-        item["datetime"]: item for item in long_operation_points.to_request_format()
+        item["timestamp"]: item for item in long_operation_points.to_request_format()
     }
     short_operation_points_map = {
-        item["datetime"]: item for item in short_operation_points.to_request_format()
+        item["timestamp"]: item for item in short_operation_points.to_request_format()
     }
 
     data = {
@@ -162,10 +162,10 @@ def test_operation_points_filter_3(rust_endpoint):
     )
 
     long_operation_points_map = {
-        item["datetime"]: item for item in long_operation_points.to_request_format()
+        item["timestamp"]: item for item in long_operation_points.to_request_format()
     }
     short_operation_points_map = {
-        item["datetime"]: item for item in short_operation_points.to_request_format()
+        item["timestamp"]: item for item in short_operation_points.to_request_format()
     }
 
     data = {

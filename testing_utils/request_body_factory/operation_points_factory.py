@@ -8,7 +8,6 @@ from testing_utils.operation_points_utils.long_operation_points import (
 from testing_utils.operation_points_utils.short_operation_points import (
     generate_random_short_operation_points,
 )
-from utils.date_utils import datetime_to_string
 
 if TYPE_CHECKING:
     from database.models import LongOperationPoint, ShortOperationPoint
@@ -18,8 +17,8 @@ class OperationPointList(list):
     def to_request_format(self) -> list[LongOperationPoint | ShortOperationPoint]:
         return [item.to_request_format() for item in self]
 
-    def dates(self) -> list[str]:
-        return [datetime_to_string(item.datetime) for item in self]
+    def dates(self) -> list[int]:
+        return [item.timestamp for item in self]
 
 
 class OperationPointsFactory:

@@ -136,9 +136,18 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
             "/annual_roi_from_global_roi",
             web::post().to(strategies::annual_roi_from_global_roi::annual_roi_from_global_roi),
         )
-        .route("/annual_roi_from_global_roi", web::get().to(routes::method_not_allowed))
-        .route("/annual_roi_from_global_roi", web::put().to(routes::method_not_allowed))
-        .route("/annual_roi_from_global_roi", web::delete().to(routes::method_not_allowed))
+        .route(
+            "/annual_roi_from_global_roi",
+            web::get().to(routes::method_not_allowed),
+        )
+        .route(
+            "/annual_roi_from_global_roi",
+            web::put().to(routes::method_not_allowed),
+        )
+        .route(
+            "/annual_roi_from_global_roi",
+            web::delete().to(routes::method_not_allowed),
+        )
         .route(
             "/operation_points_map",
             web::post().to(strategies::operation_points_map::operation_points_map),

@@ -11,12 +11,9 @@ pub async fn operation_points_map(payload: web::Json<OperationPointsPayload>) ->
 
 pub fn get_operation_points_map(
     operation_points: Vec<OperationPoint>,
-) -> HashMap<String, OperationPoint> {
+) -> HashMap<u32, OperationPoint> {
     operation_points
         .into_iter()
-        .map(|op| {
-            let date_str = op.datetime.format("%Y-%m-%d").to_string();
-            (date_str, op)
-        })
+        .map(|op| (op.timestamp, op))
         .collect()
 }

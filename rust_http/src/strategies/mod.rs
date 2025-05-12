@@ -12,8 +12,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsWithDatesPayload {
     operation_points: Vec<OperationPoint>,
-    start_date: NaiveDate,
-    end_date: NaiveDate,
+    start_date: u32,
+    end_date: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,8 +23,8 @@ pub struct OperationPointsPayload {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SignalGroup {
-    pub long_signals: Vec<String>,
-    pub short_signals: Vec<String>,
+    pub long_signals: Vec<u32>,
+    pub short_signals: Vec<u32>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -40,6 +40,7 @@ pub struct OperationPoint {
     datetime: NaiveDate,
     id: i32,
     sl: i32,
+    timestamp: u32,
 }
 
 pub async fn process_strategies(

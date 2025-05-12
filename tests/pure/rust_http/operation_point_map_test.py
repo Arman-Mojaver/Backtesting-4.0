@@ -32,7 +32,7 @@ def test_long_operation_points_map(end_date, operation_points_type, rust_endpoin
     )
 
     expected_result = {
-        item["datetime"]: item for item in operation_points.to_request_format()
+        str(item["timestamp"]): item for item in operation_points.to_request_format()
     }
 
     content = parse_response(response)

@@ -7,6 +7,7 @@ from testing_utils.http_utils import parse_response
 from testing_utils.request_body_factory.operation_points_factory import (
     OperationPointsFactory,
 )
+from utils.date_utils import string_to_datetime
 
 
 @pytest.mark.parametrize(
@@ -41,8 +42,8 @@ def test_annual_operation_count(end_date, count, expected_result, rust_endpoint)
     operation_points = factory.get_evenly_spaced(count=count)
     data = {
         "operation_points": operation_points.to_request_format(),
-        "start_date": start_date,
-        "end_date": end_date,
+        "start_date": int(string_to_datetime(start_date).timestamp()),
+        "end_date": int(string_to_datetime(end_date).timestamp()),
     }
 
     response = requests.post(
