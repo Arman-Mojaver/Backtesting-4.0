@@ -5,8 +5,15 @@ use chrono::NaiveDate;
 pub async fn annual_operation_count(
     payload: web::Json<OperationPointsWithDatesPayload>,
 ) -> impl Responder {
+
+    let operation_points_references: Vec<&OperationPoint> = payload
+        .operation_points
+        .iter()
+        .collect();
+
+
     let annual_operation_count = get_annual_operation_count(
-        &payload.operation_points,
+        operation_points_references,
         payload.start_date,
         payload.end_date,
     );
@@ -14,7 +21,7 @@ pub async fn annual_operation_count(
 }
 
 pub fn get_annual_operation_count(
-    operation_points: &Vec<OperationPoint>,
+    operation_points: Vec<&OperationPoint>,
     start_date: NaiveDate,
     end_date: NaiveDate,
 ) -> f64 {
