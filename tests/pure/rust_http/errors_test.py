@@ -39,7 +39,7 @@ def test_only_accepts_post_requests(http_method, rust_endpoint, endpoint_path):
         1,
         1.5,
         "random_string",
-        (1, 2, 3),
+        (1, 2, 3, 4),
     ],
 )
 def test_invalid_json(invalid_body, rust_endpoint, endpoint_path):
