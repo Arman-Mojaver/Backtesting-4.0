@@ -6,7 +6,6 @@ pub mod operation_points_filter;
 pub mod operation_points_map;
 
 use actix_web::{web, HttpResponse, Responder};
-use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -37,7 +36,6 @@ pub struct OperationPoint {
     tp: i32,
     risk: f64,
     money_management_strategy_id: i32,
-    datetime: NaiveDate,
     id: i32,
     sl: i32,
     timestamp: u32,

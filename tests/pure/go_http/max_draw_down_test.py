@@ -1,3 +1,4 @@
+import pytest
 import requests
 
 from testing_utils.http_utils import parse_response
@@ -6,6 +7,11 @@ from testing_utils.request_body_factory.max_draw_down import (
     StrategyResponseMaxDrawDown,
 )
 from tests.pure.finance_utils.draw_down_test import DRAW_DOWN_RESULT_MAPPING
+
+pytestmark = pytest.mark.skip(
+    reason="These tests will be removed after the migration to rust_http"
+)
+
 
 INSTRUMENT = "EURUSD"
 

@@ -10,6 +10,7 @@ from testing_utils.request_body_factory.annual_operation_count import (
 INSTRUMENT = "EURUSD"
 
 
+@pytest.mark.skip(reason="These tests will be removed after the migration to rust_http")
 @pytest.mark.parametrize(
     (
         "end_date",

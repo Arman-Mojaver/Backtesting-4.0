@@ -44,6 +44,6 @@ pub fn get_operation_points_filter<'a>(
             .filter_map(|sig| short_operation_points_map.get(sig)),
     );
 
-    operation_points.sort_by_key(|p| p.datetime);
+    operation_points.sort_by_key(|p| p.timestamp);
     operation_points
 }

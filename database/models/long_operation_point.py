@@ -56,4 +56,6 @@ class LongOperationPoint(Base, CRUDMixin):
     )
 
     def to_request_format(self) -> dict[str, Any]:
-        return self.to_dict(rules=("id", "money_management_strategy_id", "-long_balance"))
+        return self.to_dict(
+            rules=("id", "money_management_strategy_id", "-long_balance", "-datetime")
+        )
