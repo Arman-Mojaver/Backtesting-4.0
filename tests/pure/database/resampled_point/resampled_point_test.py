@@ -19,8 +19,8 @@ def resampled_point(resampled_point_data):
     return ResampledPointD1(id=4000, **resampled_point_data)
 
 
-def test_to_request_data(resampled_point, resampled_point_data):
-    assert resampled_point.to_request_data() == {
+def test_to_request_format(resampled_point, resampled_point_data):
+    assert resampled_point.to_request_format() == {
         "id": resampled_point.id,
         **resampled_point_data,
     }

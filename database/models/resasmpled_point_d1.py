@@ -17,8 +17,8 @@ class HighLowOrder(Enum):
 
 
 class ResampledPointD1List(list):
-    def to_request_data(self) -> list[dict[str, Any]]:
-        return [item.to_request_data() for item in self]
+    def to_request_format(self) -> list[dict[str, Any]]:
+        return [item.to_request_format() for item in self]
 
 
 class ResampledPointD1Query(Query):
@@ -51,7 +51,7 @@ class ResampledPointD1(Base, CRUDMixin):
         ),
     )
 
-    def to_request_data(self) -> dict[str, Any]:
+    def to_request_format(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "datetime": str(self.datetime),

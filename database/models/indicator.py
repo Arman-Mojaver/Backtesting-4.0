@@ -30,8 +30,8 @@ PARAMETERS_VALIDATOR_MAPPER = {
 
 
 class IndicatorList(list):
-    def to_request_data(self) -> list[dict[str, Any]]:
-        return [item.to_request_data() for item in self]
+    def to_request_format(self) -> list[dict[str, Any]]:
+        return [item.to_request_format() for item in self]
 
 
 class IndicatorQuery(Query):
@@ -86,7 +86,7 @@ class Indicator(Base, CRUDMixin):
     def to_dict_with_ids(self) -> dict[str, Any]:
         return self.to_dict(rules=("id",))
 
-    def to_request_data(self) -> dict[str, Any]:
+    def to_request_format(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "type": self.type,

@@ -13,8 +13,8 @@ def test_to_dict_with_ids(indicator_point):
     assert indicator_point.id == result["id"]
 
 
-def test_to_request_data(indicator_point, indicator_data):
-    assert indicator_point.to_request_data() == {
+def test_to_request_format(indicator_point, indicator_data):
+    assert indicator_point.to_request_format() == {
         "id": indicator_point.id,
         **indicator_data,
     }
