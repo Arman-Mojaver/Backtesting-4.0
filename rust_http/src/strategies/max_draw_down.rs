@@ -2,16 +2,18 @@ use crate::strategies::{OperationPoint, OperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
 
 pub async fn max_draw_down(payload: web::Json<OperationPointsPayload>) -> impl Responder {
-    let max_draw_down = get_max_draw_down(&payload.operation_points);
+    let operation_point_references: Vec<&OperationPoint> =
+        payload.operation_points.iter().collect();
+    let max_draw_down = get_max_draw_down(&operation_point_references);
     HttpResponse::Ok().json(serde_json::json!({ "data": max_draw_down }))
 }
 
-pub fn get_max_draw_down(operation_points: &Vec<OperationPoint>) -> f64 {
+pub fn get_max_draw_down(operation_points: &Vec<&OperationPoint>) -> f64 {
     let mut cumsum: f64 = 1.0;
     let mut cummax: f64 = 1.0;
     let mut draw_downs: Vec<f64> = Vec::new();
 
-    for point in operation_points.iter() {
+    for point in operation_points {
         let result: f64 = point.result as f64 * point.risk / point.sl as f64;
         cumsum += result;
         cummax = cummax.max(cumsum);
@@ -22,10 +24,6 @@ pub fn get_max_draw_down(operation_points: &Vec<OperationPoint>) -> f64 {
     get_max(&draw_downs)
 }
 
-fn get_max(floats: &Vec<f64>) -> f64 {
-    let mut max_value: f64 = 0.0;
-    for float in floats.iter() {
-        max_value = max_value.max(*float);
-    }
-    max_value
+fn get_max(floats: &[f64]) -> f64 {
+    floats.iter().copied().fold(0.0, f64::max)
 }
