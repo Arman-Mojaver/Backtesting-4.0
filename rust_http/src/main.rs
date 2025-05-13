@@ -1,7 +1,8 @@
-use actix_web::{web, App, HttpResponse, HttpServer};
+use actix_web::{web, App, FromRequest, HttpResponse, HttpServer, Responder};
 use chrono::Local;
 use fern::colors::{Color, ColoredLevelConfig};
 use log::info;
+use std::future::Future;
 use std::io;
 
 mod indicators;
@@ -54,147 +55,69 @@ fn setup_logger() -> Result<(), fern::InitError> {
     Ok(())
 }
 
+fn post_only_route<F, Fut, T, R>(cfg: &mut web::ServiceConfig, path: &str, handler: F)
+where
+    F: Fn(T) -> Fut + Clone + 'static,
+    Fut: Future<Output = R> + 'static,
+    T: FromRequest + 'static,
+    R: Responder + 'static,
+{
+    cfg.service(
+        web::resource(path)
+            .route(web::post().to(handler.clone()))
+            .route(web::get().to(routes::method_not_allowed))
+            .route(web::put().to(routes::method_not_allowed))
+            .route(web::delete().to(routes::method_not_allowed)),
+    );
+}
+
 fn configure_routes(cfg: &mut web::ServiceConfig) {
-    cfg
-        // process_strategies
-        .route(
-            "/process_strategies",
-            web::post().to(strategies::process_strategies),
-        )
-        .route(
-            "/process_strategies",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/process_strategies",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/process_strategies",
-            web::delete().to(routes::method_not_allowed),
-        )
-        //
-        // rsi
-        //
-        .route("/rsi", web::post().to(indicators::rsi::rsi))
-        .route("/rsi", web::get().to(routes::method_not_allowed))
-        .route("/rsi", web::put().to(routes::method_not_allowed))
-        .route("/rsi", web::delete().to(routes::method_not_allowed))
-        // General routes
-        .service(routes::ping)
+    cfg.service(routes::ping)
         .default_service(web::route().to(routes::index))
-        //
-        // Invalid JSON error handler
-        //
         .app_data(web::JsonConfig::default().error_handler(|err, _req| {
             actix_web::error::InternalError::from_response(
                 err,
-                HttpResponse::BadRequest().json(serde_json::json!({
-                    "error": "Invalid JSON"
-                })),
+                HttpResponse::BadRequest().json(serde_json::json!({ "error": "Invalid JSON" })),
             )
             .into()
-        }))
-        //
-        // Test endpoints
-        //
-        .route(
-            "/annual_operation_count",
-            web::post().to(strategies::annual_operation_count::annual_operation_count),
-        )
-        .route(
-            "/annual_operation_count",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/annual_operation_count",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/annual_operation_count",
-            web::delete().to(routes::method_not_allowed),
-        )
-        .route(
-            "/max_draw_down",
-            web::post().to(strategies::max_draw_down::max_draw_down),
-        )
-        .route("/max_draw_down", web::get().to(routes::method_not_allowed))
-        .route("/max_draw_down", web::put().to(routes::method_not_allowed))
-        .route(
-            "/max_draw_down",
-            web::delete().to(routes::method_not_allowed),
-        )
-        .route(
-            "/global_roi",
-            web::post().to(strategies::global_roi::global_roi),
-        )
-        .route("/global_roi", web::get().to(routes::method_not_allowed))
-        .route("/global_roi", web::put().to(routes::method_not_allowed))
-        .route("/global_roi", web::delete().to(routes::method_not_allowed))
-        .route(
-            "/annual_roi_from_global_roi",
-            web::post().to(strategies::annual_roi_from_global_roi::annual_roi_from_global_roi),
-        )
-        .route(
-            "/annual_roi_from_global_roi",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/annual_roi_from_global_roi",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/annual_roi_from_global_roi",
-            web::delete().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_map",
-            web::post().to(strategies::operation_points_map::operation_points_map),
-        )
-        .route(
-            "/operation_points_map",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_map",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_map",
-            web::delete().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_filter",
-            web::post().to(strategies::operation_points_filter::operation_points_filter),
-        )
-        .route(
-            "/operation_points_filter",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_filter",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/operation_points_filter",
-            web::delete().to(routes::method_not_allowed),
-        )
-        .route(
-            "/process_strategy",
-            web::post().to(strategies::process_strategy::process_strategy),
-        )
-        .route(
-            "/process_strategy",
-            web::get().to(routes::method_not_allowed),
-        )
-        .route(
-            "/process_strategy",
-            web::put().to(routes::method_not_allowed),
-        )
-        .route(
-            "/process_strategy",
-            web::delete().to(routes::method_not_allowed),
-        );
+        }));
+
+    // Production Endpoints
+    post_only_route(cfg, "/process_strategies", strategies::process_strategies);
+    post_only_route(cfg, "/rsi", indicators::rsi::rsi);
+
+    // Test Endpoints
+    post_only_route(
+        cfg,
+        "/annual_operation_count",
+        strategies::annual_operation_count::annual_operation_count,
+    );
+    post_only_route(
+        cfg,
+        "/max_draw_down",
+        strategies::max_draw_down::max_draw_down,
+    );
+    post_only_route(cfg, "/global_roi", strategies::global_roi::global_roi);
+    post_only_route(
+        cfg,
+        "/annual_roi_from_global_roi",
+        strategies::annual_roi_from_global_roi::annual_roi_from_global_roi,
+    );
+    post_only_route(
+        cfg,
+        "/operation_points_map",
+        strategies::operation_points_map::operation_points_map,
+    );
+    post_only_route(
+        cfg,
+        "/operation_points_filter",
+        strategies::operation_points_filter::operation_points_filter,
+    );
+    post_only_route(
+        cfg,
+        "/process_strategy",
+        strategies::process_strategy::process_strategy,
+    );
 }
 
 #[actix_web::main]
