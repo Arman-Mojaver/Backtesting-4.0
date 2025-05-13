@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from utils.date_utils import string_to_datetime
 
@@ -25,7 +25,7 @@ def get_difference_in_years(
     return round(abs((datetime_1 - datetime_2).days) / 365.25, 2)
 
 
-def zigzag_split(items: tuple[str, ...], count: int) -> tuple[list[str], list[str]]:
+def zigzag_split(items: tuple[Any, ...], count: int) -> tuple[list[Any], list[Any]]:
     indices = [int(i * len(items) / count) for i in range(count)]
     items = [items[i] for i in indices]
 
@@ -41,10 +41,10 @@ def zigzag_split(items: tuple[str, ...], count: int) -> tuple[list[str], list[st
 
 @functools.lru_cache
 def get_lists_evenly_spaced_samples(
-    items: tuple[str, ...],
+    items: tuple[Any, ...],
     long_count: int,
     short_count: int,
-) -> tuple[list[str], list[str]]:
+) -> tuple[list[Any], list[Any]]:
     if not items or long_count < 0 or short_count < 0:
         err = f"Invalid inputs: {items=}, {long_count=}, {short_count=}"
         raise ValueError(err)
