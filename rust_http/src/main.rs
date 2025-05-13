@@ -74,13 +74,19 @@ where
 fn configure_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(routes::ping)
         .default_service(web::route().to(routes::index))
-        .app_data(web::JsonConfig::default().error_handler(|err, _req| {
-            actix_web::error::InternalError::from_response(
-                err,
-                HttpResponse::BadRequest().json(serde_json::json!({ "error": "Invalid JSON" })),
-            )
-            .into()
-        }));
+        .app_data(
+            web::JsonConfig::default()
+                .limit(2048 * 1024 * 1024) // 2048 MB
+                .error_handler(|err, _req| {
+                    actix_web::error::InternalError::from_response(
+                        err,
+                        HttpResponse::BadRequest().json(serde_json::json!({
+                            "error": "Invalid JSON"
+                        })),
+                    )
+                    .into()
+                }),
+        );
 
     // Production Endpoints
     post_only_route(
