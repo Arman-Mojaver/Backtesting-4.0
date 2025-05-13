@@ -5,10 +5,10 @@ from dataclasses import dataclass
 
 @dataclass
 class SignalGroup:
-    long_signals: list[str]
-    short_signals: list[str]
+    long_signals: list[int]
+    short_signals: list[int]
 
-    def to_request_format(self) -> dict[str, list[str]]:
+    def to_request_format(self) -> dict[str, list[int]]:
         return {
             "long_signals": self.long_signals,
             "short_signals": self.short_signals,
