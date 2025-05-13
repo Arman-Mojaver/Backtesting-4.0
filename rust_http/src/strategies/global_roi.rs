@@ -2,7 +2,8 @@ use crate::strategies::{OperationPoint, OperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
 
 pub async fn global_roi(payload: web::Json<OperationPointsPayload>) -> impl Responder {
-    let operation_point_references: Vec<&OperationPoint> = payload.operation_points.iter().collect();
+    let operation_point_references: Vec<&OperationPoint> =
+        payload.operation_points.iter().collect();
     let global_roi: f64 = get_global_roi(&operation_point_references);
     HttpResponse::Ok().json(serde_json::json!({ "data": global_roi }))
 }

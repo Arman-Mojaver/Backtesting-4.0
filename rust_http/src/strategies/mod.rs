@@ -4,6 +4,7 @@ pub mod global_roi;
 pub mod max_draw_down;
 pub mod operation_points_filter;
 pub mod operation_points_map;
+pub mod process_strategies;
 pub mod process_strategy;
 
 use actix_web::{web, HttpResponse, Responder};
@@ -27,9 +28,6 @@ pub struct SignalGroup {
     pub short_signals: Vec<u32>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct RequestPayloadStrategy {}
-
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct OperationPoint {
     instrument: String,
@@ -49,10 +47,4 @@ pub struct Strategy {
     annual_operation_count: f64,
     money_management_strategy_id: u32,
     indicator_id: u32,
-}
-
-pub async fn process_strategies(
-    _request_body: web::Json<RequestPayloadStrategy>,
-) -> impl Responder {
-    HttpResponse::Ok().json(serde_json::json!({ "data": [] }))
 }
