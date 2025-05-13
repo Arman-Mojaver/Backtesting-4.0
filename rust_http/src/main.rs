@@ -8,7 +8,6 @@ mod indicators;
 mod routes;
 mod strategies;
 
-// -- logger setup --
 fn setup_logger() -> Result<(), fern::InitError> {
     let colors = ColoredLevelConfig::new()
         .error(Color::Red)
@@ -178,6 +177,22 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         )
         .route(
             "/operation_points_filter",
+            web::delete().to(routes::method_not_allowed),
+        )
+        .route(
+            "/process_strategy",
+            web::post().to(strategies::process_strategy::process_strategy),
+        )
+        .route(
+            "/process_strategy",
+            web::get().to(routes::method_not_allowed),
+        )
+        .route(
+            "/process_strategy",
+            web::put().to(routes::method_not_allowed),
+        )
+        .route(
+            "/process_strategy",
             web::delete().to(routes::method_not_allowed),
         );
 }

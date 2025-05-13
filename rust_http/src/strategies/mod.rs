@@ -4,6 +4,7 @@ pub mod global_roi;
 pub mod max_draw_down;
 pub mod operation_points_filter;
 pub mod operation_points_map;
+pub mod process_strategy;
 
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
@@ -39,6 +40,15 @@ pub struct OperationPoint {
     id: i32,
     sl: i32,
     timestamp: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Strategy {
+    annual_roi: f64,
+    max_draw_down: f64,
+    annual_operation_count: f64,
+    money_management_strategy_id: u32,
+    indicator_id: u32,
 }
 
 pub async fn process_strategies(
