@@ -2,6 +2,7 @@ use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsFilterPayload {
@@ -15,13 +16,13 @@ pub async fn operation_points_filter(
 ) -> impl Responder {
     let payload = payload.into_inner();
 
-    let long_operation_points_map: HashMap<u32, &OperationPoint> = payload
+    let long_operation_points_map: FxHashMap<u32, &OperationPoint> = payload
         .long_operation_points_map
         .iter()
         .map(|(&k, v)| (k, v))
         .collect();
 
-    let short_operation_points_map: HashMap<u32, &OperationPoint> = payload
+    let short_operation_points_map: FxHashMap<u32, &OperationPoint> = payload
         .short_operation_points_map
         .iter()
         .map(|(&k, v)| (k, v))
@@ -37,8 +38,8 @@ pub async fn operation_points_filter(
 }
 
 pub fn get_operation_points_filter<'a>(
-    long_operation_points_map: &'a HashMap<u32, &OperationPoint>,
-    short_operation_points_map: &'a HashMap<u32, &OperationPoint>,
+    long_operation_points_map: &'a FxHashMap<u32, &OperationPoint>,
+    short_operation_points_map: &'a FxHashMap<u32, &OperationPoint>,
     signal_group: &SignalGroup,
 ) -> Vec<&'a OperationPoint> {
     let mut operation_points: Vec<&OperationPoint> = Vec::new();

@@ -1,6 +1,6 @@
 use crate::strategies::{OperationPoint, OperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 pub async fn operation_points_map(payload: web::Json<OperationPointsPayload>) -> impl Responder {
     let payload = payload.into_inner();
@@ -11,7 +11,7 @@ pub async fn operation_points_map(payload: web::Json<OperationPointsPayload>) ->
 
 pub fn get_operation_points_map(
     operation_points: &Vec<OperationPoint>,
-) -> HashMap<u32, &OperationPoint> {
+) -> FxHashMap<u32, &OperationPoint> {
     operation_points
         .into_iter()
         .map(|op| (op.timestamp, op))
