@@ -2,8 +2,10 @@ use crate::strategies::operation_points_map::get_operation_points_map;
 use crate::strategies::process_strategy::get_process_strategy;
 use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
+use log::info;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::time::Instant;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategiesPayload {
@@ -32,6 +34,9 @@ pub fn get_process_strategies(
     money_management_strategy_id: u32,
     signal_groups: &HashMap<u32, SignalGroup>,
 ) -> Vec<Strategy> {
+    let start = Instant::now();
+    info!("/process_strategies. Starting");
+
     let mut strategies = Vec::new();
     let long_operation_points = operation_points.long_operation_points.clone();
     let long_operation_points_map = get_operation_points_map(long_operation_points);
@@ -66,6 +71,9 @@ pub fn get_process_strategies(
 
         strategies.push(strategy);
     }
+
+    let total_elapsed = start.elapsed();
+    info!("Process time: {:?}", total_elapsed);
 
     strategies
 }
