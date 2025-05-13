@@ -14,9 +14,22 @@ pub async fn operation_points_filter(
     payload: web::Json<OperationPointsFilterPayload>,
 ) -> impl Responder {
     let payload = payload.into_inner();
+
+    let long_operation_points_map: HashMap<u32, &OperationPoint> = payload
+        .long_operation_points_map
+        .iter()
+        .map(|(&k, v)| (k, v))
+        .collect();
+
+    let short_operation_points_map: HashMap<u32, &OperationPoint> = payload
+        .short_operation_points_map
+        .iter()
+        .map(|(&k, v)| (k, v))
+        .collect();
+
     let operation_point_list = get_operation_points_filter(
-        &payload.long_operation_points_map,
-        &payload.short_operation_points_map,
+        &long_operation_points_map,
+        &short_operation_points_map,
         &payload.signal_group,
     );
 
@@ -24,8 +37,8 @@ pub async fn operation_points_filter(
 }
 
 pub fn get_operation_points_filter<'a>(
-    long_operation_points_map: &'a HashMap<u32, OperationPoint>,
-    short_operation_points_map: &'a HashMap<u32, OperationPoint>,
+    long_operation_points_map: &'a HashMap<u32, &OperationPoint>,
+    short_operation_points_map: &'a HashMap<u32, &OperationPoint>,
     signal_group: &SignalGroup,
 ) -> Vec<&'a OperationPoint> {
     let mut operation_points: Vec<&OperationPoint> = Vec::new();

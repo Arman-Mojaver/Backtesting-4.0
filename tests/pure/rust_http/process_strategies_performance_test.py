@@ -59,4 +59,9 @@ def test_process_strategies_performance(rust_endpoint):
     Single threaded, with clones:
         Request time: 18.65s
         Process time: 8.89s
+
+    Single threaded:
+        Request time: 18.8s
+        Process time: 8.12s
+
     """

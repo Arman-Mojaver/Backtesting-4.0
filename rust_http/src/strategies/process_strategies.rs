@@ -38,10 +38,10 @@ pub fn get_process_strategies(
     info!("/process_strategies. Starting");
 
     let mut strategies = Vec::new();
-    let long_operation_points = operation_points.long_operation_points.clone();
+    let long_operation_points = &operation_points.long_operation_points;
     let long_operation_points_map = get_operation_points_map(long_operation_points);
 
-    let short_operation_points = operation_points.short_operation_points.clone();
+    let short_operation_points = &operation_points.short_operation_points;
     let short_operation_points_map = get_operation_points_map(short_operation_points);
 
     let timestamps: Vec<u32> = operation_points

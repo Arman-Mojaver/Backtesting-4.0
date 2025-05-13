@@ -20,9 +20,20 @@ pub struct ProcessStrategyPayload {
 }
 
 pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
+    let long_operation_points_map: HashMap<u32, &OperationPoint> = payload
+        .long_operation_points_map
+        .iter()
+        .map(|(&k, v)| (k, v))
+        .collect();
+    let short_operation_points_map: HashMap<u32, &OperationPoint> = payload
+        .short_operation_points_map
+        .iter()
+        .map(|(&k, v)| (k, v))
+        .collect();
+
     let strategy = get_process_strategy(
-        &payload.long_operation_points_map,
-        &payload.short_operation_points_map,
+        &long_operation_points_map,
+        &short_operation_points_map,
         &payload.signal_group,
         payload.start_date,
         payload.end_date,
@@ -34,8 +45,8 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
 }
 
 pub fn get_process_strategy(
-    long_operation_points_map: &HashMap<u32, OperationPoint>,
-    short_operation_points_map: &HashMap<u32, OperationPoint>,
+    long_operation_points_map: &HashMap<u32, &OperationPoint>,
+    short_operation_points_map: &HashMap<u32, &OperationPoint>,
     signal_group: &SignalGroup,
     start_date: u32,
     end_date: u32,
