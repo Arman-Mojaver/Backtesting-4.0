@@ -30,7 +30,7 @@ from utils.date_utils import datetime_to_string
         ((0, 2, 4, -4, -2), (1, 3, 5, -3, -1)),
     ],
 )
-def test_1(end_date, long_date_indices, short_date_indices, rust_endpoint):
+def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_endpoint):
     money_management_strategy_id, indicator_id = 1, 20
     operation_points_factory = OperationPointsFactory(
         instrument="EURUSD",
