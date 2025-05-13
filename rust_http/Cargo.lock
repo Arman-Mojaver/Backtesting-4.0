@@ -1132,7 +1132,6 @@ dependencies = [
  "actix-web",
  "chrono",
  "fern",
- "http",
  "log",
  "serde",
  "serde_json",
