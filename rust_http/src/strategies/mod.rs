@@ -7,15 +7,7 @@ pub mod operation_points_map;
 pub mod process_strategies;
 pub mod process_strategy;
 
-use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct OperationPointsWithDatesPayload {
-    operation_points: Vec<OperationPoint>,
-    start_date: u32,
-    end_date: u32,
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsPayload {

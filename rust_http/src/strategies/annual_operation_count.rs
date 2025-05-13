@@ -1,8 +1,16 @@
-use crate::strategies::{OperationPoint, OperationPointsWithDatesPayload};
+use crate::strategies::OperationPoint;
 use actix_web::{web, HttpResponse, Responder};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AnnualOperationCountPayload {
+    operation_points: Vec<OperationPoint>,
+    start_date: u32,
+    end_date: u32,
+}
 
 pub async fn annual_operation_count(
-    payload: web::Json<OperationPointsWithDatesPayload>,
+    payload: web::Json<AnnualOperationCountPayload>,
 ) -> impl Responder {
     let operation_points_references: Vec<&OperationPoint> =
         payload.operation_points.iter().collect();
