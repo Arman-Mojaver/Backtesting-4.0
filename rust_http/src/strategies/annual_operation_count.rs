@@ -30,11 +30,10 @@ pub fn get_annual_operation_count(
 
     let duration_secs = end_date - start_date;
     let days = duration_secs / (24 * 60 * 60);
-    if days <= 0 {
+    if days == 0 {
         return 0.0;
     }
 
     let annualized = (count as f64 / days as f64) * 365.25;
-    let count = (annualized * 100.0).round() / 100.0;
-    count
+    (annualized * 100.0).round() / 100.0
 }
