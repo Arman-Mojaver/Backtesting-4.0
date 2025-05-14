@@ -1,8 +1,8 @@
 use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use rustc_hash::FxHashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsFilterPayload {

@@ -5,8 +5,8 @@ use crate::strategies::max_draw_down::get_max_draw_down;
 use crate::strategies::operation_points_filter::get_operation_points_filter;
 use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
 use rustc_hash::FxHashMap;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategyPayload {
