@@ -11,9 +11,9 @@ pub async fn operation_points_map(payload: web::Json<OperationPointsPayload>) ->
 
 pub fn get_operation_points_map(
     operation_points: &Vec<OperationPoint>,
-) -> FxHashMap<u32, &OperationPoint> {
+) -> FxHashMap<u32, OperationPoint> {
     operation_points
-        .into_iter()
-        .map(|op| (op.timestamp, op))
+        .iter()
+        .map(|op| (op.timestamp, op.clone()))
         .collect()
 }
