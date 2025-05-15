@@ -72,4 +72,8 @@ def test_process_strategies_performance(rust_endpoint):
         Request time: 12.69s
         Process time: 3.71s
 
+    Multithreaded, with FXHasher:
+        Request time: 10.77s
+        Process time: 1.93s
+
     """

@@ -7,6 +7,7 @@ use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategyPayload {
@@ -20,15 +21,18 @@ pub struct ProcessStrategyPayload {
 }
 
 pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
-    let long_operation_points_map: FxHashMap<u32, &OperationPoint> = payload
+    let payload = payload.into_inner();
+
+    let long_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
         .long_operation_points_map
-        .iter()
-        .map(|(&k, v)| (k, v))
+        .into_iter()
+        .map(|(k, v)| (k, Arc::new(v)))
         .collect();
-    let short_operation_points_map: FxHashMap<u32, &OperationPoint> = payload
+
+    let short_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
         .short_operation_points_map
-        .iter()
-        .map(|(&k, v)| (k, v))
+        .into_iter()
+        .map(|(k, v)| (k, Arc::new(v)))
         .collect();
 
     let strategy = get_process_strategy(
@@ -45,8 +49,8 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
 }
 
 pub fn get_process_strategy(
-    long_operation_points_map: &FxHashMap<u32, &OperationPoint>,
-    short_operation_points_map: &FxHashMap<u32, &OperationPoint>,
+    long_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
+    short_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
     signal_group: &SignalGroup,
     start_date: u32,
     end_date: u32,

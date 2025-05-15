@@ -1,6 +1,7 @@
 use crate::strategies::OperationPoint;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AnnualOperationCountPayload {
@@ -12,8 +13,12 @@ pub struct AnnualOperationCountPayload {
 pub async fn annual_operation_count(
     payload: web::Json<AnnualOperationCountPayload>,
 ) -> impl Responder {
-    let operation_points_references: Vec<&OperationPoint> =
-        payload.operation_points.iter().collect();
+    let operation_points_references: Vec<Arc<OperationPoint>> = payload
+        .operation_points
+        .iter()
+        .cloned()
+        .map(Arc::new)
+        .collect();
 
     let annual_operation_count = get_annual_operation_count(
         &operation_points_references,
@@ -24,7 +29,7 @@ pub async fn annual_operation_count(
 }
 
 pub fn get_annual_operation_count(
-    operation_points: &Vec<&OperationPoint>,
+    operation_points: &Vec<Arc<OperationPoint>>,
     start_date: u32,
     end_date: u32,
 ) -> f64 {

@@ -7,6 +7,7 @@ use log::info;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::sync::Arc;
 use std::thread;
 use std::time::Instant;
 
@@ -73,21 +74,16 @@ pub fn get_process_strategies(
 
     let mut handles = Vec::new();
     for _ in 0..7 {
-        let long_map = long_operation_points_map.clone();
-        let short_map = short_operation_points_map.clone();
+        let long_map = Arc::clone(&long_operation_points_map);
+        let short_map = Arc::clone(&short_operation_points_map);
         let work_rx = work_receiver.clone();
         let result_tx = result_sender.clone();
 
         let handle = thread::spawn(move || {
             while let Ok(task) = work_rx.recv() {
-                let long_ref: FxHashMap<u32, &OperationPoint> =
-                    long_map.iter().map(|(&ts, op)| (ts, op)).collect();
-                let short_ref: FxHashMap<u32, &OperationPoint> =
-                    short_map.iter().map(|(&ts, op)| (ts, op)).collect();
-
                 let strategy = get_process_strategy(
-                    &long_ref,
-                    &short_ref,
+                    &long_map,
+                    &short_map,
                     &task.signal_group,
                     task.start_date,
                     task.end_date,
