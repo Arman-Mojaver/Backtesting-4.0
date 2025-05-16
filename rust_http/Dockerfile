@@ -11,8 +11,8 @@ WORKDIR /app
 
 COPY --from=fetcher /usr/local/cargo /usr/local/cargo
 COPY . .
-RUN cargo build             && \
-    cargo build --release    && \
+
+RUN cargo build --release && \
     cargo install cargo-watch --root /usr/local
 
 
@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /usr/local/cargo /usr/local/cargo
 COPY --from=builder /usr/local/bin/cargo-watch /usr/local/bin/cargo-watch
-COPY --from=builder /app/target /app/target
+COPY --from=builder /app/target/release /usr/local/bin/
 
 WORKDIR /usr/src/app
 
