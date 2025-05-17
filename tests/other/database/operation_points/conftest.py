@@ -29,6 +29,18 @@ def money_management_strategy(money_management_strategy_data, session):
 
 
 @pytest.fixture
+def money_management_strategy_2(money_management_strategy_data_2, session):
+    money_management_strategy = MoneyManagementStrategy(
+        **money_management_strategy_data_2
+    )
+
+    session.add(money_management_strategy)
+    session.commit()
+
+    return money_management_strategy
+
+
+@pytest.fixture
 def long_operation_points_data():
     return [
         {

@@ -5,6 +5,8 @@ use log::info;
 use std::future::Future;
 use std::io;
 
+mod config;
+mod db;
 mod indicators;
 mod routes;
 mod strategies;
