@@ -18,6 +18,11 @@ pub struct OperationPointsPayload {
     operation_points: Vec<OperationPoint>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct QueryOperationPointsPayload {
+    money_management_strategy_id: i32,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SignalGroup {
     pub long_signals: Vec<i32>,

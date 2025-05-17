@@ -1,17 +1,11 @@
 use crate::config::DbConfig;
 use crate::db::init_pool;
-use crate::strategies::{OperationPoint, OperationPointRepo};
+use crate::strategies::{OperationPoint, OperationPointRepo, QueryOperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Postgres};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct QueryShortOperationPointsPayload {
-    money_management_strategy_id: i32,
-}
-
 pub async fn query_short_operation_points(
-    payload: web::Json<QueryShortOperationPointsPayload>,
+    payload: web::Json<QueryOperationPointsPayload>,
 ) -> impl Responder {
     let db_config = DbConfig::testing();
     let db_pool = init_pool(db_config).await.expect("DB pool init failed");
