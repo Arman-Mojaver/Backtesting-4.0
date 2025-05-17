@@ -73,4 +73,30 @@ impl OperationPointRepo {
         .await?;
         Ok(records)
     }
+
+    pub async fn fetch_short_by_mm_strategy(
+        pool: &Pool<Postgres>,
+        money_management_strategy_id: i32,
+    ) -> Result<Vec<OperationPoint>> {
+        let records = sqlx::query_as::<_, OperationPoint>(
+            r#"
+            SELECT
+                id,
+                instrument,
+                result,
+                tp,
+                sl,
+                risk,
+                timestamp,
+                money_management_strategy_id
+            FROM short_operation_point
+            WHERE money_management_strategy_id = $1
+            ORDER BY id
+            "#,
+        )
+        .bind(money_management_strategy_id)
+        .fetch_all(pool)
+        .await?;
+        Ok(records)
+    }
 }
