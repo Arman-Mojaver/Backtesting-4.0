@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
+from sqlalchemy import Column, Date, Float, Index, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Query
 
@@ -29,6 +29,15 @@ class ResampledPointD1Query(Query):
 class ResampledPointD1(Base, CRUDMixin):
     __tablename__ = "resampled_point_d1"
     __repr_fields__ = ("instrument", "datetime", "high_low_order")
+    __table_args__ = (
+        UniqueConstraint(
+            "datetime",
+            "instrument",
+            name="uq_datetime_instrument_resampled_d1",
+        ),
+        Index("ix_resampled_point_d1_instrument", "instrument"),
+    )
+
     serialize_rules = ("-id",)
 
     query: ResampledPointD1Query = session.query_property(query_cls=ResampledPointD1Query)
@@ -42,14 +51,6 @@ class ResampledPointD1(Base, CRUDMixin):
     close = Column(Float, nullable=False)
     volume = Column(Integer, nullable=False)
     high_low_order = Column(PG_ENUM(HighLowOrder), nullable=False)
-
-    __table_args__ = (
-        UniqueConstraint(
-            "datetime",
-            "instrument",
-            name="uq_datetime_instrument_resampled_d1",
-        ),
-    )
 
     def to_request_format(self) -> dict[str, Any]:
         return {

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Index, Integer
 
 from database import Base, CRUDMixin
 
@@ -8,6 +8,14 @@ from database import Base, CRUDMixin
 class LongOperationPointStrategy(Base, CRUDMixin):
     __tablename__ = "long_operation_points_strategies"
     __repr_fields__ = ("long_operation_point_id", "strategy_id")
+
+    __table_args__ = (
+        Index(
+            "ix_long_operation_point_strategy_strategy_id",
+            "strategy_id",
+        ),
+    )
+
     serialize_rules = ("-long_operation_point_id", "-strategy_id")
 
     id = Column(Integer, primary_key=True, autoincrement=True)

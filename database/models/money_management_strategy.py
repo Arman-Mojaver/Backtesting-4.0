@@ -42,6 +42,10 @@ class MoneyManagementStrategyQuery(Query):
 class MoneyManagementStrategy(Base, CRUDMixin):
     __tablename__ = "money_management_strategy"
     __repr_fields__ = ("identifier",)
+    __table_args__ = (
+        UniqueConstraint("identifier", name="uq_money_management_strategy_identifier"),
+    )
+
     serialize_rules = (
         "-id",
         "-long_operation_points",
@@ -73,10 +77,6 @@ class MoneyManagementStrategy(Base, CRUDMixin):
     strategies: Mapped[list[Strategy]] = relationship(
         back_populates="money_management_strategy",
         cascade="all",
-    )
-
-    __table_args__ = (
-        UniqueConstraint("identifier", name="uq_money_management_strategy_identifier"),
     )
 
     def delete(self) -> None:

@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     UniqueConstraint,
@@ -26,6 +27,11 @@ class RawPointH1Query(Query):
 class RawPointH1(Base, CRUDMixin):
     __tablename__ = "raw_point_h1"
     __repr_fields__ = ("instrument", "datetime")
+    __table_args__ = (
+        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_h1"),
+        Index("ix_raw_point_h1_instrument", "instrument"),
+    )
+
     serialize_rules = ("-id", "-raw_point_d1_id", "-raw_point_d1")
 
     query: RawPointH1Query = session.query_property(query_cls=RawPointH1Query)
@@ -41,7 +47,3 @@ class RawPointH1(Base, CRUDMixin):
     volume = Column(Integer, nullable=False)
 
     raw_point_d1: Mapped[RawPointD1] = relationship(back_populates="raw_points_h1")
-
-    __table_args__ = (
-        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_h1"),
-    )

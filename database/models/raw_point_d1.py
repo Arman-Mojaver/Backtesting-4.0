@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Date, Float, Integer, String, UniqueConstraint
+from sqlalchemy import Column, Date, Float, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
@@ -19,6 +19,11 @@ class RawPointD1Query(Query):
 class RawPointD1(Base, CRUDMixin):
     __tablename__ = "raw_point_d1"
     __repr_fields__ = ("instrument", "datetime")
+    __table_args__ = (
+        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_d1"),
+        Index("ix_raw_point_d1_instrument", "instrument"),
+    )
+
     serialize_rules = ("-id", "-raw_points_h1")
 
     query: RawPointD1Query = session.query_property(query_cls=RawPointD1Query)
@@ -36,10 +41,6 @@ class RawPointD1(Base, CRUDMixin):
         back_populates="raw_point_d1",
         cascade="all",
         lazy="subquery",
-    )
-
-    __table_args__ = (
-        UniqueConstraint("datetime", "instrument", name="uq_datetime_instrument_d1"),
     )
 
     def _max_high_raw_point_h1(self) -> RawPointH1:

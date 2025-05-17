@@ -36,6 +36,14 @@ class Strategy(Base, CRUDMixin):
         "money_management_strategy_id",
         "indicator_id",
     )
+    __table_args__ = (
+        UniqueConstraint(
+            "money_management_strategy_id",
+            "indicator_id",
+            name="uq_mm_strategy_indicator",
+        ),
+    )
+
     serialize_rules = (
         "-id",
         "-money_management_strategy_id",
@@ -77,14 +85,6 @@ class Strategy(Base, CRUDMixin):
         "ShortOperationPoint",
         back_populates="strategies",
         secondary="short_operation_points_strategies",
-    )
-
-    __table_args__ = (
-        UniqueConstraint(
-            "money_management_strategy_id",
-            "indicator_id",
-            name="uq_mm_strategy_indicator",
-        ),
     )
 
     def delete(self) -> None:

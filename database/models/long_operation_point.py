@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Integer, String
+from sqlalchemy import ARRAY, Column, Date, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
@@ -18,6 +18,13 @@ class LongOperationPointQuery(Query):
 class LongOperationPoint(Base, CRUDMixin):
     __tablename__ = "long_operation_point"
     __repr_fields__ = ("instrument", "datetime", "money_management_strategy_id")
+    __table_args__ = (
+        Index(
+            "ix_long_operation_point_money_management_strategy_id",
+            "money_management_strategy_id",
+        ),
+    )
+
     serialize_rules = (
         "-id",
         "-money_management_strategy_id",
