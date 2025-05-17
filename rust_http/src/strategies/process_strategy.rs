@@ -11,25 +11,25 @@ use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategyPayload {
-    long_operation_points_map: FxHashMap<u32, OperationPoint>,
-    short_operation_points_map: FxHashMap<u32, OperationPoint>,
+    long_operation_points_map: FxHashMap<i32, OperationPoint>,
+    short_operation_points_map: FxHashMap<i32, OperationPoint>,
     signal_group: SignalGroup,
-    start_date: u32,
-    end_date: u32,
-    money_management_strategy_id: u32,
-    indicator_id: u32,
+    start_date: i32,
+    end_date: i32,
+    money_management_strategy_id: i32,
+    indicator_id: i32,
 }
 
 pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
     let payload = payload.into_inner();
 
-    let long_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
+    let long_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
         .long_operation_points_map
         .into_iter()
         .map(|(k, v)| (k, Arc::new(v)))
         .collect();
 
-    let short_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
+    let short_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
         .short_operation_points_map
         .into_iter()
         .map(|(k, v)| (k, Arc::new(v)))
@@ -49,13 +49,13 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
 }
 
 pub fn get_process_strategy(
-    long_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
-    short_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
+    long_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
+    short_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
     signal_group: &SignalGroup,
-    start_date: u32,
-    end_date: u32,
-    money_management_strategy_id: u32,
-    indicator_id: u32,
+    start_date: i32,
+    end_date: i32,
+    money_management_strategy_id: i32,
+    indicator_id: i32,
 ) -> Strategy {
     let operation_point_list = get_operation_points_filter(
         long_operation_points_map,

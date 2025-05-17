@@ -6,8 +6,8 @@ use std::sync::Arc;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AnnualOperationCountPayload {
     operation_points: Vec<OperationPoint>,
-    start_date: u32,
-    end_date: u32,
+    start_date: i32,
+    end_date: i32,
 }
 
 pub async fn annual_operation_count(
@@ -30,15 +30,15 @@ pub async fn annual_operation_count(
 
 pub fn get_annual_operation_count(
     operation_points: &Vec<Arc<OperationPoint>>,
-    start_date: u32,
-    end_date: u32,
+    start_date: i32,
+    end_date: i32,
 ) -> f64 {
     let count = operation_points.len();
     if count == 0 {
         return 0.0;
     }
 
-    let mut dates: Vec<u32> = operation_points.iter().map(|op| op.timestamp).collect();
+    let mut dates: Vec<i32> = operation_points.iter().map(|op| op.timestamp).collect();
     dates.sort_unstable();
 
     let duration_secs = end_date - start_date;

@@ -16,8 +16,8 @@ pub struct OperationPointsPayload {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SignalGroup {
-    pub long_signals: Vec<u32>,
-    pub short_signals: Vec<u32>,
+    pub long_signals: Vec<i32>,
+    pub short_signals: Vec<i32>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -29,7 +29,7 @@ pub struct OperationPoint {
     money_management_strategy_id: i32,
     id: i32,
     sl: i32,
-    timestamp: u32,
+    timestamp: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -37,6 +37,6 @@ pub struct Strategy {
     annual_roi: f64,
     max_draw_down: f64,
     annual_operation_count: f64,
-    money_management_strategy_id: u32,
-    indicator_id: u32,
+    money_management_strategy_id: i32,
+    indicator_id: i32,
 }

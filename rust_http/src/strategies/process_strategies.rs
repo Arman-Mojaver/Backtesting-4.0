@@ -4,7 +4,6 @@ use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
 use crossbeam::channel;
 use log::info;
-use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -13,9 +12,9 @@ use std::time::Instant;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategiesPayload {
-    money_management_strategy_id: u32,
+    money_management_strategy_id: i32,
     operation_points: OperationPoints,
-    signal_groups: HashMap<u32, SignalGroup>,
+    signal_groups: HashMap<i32, SignalGroup>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -36,16 +35,16 @@ pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) ->
 #[derive(Debug)]
 struct ProcessTask {
     signal_group: SignalGroup,
-    start_date: u32,
-    end_date: u32,
-    money_management_strategy_id: u32,
-    indicator_id: u32,
+    start_date: i32,
+    end_date: i32,
+    money_management_strategy_id: i32,
+    indicator_id: i32,
 }
 
 pub fn get_process_strategies(
     operation_points: &OperationPoints,
-    money_management_strategy_id: u32,
-    signal_groups: &HashMap<u32, SignalGroup>,
+    money_management_strategy_id: i32,
+    signal_groups: &HashMap<i32, SignalGroup>,
 ) -> Vec<Strategy> {
     let start = Instant::now();
     info!("/process_strategies. Starting");
@@ -57,7 +56,7 @@ pub fn get_process_strategies(
     let short_operation_points = &operation_points.short_operation_points;
     let short_operation_points_map = get_operation_points_map(short_operation_points);
 
-    let timestamps: Vec<u32> = operation_points
+    let timestamps: Vec<i32> = operation_points
         .long_operation_points
         .iter()
         .map(|op| op.timestamp)
@@ -66,7 +65,7 @@ pub fn get_process_strategies(
     let start_date = *timestamps.iter().min().unwrap();
     let end_date = *timestamps.iter().max().unwrap();
 
-    let mut indicator_ids: Vec<&u32> = signal_groups.keys().collect();
+    let mut indicator_ids: Vec<&i32> = signal_groups.keys().collect();
     indicator_ids.sort();
 
     let (work_sender, work_receiver) = channel::unbounded::<ProcessTask>();

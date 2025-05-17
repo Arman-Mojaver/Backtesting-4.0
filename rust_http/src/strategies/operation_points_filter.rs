@@ -7,8 +7,8 @@ use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsFilterPayload {
-    long_operation_points_map: HashMap<u32, OperationPoint>,
-    short_operation_points_map: HashMap<u32, OperationPoint>,
+    long_operation_points_map: HashMap<i32, OperationPoint>,
+    short_operation_points_map: HashMap<i32, OperationPoint>,
     signal_group: SignalGroup,
 }
 
@@ -17,13 +17,13 @@ pub async fn operation_points_filter(
 ) -> impl Responder {
     let payload = payload.into_inner();
 
-    let long_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
+    let long_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
         .long_operation_points_map
         .into_iter()
         .map(|(k, v)| (k, Arc::new(v)))
         .collect();
 
-    let short_operation_points_map: FxHashMap<u32, Arc<OperationPoint>> = payload
+    let short_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
         .short_operation_points_map
         .into_iter()
         .map(|(k, v)| (k, Arc::new(v)))
@@ -42,8 +42,8 @@ pub async fn operation_points_filter(
 }
 
 pub fn get_operation_points_filter(
-    long_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
-    short_operation_points_map: &FxHashMap<u32, Arc<OperationPoint>>,
+    long_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
+    short_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
     signal_group: &SignalGroup,
 ) -> Vec<Arc<OperationPoint>> {
     let mut operation_points: Vec<Arc<OperationPoint>> = Vec::new();
