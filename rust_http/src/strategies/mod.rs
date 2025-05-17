@@ -106,3 +106,36 @@ impl OperationPointRepo {
         Ok(records)
     }
 }
+
+#[derive(Debug, FromRow, Serialize, Deserialize, Clone)]
+pub struct ResampledPointD1 {
+    id: i32,
+    instrument: String,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: i32,
+    timestamp: i32,
+}
+
+pub struct ResampledPointD1Repo;
+
+impl ResampledPointD1Repo {
+    pub async fn fetch_by_instrument(
+        pool: &Pool<Postgres>,
+        instrument: &String,
+    ) -> Result<Vec<ResampledPointD1>> {
+        let records = sqlx::query_as::<_, ResampledPointD1>(
+            "SELECT id, instrument, open, high, low, close, volume, timestamp
+             FROM resampled_point_d1
+             WHERE instrument = $1
+             ORDER BY timestamp",
+        )
+        .bind(instrument)
+        .fetch_all(pool)
+        .await?;
+
+        Ok(records)
+    }
+}

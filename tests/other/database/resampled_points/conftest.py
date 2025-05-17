@@ -84,3 +84,37 @@ def other_resampled_points(session):
     session.commit()
 
     return points
+
+
+@pytest.fixture
+def other_resampled_points_usdcad(session):
+    point_data_1 = {
+        "datetime": string_to_datetime("2023-11-17").date(),
+        "instrument": "USDCAD",
+        "open": 1.07916,
+        "high": 1.09872,
+        "low": 1.07916,
+        "close": 1.09782,
+        "volume": 89728,
+        "high_low_order": HighLowOrder.undefined,
+        "timestamp": int(string_to_datetime("2023-11-17").timestamp()),
+    }
+
+    point_data_2 = {
+        "datetime": string_to_datetime("2023-11-18").date(),
+        "instrument": "USDCAD",
+        "open": 1.08916,
+        "high": 1.10872,
+        "low": 1.08916,
+        "close": 1.10782,
+        "volume": 99728,
+        "high_low_order": HighLowOrder.high_first,
+        "timestamp": int(string_to_datetime("2023-11-18").timestamp()),
+    }
+
+    points = [ResampledPointD1(**point_data_1), ResampledPointD1(**point_data_2)]
+
+    session.add_all(points)
+    session.commit()
+
+    return points
