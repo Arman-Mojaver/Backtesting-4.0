@@ -128,6 +128,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/process_strategy",
         strategies::process_strategy::process_strategy,
     );
+    post_only_route(
+        cfg,
+        "/query_long_operation_points_by_mms",
+        strategies::query_long_operation_points::query_long_operation_points,
+    );
 }
 
 #[actix_web::main]

@@ -13,6 +13,7 @@ ENDPOINT_PATHS = (
     "max_draw_down",
     "global_roi",
     "annual_roi_from_global_roi",
+    "query_long_operation_points_by_mms",
 )
 
 
