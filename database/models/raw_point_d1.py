@@ -6,7 +6,7 @@ from sqlalchemy import Column, Date, Float, Index, Integer, String, UniqueConstr
 from sqlalchemy.orm import Mapped, Query, relationship
 
 from database import Base, CRUDMixin, session
-from database.models.resasmpled_point_d1 import HighLowOrder
+from database.models.resampled_point_d1 import HighLowOrder
 
 if TYPE_CHECKING:
     from database.models import RawPointH1

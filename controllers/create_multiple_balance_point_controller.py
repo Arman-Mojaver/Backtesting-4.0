@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from config.logging_config.log_decorators import log_on_start
-from database.models.resasmpled_point_d1 import HighLowOrder
+from database.models.resampled_point_d1 import HighLowOrder
 
 if TYPE_CHECKING:
     from datetime import date

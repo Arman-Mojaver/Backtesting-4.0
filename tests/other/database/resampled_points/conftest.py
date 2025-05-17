@@ -1,7 +1,7 @@
 import pytest
 
 from database.models import ResampledPointD1
-from database.models.resasmpled_point_d1 import HighLowOrder
+from database.models.resampled_point_d1 import HighLowOrder
 from utils.date_utils import string_to_datetime
 
 
