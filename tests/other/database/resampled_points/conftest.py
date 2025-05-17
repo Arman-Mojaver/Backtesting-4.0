@@ -25,6 +25,7 @@ def resampled_point_data_1():
         "close": 1.06981,
         "volume": 47554,
         "high_low_order": HighLowOrder.high_first,
+        "timestamp": int(string_to_datetime("2023-11-13").timestamp()),
     }
 
 
@@ -39,6 +40,7 @@ def resampled_point_data_2():
         "close": 1.08782,
         "volume": 79728,
         "high_low_order": HighLowOrder.low_first,
+        "timestamp": int(string_to_datetime("2023-11-14").timestamp()),
     }
 
 
@@ -61,6 +63,7 @@ def other_resampled_points(session):
         "close": 1.09782,
         "volume": 89728,
         "high_low_order": HighLowOrder.undefined,
+        "timestamp": int(string_to_datetime("2023-11-15").timestamp()),
     }
 
     point_data_2 = {
@@ -72,6 +75,7 @@ def other_resampled_points(session):
         "close": 1.10782,
         "volume": 99728,
         "high_low_order": HighLowOrder.high_first,
+        "timestamp": int(string_to_datetime("2023-11-16").timestamp()),
     }
 
     points = [ResampledPointD1(**point_data_1), ResampledPointD1(**point_data_2)]

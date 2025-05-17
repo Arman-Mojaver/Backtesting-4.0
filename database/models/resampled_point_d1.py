@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Query
 
 from database import Base, CRUDMixin, session
+from utils.date_utils import string_to_datetime
 
 
 class HighLowOrder(Enum):
@@ -51,6 +52,7 @@ class ResampledPointD1(Base, CRUDMixin):
     close = Column(Float, nullable=False)
     volume = Column(Integer, nullable=False)
     high_low_order = Column(PG_ENUM(HighLowOrder), nullable=False)
+    timestamp = Column(Integer, nullable=False)
 
     def to_request_format(self) -> dict[str, Any]:
         return {
@@ -63,4 +65,5 @@ class ResampledPointD1(Base, CRUDMixin):
             "close": self.close,
             "volume": self.volume,
             "high_low_order": HighLowOrder(self.high_low_order).value,
+            "timestamp": int(string_to_datetime(str(self.datetime)).timestamp()),
         }

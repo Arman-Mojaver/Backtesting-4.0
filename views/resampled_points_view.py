@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from config.logging_config.log_decorators import log_on_end, log_on_start
 from database.models import RawPointD1, RawPointH1, ResampledPointD1
+from utils.date_utils import string_to_datetime
 
 
 class NoRawPointsError(Exception):
@@ -36,6 +37,7 @@ class ResampledPointsCreateMultipleView:
         return [
             ResampledPointD1(
                 high_low_order=raw_point_d1.high_low_order(),
+                timestamp=int(string_to_datetime(str(raw_point_d1.datetime)).timestamp()),
                 **raw_point_d1.to_dict(),
             )
             for raw_point_d1 in self.raw_points_d1

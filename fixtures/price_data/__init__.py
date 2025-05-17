@@ -222,6 +222,7 @@ def get_resampled_d1_data(
             continue
 
         point_data = points[date]  # type: ignore[index]
+        point_data["timestamp"] = int(string_to_datetime(date).timestamp())
         data.append(point_data)
 
     return data
