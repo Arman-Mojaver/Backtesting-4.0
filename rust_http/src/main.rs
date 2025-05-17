@@ -140,6 +140,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/query_short_operation_points_by_mms",
         strategies::query_short_operation_points::query_short_operation_points,
     );
+    post_only_route(
+        cfg,
+        "/query_resampled_points_by_instrument",
+        strategies::query_resampled_points::query_resampled_points,
+    );
 }
 
 #[actix_web::main]

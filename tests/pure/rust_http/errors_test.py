@@ -15,6 +15,7 @@ ENDPOINT_PATHS = (
     "annual_roi_from_global_roi",
     "query_long_operation_points_by_mms",
     "query_short_operation_points_by_mms",
+    "query_resampled_points_by_instrument",
 )
 
 

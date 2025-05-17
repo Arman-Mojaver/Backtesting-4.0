@@ -7,6 +7,7 @@ pub mod operation_points_map;
 pub mod process_strategies;
 pub mod process_strategy;
 pub mod query_long_operation_points;
+pub mod query_resampled_points;
 pub mod query_short_operation_points;
 
 use anyhow::Result;
