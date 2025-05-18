@@ -12,20 +12,10 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - go-http
       - rust-http
       - db-development
       - db-production
       - db-testing
-
-  go-http:
-    container_name: go-http
-    image: armanmojaver/go-http
-    restart: unless-stopped
-    volumes:
-      - ./go_http/logs:/app/logs
-    ports:
-      - "80:80"
 
   rust-http:
     container_name: rust-http

@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 
-.PHONY: help bash run logs cov pytest gotest tests up in ing down clean ps \
-        build build-go build-rust build-no-cache push pull ruff format mypy pyupgrade \
+.PHONY: help bash run logs cov pytest tests up in down ps \
+        build build-rust build-no-cache push pull ruff format fmt mypy pyupgrade \
         alembic-upgrade alembic-downgrade freeze timer clean-flower db-development \
         db-production db-size db-dump db-load db-dump-development db-load-development \
         server
@@ -52,13 +52,8 @@ up:  ## Start containers
 in:  ## Start a bash shell in started api container
 	docker compose -f docker-compose.yaml exec -it api /bin/bash
 
-ing:  ## Start a bash shell in started strategy container
-	docker compose -f docker-compose.yaml exec -it go-http /bin/sh
-
 down:  ## Remove containers
 	docker compose -f docker-compose.yaml down
-
-clean: down  ## Remove containers
 
 ps:  ## Display containers
 	docker compose ps
@@ -66,32 +61,25 @@ ps:  ## Display containers
 
 
 # Docker image commands
-build:  ## Build images (python + go + rust)
+build:  ## Build images (python + rust)
 	docker image build -t armanmojaver/backtesting-api:latest .
-	docker image build -t armanmojaver/go-http:latest ./go_http
 	docker image build -t armanmojaver/rust-http:latest ./rust_http
-
-build-go:  ## Build go image
-	docker image build -t armanmojaver/go-http:latest ./go_http
 
 build-rust:  ## Build rust image
 	docker image build -t armanmojaver/rust-http:latest ./rust_http
 
-build-no-cache:  ## Build images, no cache (python + go + rust)
+build-no-cache:  ## Build images, no cache (python + rust)
 	docker image build --no-cache -t armanmojaver/backtesting-api:latest .
-	docker image build --no-cache -t armanmojaver/go-http:latest ./go_http
 	docker image build --no-cache -t armanmojaver/rust-http:latest ./rust_http
 
-push:  ## Push images (python + go + rust)
+push:  ## Push images (python + rust)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker push armanmojaver/backtesting-api:latest
-	docker push armanmojaver/go-http:latest
 	docker push armanmojaver/rust-http:latest
 
-pull:  ## Pull images (python + go + rust)
+pull:  ## Pull images (python + rust)
 	cat .docker_password | docker login --username armanmojaver --password-stdin
 	docker pull armanmojaver/backtesting-api:latest
-	docker pull armanmojaver/go-http:latest
 	docker push armanmojaver/rust-http:latest
 
 
@@ -103,8 +91,8 @@ ruff:  ## Run ruff check
 format:  ## Run ruff format
 	ruff format
 
-fmt:  ## Run go formatter
-	cd $(PWD)/go_http && go fmt ./...
+fmt:  ## Run rust formatter
+	cd $(PWD)/rust_http && cargo fmt
 
 mypy: ## Run mypy
 	mypy . --ignore-missing-imports --implicit-reexport --check-untyped-defs
@@ -178,10 +166,3 @@ db-dump-development:  ## Dump the development database to a custom format file
 
 db-load-development:  ## Load the dump back into the development database
 	./scripts/db.sh load development
-
-
-# go-http
-server:
-	docker compose -f docker-compose.yaml down go-http
-	docker image build -t armanmojaver/go-http:latest ./go_http
-	docker compose -f docker-compose.yaml up go-http

@@ -15,23 +15,6 @@ if not project_config.is_testing():
 
 
 @pytest.fixture
-def go_server():
-    """
-    Equivalent to calling "localhost" from outside the container.
-    Port is not needed since it is PORT=80.
-    """
-    return "http://host.docker.internal"
-
-
-@pytest.fixture
-def go_endpoint(go_server):
-    def _endpoint(url):
-        return f"{go_server}/{url}"
-
-    return _endpoint
-
-
-@pytest.fixture
 def rust_server():
     """Equivalent to calling "localhost" from outside the container."""
     return "http://host.docker.internal:81"
