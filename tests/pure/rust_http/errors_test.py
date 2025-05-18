@@ -16,6 +16,7 @@ ENDPOINT_PATHS = (
     "query_long_operation_points_by_mms",
     "query_short_operation_points_by_mms",
     "query_resampled_points_by_instrument",
+    "query_indicators_by_type",
 )
 
 

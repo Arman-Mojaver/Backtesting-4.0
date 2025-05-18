@@ -145,6 +145,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/query_resampled_points_by_instrument",
         strategies::query_resampled_points::query_resampled_points,
     );
+    post_only_route(
+        cfg,
+        "/query_indicators_by_type",
+        strategies::query_indicators::query_indicators,
+    );
 }
 
 #[actix_web::main]
