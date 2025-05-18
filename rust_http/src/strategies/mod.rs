@@ -13,6 +13,8 @@ pub mod query_short_operation_points;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use sqlx::types::Json;
 use sqlx::{FromRow, Pool, Postgres};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -134,6 +136,29 @@ impl ResampledPointD1Repo {
              ORDER BY timestamp",
         )
         .bind(instrument)
+        .fetch_all(pool)
+        .await?;
+
+        Ok(records)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, Clone)]
+pub struct Indicator {
+    id: i32,
+    #[serde(rename = "type")]
+    r#type: String,
+    parameters: Json<Value>,
+    identifier: String,
+}
+
+pub struct IndicatorRepo;
+impl IndicatorRepo {
+    pub async fn fetch_by_type(pool: &Pool<Postgres>, type_: &String) -> Result<Vec<Indicator>> {
+        let records = sqlx::query_as::<_, Indicator>(
+            "SELECT id, type, parameters, identifier FROM indicator WHERE type = $1",
+        )
+        .bind(type_)
         .fetch_all(pool)
         .await?;
 

@@ -21,6 +21,28 @@ def other_indicators(indicator_data, indicator_data_2, session):
     session.add_all(indicators)
     session.commit()
 
-    yield indicators
+    return indicators
 
-    session.query(Indicator).delete()
+
+@pytest.fixture
+def other_indicators_rsi(session):
+    indicator_data_1 = {
+        "type": "rsi",
+        "parameters": {"n": 14},
+        "identifier": "rsi.n-14",
+    }
+    indicator_data_2 = {
+        "type": "rsi",
+        "parameters": {"n": 15},
+        "identifier": "rsi.n-15",
+    }
+
+    indicator_1 = Indicator(**indicator_data_1)
+    indicator_2 = Indicator(**indicator_data_2)
+
+    indicators = [indicator_1, indicator_2]
+
+    session.add_all(indicators)
+    session.commit()
+
+    return indicators
