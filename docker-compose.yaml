@@ -31,7 +31,7 @@ services:
     working_dir: /app
     command: cargo watch -i logs/ -x run
     ports:
-      - "81:81"
+      - "80:80"
 
   db-development:
     container_name: db-development

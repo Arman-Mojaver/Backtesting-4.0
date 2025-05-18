@@ -160,7 +160,7 @@ async fn main() -> io::Result<()> {
         std::process::exit(1);
     }
 
-    let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0:81".into());
+    let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0:80".into());
     info!("Server starting on {}", &host);
 
     HttpServer::new(|| App::new().configure(configure_routes))

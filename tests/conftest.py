@@ -17,7 +17,7 @@ if not project_config.is_testing():
 @pytest.fixture
 def rust_server():
     """Equivalent to calling "localhost" from outside the container."""
-    return "http://host.docker.internal:81"
+    return "http://host.docker.internal"
 
 
 @pytest.fixture
