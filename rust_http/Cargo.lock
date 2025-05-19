@@ -1595,6 +1595,7 @@ dependencies = [
  "crossbeam",
  "fern",
  "log",
+ "rand 0.8.5",
  "rustc-hash",
  "serde",
  "serde_json",
