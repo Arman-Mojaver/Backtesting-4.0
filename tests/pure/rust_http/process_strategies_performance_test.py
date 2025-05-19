@@ -19,8 +19,8 @@ def test_process_strategies_performance(rust_endpoint):
     operation_points_factory = OperationPointsFactory(
         instrument="EURUSD",
         mm_strategy_id=money_management_strategy_id,
-        start_date="2024-01-01",
-        end_date="2039-01-01",
+        start_date="2022-01-01",
+        end_date="2037-01-01",
     )
 
     long_operation_points = operation_points_factory.long_operation_points
