@@ -1,13 +1,12 @@
 use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OperationPointsFilterPayload {
-    long_operation_points_map: HashMap<i32, OperationPoint>,
-    short_operation_points_map: HashMap<i32, OperationPoint>,
+    long_operation_points_table: Vec<(i32, OperationPoint)>,
+    short_operation_points_table: Vec<(i32, OperationPoint)>,
     signal_group: SignalGroup,
 }
 
@@ -17,14 +16,14 @@ pub async fn operation_points_filter(
     let payload = payload.into_inner();
 
     let mut long_table: Vec<(i32, Arc<OperationPoint>)> = payload
-        .long_operation_points_map
+        .long_operation_points_table
         .into_iter()
         .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
     long_table.sort_unstable_by_key(|&(ts, _)| ts);
 
     let mut short_table: Vec<(i32, Arc<OperationPoint>)> = payload
-        .short_operation_points_map
+        .short_operation_points_table
         .into_iter()
         .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();

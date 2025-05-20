@@ -25,25 +25,25 @@ def test_operation_points_filter_1(rust_endpoint):
         short_signals=[dates[1], dates[3]],
     )
 
-    long_operation_points_map = {
-        item["timestamp"]: item for item in long_operation_points.to_request_format()
-    }
-    short_operation_points_map = {
-        item["timestamp"]: item for item in short_operation_points.to_request_format()
-    }
+    long_operation_points_table = [
+        (item["timestamp"], item) for item in long_operation_points.to_request_format()
+    ]
+    short_operation_points_table = [
+        (item["timestamp"], item) for item in short_operation_points.to_request_format()
+    ]
 
     data = {
-        "long_operation_points_map": long_operation_points_map,
-        "short_operation_points_map": short_operation_points_map,
+        "long_operation_points_table": long_operation_points_table,
+        "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
     }
 
     expected_result = [
-        long_operation_points_map[dates[0]],
-        short_operation_points_map[dates[1]],
-        long_operation_points_map[dates[2]],
-        short_operation_points_map[dates[3]],
-        long_operation_points_map[dates[4]],
+        long_operation_points_table[0][1],
+        short_operation_points_table[1][1],
+        long_operation_points_table[2][1],
+        short_operation_points_table[3][1],
+        long_operation_points_table[4][1],
     ]
 
     response = requests.post(
@@ -87,31 +87,31 @@ def test_operation_points_filter_2(rust_endpoint):
         ],
     )
 
-    long_operation_points_map = {
-        item["timestamp"]: item for item in long_operation_points.to_request_format()
-    }
-    short_operation_points_map = {
-        item["timestamp"]: item for item in short_operation_points.to_request_format()
-    }
+    long_operation_points_table = [
+        (item["timestamp"], item) for item in long_operation_points.to_request_format()
+    ]
+    short_operation_points_table = [
+        (item["timestamp"], item) for item in short_operation_points.to_request_format()
+    ]
 
     data = {
-        "long_operation_points_map": long_operation_points_map,
-        "short_operation_points_map": short_operation_points_map,
+        "long_operation_points_table": long_operation_points_table,
+        "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
     }
 
     expected_result = [
-        long_operation_points_map[dates[0]],
-        short_operation_points_map[dates[1]],
-        long_operation_points_map[dates[2]],
-        short_operation_points_map[dates[3]],
-        long_operation_points_map[dates[4]],
-        short_operation_points_map[dates[-6]],
-        long_operation_points_map[dates[-5]],
-        short_operation_points_map[dates[-4]],
-        long_operation_points_map[dates[-3]],
-        short_operation_points_map[dates[-2]],
-        long_operation_points_map[dates[-1]],
+        long_operation_points_table[0][1],
+        short_operation_points_table[1][1],
+        long_operation_points_table[2][1],
+        short_operation_points_table[3][1],
+        long_operation_points_table[4][1],
+        short_operation_points_table[-6][1],
+        long_operation_points_table[-5][1],
+        short_operation_points_table[-4][1],
+        long_operation_points_table[-3][1],
+        short_operation_points_table[-2][1],
+        long_operation_points_table[-1][1],
     ]
 
     response = requests.post(
@@ -161,37 +161,37 @@ def test_operation_points_filter_3(rust_endpoint):
         ],
     )
 
-    long_operation_points_map = {
-        item["timestamp"]: item for item in long_operation_points.to_request_format()
-    }
-    short_operation_points_map = {
-        item["timestamp"]: item for item in short_operation_points.to_request_format()
-    }
+    long_operation_points_table = [
+        (item["timestamp"], item) for item in long_operation_points.to_request_format()
+    ]
+    short_operation_points_table = [
+        (item["timestamp"], item) for item in short_operation_points.to_request_format()
+    ]
 
     data = {
-        "long_operation_points_map": long_operation_points_map,
-        "short_operation_points_map": short_operation_points_map,
+        "long_operation_points_table": long_operation_points_table,
+        "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
     }
 
     expected_result = [
-        long_operation_points_map[dates[0]],
-        short_operation_points_map[dates[1]],
-        long_operation_points_map[dates[2]],
-        short_operation_points_map[dates[3]],
-        long_operation_points_map[dates[4]],
-        short_operation_points_map[dates[10]],
-        long_operation_points_map[dates[15]],
-        short_operation_points_map[dates[100]],
-        long_operation_points_map[dates[105]],
-        short_operation_points_map[dates[200]],
-        long_operation_points_map[dates[205]],
-        short_operation_points_map[dates[-6]],
-        long_operation_points_map[dates[-5]],
-        short_operation_points_map[dates[-4]],
-        long_operation_points_map[dates[-3]],
-        short_operation_points_map[dates[-2]],
-        long_operation_points_map[dates[-1]],
+        long_operation_points_table[0][1],
+        short_operation_points_table[1][1],
+        long_operation_points_table[2][1],
+        short_operation_points_table[3][1],
+        long_operation_points_table[4][1],
+        short_operation_points_table[10][1],
+        long_operation_points_table[15][1],
+        short_operation_points_table[100][1],
+        long_operation_points_table[105][1],
+        short_operation_points_table[200][1],
+        long_operation_points_table[205][1],
+        short_operation_points_table[-6][1],
+        long_operation_points_table[-5][1],
+        short_operation_points_table[-4][1],
+        long_operation_points_table[-3][1],
+        short_operation_points_table[-2][1],
+        long_operation_points_table[-1][1],
     ]
 
     response = requests.post(
