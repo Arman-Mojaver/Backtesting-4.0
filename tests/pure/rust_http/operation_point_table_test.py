@@ -13,7 +13,7 @@ from testing_utils.request_body_factory.operation_points_factory import (
 @pytest.mark.parametrize(
     "operation_points_type", ["long_operation_points", "short_operation_points"]
 )
-def test_long_operation_points_map(end_date, operation_points_type, rust_endpoint):
+def test_long_operation_points_table(end_date, operation_points_type, rust_endpoint):
     start_date = "2024-01-01"
     operation_points_factory = OperationPointsFactory(
         instrument="EURUSD",
