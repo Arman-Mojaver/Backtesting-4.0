@@ -49,19 +49,19 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
         short_signals=[dates[index] for index in short_date_indices],
     )
 
-    long_operation_points_map = {
-        item["timestamp"]: item for item in long_operation_points.to_request_format()
-    }
-    short_operation_points_map = {
-        item["timestamp"]: item for item in short_operation_points.to_request_format()
-    }
+    long_operation_points_table = [
+        (item["timestamp"], item) for item in long_operation_points.to_request_format()
+    ]
+    short_operation_points_table = [
+        (item["timestamp"], item) for item in short_operation_points.to_request_format()
+    ]
 
     start_date = datetime_to_string(datetime.fromtimestamp(dates[0]))  # noqa: DTZ006
     end_date = datetime_to_string(datetime.fromtimestamp(dates[-1]))  # noqa: DTZ006
 
     data = {
-        "long_operation_points_map": long_operation_points_map,
-        "short_operation_points_map": short_operation_points_map,
+        "long_operation_points_table": long_operation_points_table,
+        "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
         "start_date": dates[0],
         "end_date": dates[-1],
