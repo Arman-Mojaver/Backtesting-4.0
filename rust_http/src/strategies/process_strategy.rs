@@ -19,9 +19,7 @@ pub struct ProcessStrategyPayload {
     indicator_id: i32,
 }
 
-pub async fn process_strategy(
-    payload: web::Json<ProcessStrategyPayload>,
-) -> impl Responder {
+pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
     let payload = payload.into_inner();
 
     let long_table: Vec<(i32, Arc<OperationPoint>)> = payload

@@ -150,6 +150,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/query_indicators_by_type",
         strategies::query_indicators::query_indicators,
     );
+    post_only_route(
+        cfg,
+        "/process_strategies_validator",
+        strategies::process_strategies_validator::process_strategies_validator,
+    );
 }
 
 #[actix_web::main]

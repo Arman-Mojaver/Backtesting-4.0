@@ -15,6 +15,7 @@ ENDPOINT_PATHS = (
     "max_draw_down",
     "operation_points_table",
     "operation_points_filter",
+    "process_strategies_validator",
     "process_strategies",
     "process_strategy",
     "query_long_operation_points_by_mms",

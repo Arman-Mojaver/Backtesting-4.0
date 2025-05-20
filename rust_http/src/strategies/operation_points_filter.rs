@@ -29,11 +29,8 @@ pub async fn operation_points_filter(
         .collect();
     short_table.sort_unstable_by_key(|&(ts, _)| ts);
 
-    let operation_point_list = get_operation_points_filter(
-        &long_table,
-        &short_table,
-        &payload.signal_group,
-    );
+    let operation_point_list =
+        get_operation_points_filter(&long_table, &short_table, &payload.signal_group);
 
     let serialized: Vec<OperationPoint> = operation_point_list
         .into_iter()
@@ -66,9 +63,8 @@ pub fn get_operation_points_filter(
     short_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     signal_group: &SignalGroup,
 ) -> Vec<Arc<OperationPoint>> {
-    let mut operation_points: Vec<Arc<OperationPoint>> = Vec::with_capacity(
-        signal_group.long_signals.len() + signal_group.short_signals.len(),
-    );
+    let mut operation_points: Vec<Arc<OperationPoint>> =
+        Vec::with_capacity(signal_group.long_signals.len() + signal_group.short_signals.len());
 
     let long_operation_points =
         lookup_operation_points(&signal_group.long_signals, long_operation_points_table);
