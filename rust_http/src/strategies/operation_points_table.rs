@@ -1,18 +1,12 @@
 use crate::strategies::{OperationPoint, OperationPointsPayload};
 use actix_web::{web, HttpResponse, Responder};
-use std::collections::HashMap;
 use std::sync::Arc;
 
 pub async fn operation_points_table(payload: web::Json<OperationPointsPayload>) -> impl Responder {
     let payload = payload.into_inner();
     let operation_points_table = get_operation_points_table(&payload.operation_points);
 
-    let serialized_operation_points: HashMap<i32, OperationPoint> = operation_points_table
-        .iter()
-        .map(|(ts, op_arc)| (*ts, (**op_arc).clone()))
-        .collect();
-
-    HttpResponse::Ok().json(serde_json::json!({"data": serialized_operation_points}))
+    HttpResponse::Ok().json(serde_json::json!({"data": operation_points_table}))
 }
 
 pub fn get_operation_points_table(

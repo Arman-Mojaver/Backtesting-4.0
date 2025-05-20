@@ -31,9 +31,9 @@ def test_long_operation_points_map(end_date, operation_points_type, rust_endpoin
         timeout=5,
     )
 
-    expected_result = {
-        str(item["timestamp"]): item for item in operation_points.to_request_format()
-    }
+    expected_result = [
+        [item["timestamp"], item] for item in operation_points.to_request_format()
+    ]
 
     content = parse_response(response)
     assert content["data"] == expected_result
