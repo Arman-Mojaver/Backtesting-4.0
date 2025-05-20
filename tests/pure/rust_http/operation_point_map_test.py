@@ -26,7 +26,7 @@ def test_long_operation_points_map(end_date, operation_points_type, rust_endpoin
     data = {"operation_points": operation_points.to_request_format()}
 
     response = requests.post(
-        url=rust_endpoint("operation_points_map"),
+        url=rust_endpoint("operation_points_table"),
         json=data,
         timeout=5,
     )
