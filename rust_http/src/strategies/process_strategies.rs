@@ -1,4 +1,4 @@
-use crate::strategies::operation_points_map::get_operation_points_map;
+use crate::strategies::operation_points_table::get_operation_points_table;
 use crate::strategies::process_strategy::get_process_strategy;
 use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
@@ -51,10 +51,10 @@ pub fn get_process_strategies(
 
     let mut strategies = Vec::new();
     let long_operation_points = &operation_points.long_operation_points;
-    let long_operation_points_map = get_operation_points_map(long_operation_points);
+    let long_operation_points_table = get_operation_points_table(long_operation_points);
 
     let short_operation_points = &operation_points.short_operation_points;
-    let short_operation_points_map = get_operation_points_map(short_operation_points);
+    let short_operation_points_table = get_operation_points_table(short_operation_points);
 
     let timestamps: Vec<i32> = operation_points
         .long_operation_points
@@ -73,16 +73,16 @@ pub fn get_process_strategies(
 
     let mut handles = Vec::new();
     for _ in 0..7 {
-        let long_map = Arc::clone(&long_operation_points_map);
-        let short_map = Arc::clone(&short_operation_points_map);
+        let long_table = Arc::clone(&long_operation_points_table);
+        let short_table = Arc::clone(&short_operation_points_table);
         let work_rx = work_receiver.clone();
         let result_tx = result_sender.clone();
 
         let handle = thread::spawn(move || {
             while let Ok(task) = work_rx.recv() {
                 let strategy = get_process_strategy(
-                    &long_map,
-                    &short_map,
+                    &long_table,
+                    &short_table,
                     &task.signal_group,
                     task.start_date,
                     task.end_date,

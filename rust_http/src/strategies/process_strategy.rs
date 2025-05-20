@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::strategies::annual_operation_count::get_annual_operation_count;
 use crate::strategies::annual_roi_from_global_roi::get_annual_roi_from_global_roi;
 use crate::strategies::global_roi::get_global_roi;
@@ -5,14 +6,13 @@ use crate::strategies::max_draw_down::get_max_draw_down;
 use crate::strategies::operation_points_filter::get_operation_points_filter;
 use crate::strategies::{OperationPoint, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
-use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategyPayload {
-    long_operation_points_map: FxHashMap<i32, OperationPoint>,
-    short_operation_points_map: FxHashMap<i32, OperationPoint>,
+    long_operation_points_map: HashMap<i32, OperationPoint>,
+    short_operation_points_map: HashMap<i32, OperationPoint>,
     signal_group: SignalGroup,
     start_date: i32,
     end_date: i32,
@@ -20,24 +20,36 @@ pub struct ProcessStrategyPayload {
     indicator_id: i32,
 }
 
-pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
+pub async fn process_strategy(
+    payload: web::Json<ProcessStrategyPayload>,
+) -> impl Responder {
     let payload = payload.into_inner();
 
-    let long_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
+    let long_map: HashMap<i32, Arc<OperationPoint>> = payload
         .long_operation_points_map
         .into_iter()
-        .map(|(k, v)| (k, Arc::new(v)))
+        .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
 
-    let short_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
+    let short_map: HashMap<i32, Arc<OperationPoint>> = payload
         .short_operation_points_map
         .into_iter()
-        .map(|(k, v)| (k, Arc::new(v)))
+        .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
 
+    let mut long_list: Vec<(i32, Arc<OperationPoint>)> = long_map
+        .into_iter()
+        .collect();
+    long_list.sort_unstable_by_key(|&(ts, _)| ts);
+
+    let mut short_list: Vec<(i32, Arc<OperationPoint>)> = short_map
+        .into_iter()
+        .collect();
+    short_list.sort_unstable_by_key(|&(ts, _)| ts);
+
     let strategy = get_process_strategy(
-        &long_operation_points_map,
-        &short_operation_points_map,
+        &long_list,
+        &short_list,
         &payload.signal_group,
         payload.start_date,
         payload.end_date,
@@ -49,8 +61,8 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
 }
 
 pub fn get_process_strategy(
-    long_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
-    short_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
+    long_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
+    short_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     signal_group: &SignalGroup,
     start_date: i32,
     end_date: i32,
@@ -58,8 +70,8 @@ pub fn get_process_strategy(
     indicator_id: i32,
 ) -> Strategy {
     let operation_point_list = get_operation_points_filter(
-        long_operation_points_map,
-        short_operation_points_map,
+        long_operation_points_table,
+        short_operation_points_table,
         signal_group,
     );
 

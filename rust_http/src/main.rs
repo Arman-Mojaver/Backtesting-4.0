@@ -118,7 +118,7 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
     post_only_route(
         cfg,
         "/operation_points_map",
-        strategies::operation_points_map::operation_points_map,
+        strategies::operation_points_table::operation_points_table,
     );
     post_only_route(
         cfg,

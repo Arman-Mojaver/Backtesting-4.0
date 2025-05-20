@@ -1,6 +1,5 @@
 use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
-use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -17,50 +16,68 @@ pub async fn operation_points_filter(
 ) -> impl Responder {
     let payload = payload.into_inner();
 
-    let long_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
+    let mut long_table: Vec<(i32, Arc<OperationPoint>)> = payload
         .long_operation_points_map
         .into_iter()
-        .map(|(k, v)| (k, Arc::new(v)))
+        .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
+    long_table.sort_unstable_by_key(|&(ts, _)| ts);
 
-    let short_operation_points_map: FxHashMap<i32, Arc<OperationPoint>> = payload
+    let mut short_table: Vec<(i32, Arc<OperationPoint>)> = payload
         .short_operation_points_map
         .into_iter()
-        .map(|(k, v)| (k, Arc::new(v)))
+        .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
+    short_table.sort_unstable_by_key(|&(ts, _)| ts);
 
     let operation_point_list = get_operation_points_filter(
-        &long_operation_points_map,
-        &short_operation_points_map,
+        &long_table,
+        &short_table,
         &payload.signal_group,
     );
 
-    let serialized_operation_points: Vec<&OperationPoint> =
-        operation_point_list.iter().map(|arc| &**arc).collect();
+    let serialized: Vec<OperationPoint> = operation_point_list
+        .into_iter()
+        .map(|arc| (*arc).clone())
+        .collect();
 
-    HttpResponse::Ok().json(serde_json::json!({ "data": serialized_operation_points }))
+    HttpResponse::Ok().json(serde_json::json!({ "data": serialized }))
+}
+
+fn lookup_operation_points<'a>(
+    timestamps: &[i32],
+    operation_points_table: &'a [(i32, Arc<OperationPoint>)],
+) -> Vec<&'a Arc<OperationPoint>> {
+    let mut operation_points = Vec::with_capacity(timestamps.len());
+    let mut table_index = 0;
+    let n = operation_points_table.len();
+
+    for &timestamp in timestamps {
+        while table_index < n && operation_points_table[table_index].0 < timestamp {
+            table_index += 1;
+        }
+
+        operation_points.push(&operation_points_table[table_index].1);
+    }
+    operation_points
 }
 
 pub fn get_operation_points_filter(
-    long_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
-    short_operation_points_map: &FxHashMap<i32, Arc<OperationPoint>>,
+    long_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
+    short_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     signal_group: &SignalGroup,
 ) -> Vec<Arc<OperationPoint>> {
-    let mut operation_points: Vec<Arc<OperationPoint>> = Vec::new();
-
-    operation_points.extend(
-        signal_group
-            .long_signals
-            .iter()
-            .filter_map(|sig| long_operation_points_map.get(sig).cloned()),
+    let mut operation_points: Vec<Arc<OperationPoint>> = Vec::with_capacity(
+        signal_group.long_signals.len() + signal_group.short_signals.len(),
     );
 
-    operation_points.extend(
-        signal_group
-            .short_signals
-            .iter()
-            .filter_map(|sig| short_operation_points_map.get(sig).cloned()),
-    );
+    let long_operation_points =
+        lookup_operation_points(&signal_group.long_signals, long_operation_points_table);
+    let short_operation_points =
+        lookup_operation_points(&signal_group.short_signals, short_operation_points_table);
+
+    operation_points.extend(long_operation_points.into_iter().cloned());
+    operation_points.extend(short_operation_points.into_iter().cloned());
 
     operation_points.sort_by_key(|p| p.timestamp);
     operation_points

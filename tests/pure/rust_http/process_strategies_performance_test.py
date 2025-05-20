@@ -76,4 +76,8 @@ def test_process_strategies_performance(rust_endpoint):
         Request time: 10.77s
         Process time: 1.93s
 
+    Multithreaded, with Dual Linear Scan:
+        Request time: 10.74s
+        Process time: 1.36s
+
     """
