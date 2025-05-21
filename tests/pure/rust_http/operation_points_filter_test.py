@@ -18,6 +18,9 @@ def test_operation_points_filter_1(rust_endpoint):
     long_operation_points = operation_points_factory.long_operation_points
     short_operation_points = operation_points_factory.short_operation_points
 
+    long_ids = [p.id for p in long_operation_points]
+    short_ids = [p.id for p in short_operation_points]
+
     dates = long_operation_points.dates()
 
     signal_group = SignalGroup(
@@ -38,13 +41,16 @@ def test_operation_points_filter_1(rust_endpoint):
         "signal_group": signal_group.to_request_format(),
     }
 
-    expected_result = [
+    expected_operation_points = [
         long_operation_points_table[0][1],
         short_operation_points_table[1][1],
         long_operation_points_table[2][1],
         short_operation_points_table[3][1],
         long_operation_points_table[4][1],
     ]
+
+    expected_long_ids = [long_ids[0], long_ids[2], long_ids[4]]
+    expected_short_ids = [short_ids[1], short_ids[3]]
 
     response = requests.post(
         url=rust_endpoint("operation_points_filter"),
@@ -53,7 +59,11 @@ def test_operation_points_filter_1(rust_endpoint):
     )
 
     content = parse_response(response)
-    assert content["data"] == expected_result
+    assert content.get("data") == {
+        "operation_points": expected_operation_points,
+        "long_operation_point_ids": expected_long_ids,
+        "short_operation_point_ids": expected_short_ids,
+    }
 
 
 def test_operation_points_filter_2(rust_endpoint):
@@ -94,13 +104,16 @@ def test_operation_points_filter_2(rust_endpoint):
         (item["timestamp"], item) for item in short_operation_points.to_request_format()
     ]
 
+    long_ids = [p.id for p in long_operation_points]
+    short_ids = [p.id for p in short_operation_points]
+
     data = {
         "long_operation_points_table": long_operation_points_table,
         "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
     }
 
-    expected_result = [
+    expected_operation_points = [
         long_operation_points_table[0][1],
         short_operation_points_table[1][1],
         long_operation_points_table[2][1],
@@ -114,6 +127,22 @@ def test_operation_points_filter_2(rust_endpoint):
         long_operation_points_table[-1][1],
     ]
 
+    expected_long_ids = [
+        long_ids[0],
+        long_ids[2],
+        long_ids[4],
+        long_ids[-5],
+        long_ids[-3],
+        long_ids[-1],
+    ]
+    expected_short_ids = [
+        short_ids[1],
+        short_ids[3],
+        short_ids[-6],
+        short_ids[-4],
+        short_ids[-2],
+    ]
+
     response = requests.post(
         url=rust_endpoint("operation_points_filter"),
         json=data,
@@ -121,7 +150,11 @@ def test_operation_points_filter_2(rust_endpoint):
     )
 
     content = parse_response(response)
-    assert content["data"] == expected_result
+    assert content.get("data") == {
+        "operation_points": expected_operation_points,
+        "long_operation_point_ids": expected_long_ids,
+        "short_operation_point_ids": expected_short_ids,
+    }
 
 
 def test_operation_points_filter_3(rust_endpoint):
@@ -134,6 +167,9 @@ def test_operation_points_filter_3(rust_endpoint):
 
     long_operation_points = operation_points_factory.long_operation_points
     short_operation_points = operation_points_factory.short_operation_points
+
+    long_ids = [p.id for p in long_operation_points]
+    short_ids = [p.id for p in short_operation_points]
 
     dates = long_operation_points.dates()
 
@@ -174,7 +210,7 @@ def test_operation_points_filter_3(rust_endpoint):
         "signal_group": signal_group.to_request_format(),
     }
 
-    expected_result = [
+    expected_operation_points = [
         long_operation_points_table[0][1],
         short_operation_points_table[1][1],
         long_operation_points_table[2][1],
@@ -194,6 +230,28 @@ def test_operation_points_filter_3(rust_endpoint):
         long_operation_points_table[-1][1],
     ]
 
+    expected_long_ids = [
+        long_ids[0],
+        long_ids[2],
+        long_ids[4],
+        long_ids[15],
+        long_ids[105],
+        long_ids[205],
+        long_ids[-5],
+        long_ids[-3],
+        long_ids[-1],
+    ]
+    expected_short_ids = [
+        short_ids[1],
+        short_ids[3],
+        short_ids[10],
+        short_ids[100],
+        short_ids[200],
+        short_ids[-6],
+        short_ids[-4],
+        short_ids[-2],
+    ]
+
     response = requests.post(
         url=rust_endpoint("operation_points_filter"),
         json=data,
@@ -201,4 +259,8 @@ def test_operation_points_filter_3(rust_endpoint):
     )
 
     content = parse_response(response)
-    assert content["data"] == expected_result
+    assert content.get("data") == {
+        "operation_points": expected_operation_points,
+        "long_operation_point_ids": expected_long_ids,
+        "short_operation_point_ids": expected_short_ids,
+    }

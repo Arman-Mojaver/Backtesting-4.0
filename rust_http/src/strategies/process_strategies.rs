@@ -1,6 +1,6 @@
 use crate::strategies::operation_points_table::get_operation_points_table;
-use crate::strategies::process_strategy::get_process_strategy;
-use crate::strategies::{OperationPoint, SignalGroup, Strategy};
+use crate::strategies::process_strategy::{get_process_strategy, StrategyGroup};
+use crate::strategies::{OperationPoint, SignalGroup};
 use actix_web::{web, HttpResponse, Responder};
 use crossbeam::channel;
 use log::info;
@@ -24,12 +24,12 @@ pub struct OperationPoints {
 }
 
 pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) -> impl Responder {
-    let strategies = get_process_strategies(
+    let strategy_groups = get_process_strategies(
         &payload.operation_points,
         payload.money_management_strategy_id,
         &payload.signal_groups,
     );
-    HttpResponse::Ok().json(serde_json::json!({ "data": strategies }))
+    HttpResponse::Ok().json(serde_json::json!({ "data": strategy_groups }))
 }
 
 #[derive(Debug)]
@@ -45,11 +45,11 @@ pub fn get_process_strategies(
     operation_points: &OperationPoints,
     money_management_strategy_id: i32,
     signal_groups: &HashMap<i32, SignalGroup>,
-) -> Vec<Strategy> {
+) -> Vec<StrategyGroup> {
     let start = Instant::now();
     info!("/process_strategies. Starting");
 
-    let mut strategies = Vec::new();
+    let mut strategy_groups = Vec::new();
     let long_operation_points = &operation_points.long_operation_points;
     let long_operation_points_table = get_operation_points_table(long_operation_points);
 
@@ -69,7 +69,7 @@ pub fn get_process_strategies(
     indicator_ids.sort();
 
     let (work_sender, work_receiver) = channel::unbounded::<ProcessTask>();
-    let (result_sender, result_receiver) = channel::unbounded::<Strategy>();
+    let (result_sender, result_receiver) = channel::unbounded::<StrategyGroup>();
 
     let mut handles = Vec::new();
     for _ in 0..7 {
@@ -102,10 +102,10 @@ pub fn get_process_strategies(
 
         work_sender
             .send(ProcessTask {
-                signal_group: signal_group,
-                start_date: start_date,
-                end_date: end_date,
-                money_management_strategy_id: money_management_strategy_id,
+                signal_group,
+                start_date,
+                end_date,
+                money_management_strategy_id,
                 indicator_id: *indicator_id,
             })
             .unwrap();
@@ -114,18 +114,18 @@ pub fn get_process_strategies(
     drop(work_sender);
     drop(result_sender);
 
-    for strategy in result_receiver.iter() {
-        strategies.push(strategy);
+    for strategy_group in result_receiver.iter() {
+        strategy_groups.push(strategy_group);
     }
 
     for handle in handles {
         handle.join().unwrap();
     }
 
-    strategies.sort_by_key(|s| s.indicator_id);
+    strategy_groups.sort_by_key(|s| s.strategy.indicator_id);
 
     let total_elapsed = start.elapsed();
     info!("Process time: {:?}", total_elapsed);
 
-    strategies
+    strategy_groups
 }

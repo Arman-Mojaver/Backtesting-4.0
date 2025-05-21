@@ -19,6 +19,13 @@ pub struct ProcessStrategyPayload {
     indicator_id: i32,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct StrategyGroup {
+    pub strategy: Strategy,
+    pub long_operation_point_ids: Vec<i32>,
+    pub short_operation_point_ids: Vec<i32>,
+}
+
 pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> impl Responder {
     let payload = payload.into_inner();
 
@@ -34,7 +41,7 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
         .map(|(ts, op)| (ts, Arc::new(op)))
         .collect();
 
-    let strategy = get_process_strategy(
+    let strategy_group = get_process_strategy(
         &long_table,
         &short_table,
         &payload.signal_group,
@@ -44,7 +51,7 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
         payload.indicator_id,
     );
 
-    HttpResponse::Ok().json(serde_json::json!({ "data": strategy }))
+    HttpResponse::Ok().json(serde_json::json!({ "data": strategy_group }))
 }
 
 pub fn get_process_strategy(
@@ -55,24 +62,36 @@ pub fn get_process_strategy(
     end_date: i32,
     money_management_strategy_id: i32,
     indicator_id: i32,
-) -> Strategy {
-    let operation_point_list = get_operation_points_filter(
+) -> StrategyGroup {
+    let operation_points_group = get_operation_points_filter(
         long_operation_points_table,
         short_operation_points_table,
         signal_group,
     );
 
-    let annual_roi =
-        get_annual_roi_from_global_roi(get_global_roi(&operation_point_list), start_date, end_date);
-    let max_draw_down = get_max_draw_down(&operation_point_list);
-    let annual_operation_count =
-        get_annual_operation_count(&operation_point_list, start_date, end_date);
+    let annual_roi = get_annual_roi_from_global_roi(
+        get_global_roi(&operation_points_group.operation_points),
+        start_date,
+        end_date,
+    );
+    let max_draw_down = get_max_draw_down(&operation_points_group.operation_points);
+    let annual_operation_count = get_annual_operation_count(
+        &operation_points_group.operation_points,
+        start_date,
+        end_date,
+    );
 
-    Strategy {
+    let strategy = Strategy {
         annual_roi,
         max_draw_down,
         annual_operation_count,
         money_management_strategy_id,
         indicator_id,
+    };
+
+    StrategyGroup {
+        strategy,
+        long_operation_point_ids: operation_points_group.long_operation_point_ids,
+        short_operation_point_ids: operation_points_group.short_operation_point_ids,
     }
 }

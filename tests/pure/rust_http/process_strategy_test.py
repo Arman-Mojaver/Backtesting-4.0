@@ -89,6 +89,9 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
         short_operation_points_map_obj[dates[index]] for index in short_date_indices
     ]
 
+    long_operation_point_ids = [p.id for p in long_operation_points]
+    short_operation_point_ids = [p.id for p in short_operation_points]
+
     operation_points = sorted(
         [*long_operation_points, *short_operation_points], key=lambda p: p.timestamp
     )
@@ -109,10 +112,18 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
 
     # TODO: Fix or reduce rounding error  # noqa: FIX002, TD002, TD003
     assert (
-        abs(content["data"]["annual_operation_count"] - expected_annual_operation_count)
+        abs(
+            content["data"]["strategy"]["annual_operation_count"]
+            - expected_annual_operation_count
+        )
         <= 0.3
     )
-    assert content["data"]["max_draw_down"] == expected_max_draw_down
-    assert content["data"]["annual_roi"] == expected_annual_roi
-    assert content["data"]["money_management_strategy_id"] == money_management_strategy_id
-    assert content["data"]["indicator_id"] == indicator_id
+    assert content["data"]["strategy"]["max_draw_down"] == expected_max_draw_down
+    assert content["data"]["strategy"]["annual_roi"] == expected_annual_roi
+    assert (
+        content["data"]["strategy"]["money_management_strategy_id"]
+        == money_management_strategy_id
+    )
+    assert content["data"]["strategy"]["indicator_id"] == indicator_id
+    assert content["data"]["long_operation_point_ids"] == long_operation_point_ids
+    assert content["data"]["short_operation_point_ids"] == short_operation_point_ids

@@ -10,6 +10,12 @@ pub struct OperationPointsFilterPayload {
     signal_group: SignalGroup,
 }
 
+pub struct OperationPointsGroup {
+    pub operation_points: Vec<Arc<OperationPoint>>,
+    pub long_operation_point_ids: Vec<i32>,
+    pub short_operation_point_ids: Vec<i32>,
+}
+
 pub async fn operation_points_filter(
     payload: web::Json<OperationPointsFilterPayload>,
 ) -> impl Responder {
@@ -29,15 +35,24 @@ pub async fn operation_points_filter(
         .collect();
     short_table.sort_unstable_by_key(|&(ts, _)| ts);
 
-    let operation_point_list =
+    let operation_points_group =
         get_operation_points_filter(&long_table, &short_table, &payload.signal_group);
 
-    let serialized: Vec<OperationPoint> = operation_point_list
+    let serialized_operation_points: Vec<OperationPoint> = operation_points_group
+        .operation_points
         .into_iter()
         .map(|arc| (*arc).clone())
         .collect();
 
-    HttpResponse::Ok().json(serde_json::json!({ "data": serialized }))
+    HttpResponse::Ok().json(serde_json::json!(
+        { "data":
+            {
+                "operation_points": serialized_operation_points,
+                "long_operation_point_ids": operation_points_group.long_operation_point_ids,
+                "short_operation_point_ids": operation_points_group.short_operation_point_ids,
+            }
+        }
+    ))
 }
 
 fn lookup_operation_points<'a>(
@@ -62,7 +77,7 @@ pub fn get_operation_points_filter(
     long_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     short_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     signal_group: &SignalGroup,
-) -> Vec<Arc<OperationPoint>> {
+) -> OperationPointsGroup {
     let mut operation_points: Vec<Arc<OperationPoint>> =
         Vec::with_capacity(signal_group.long_signals.len() + signal_group.short_signals.len());
 
@@ -71,9 +86,16 @@ pub fn get_operation_points_filter(
     let short_operation_points =
         lookup_operation_points(&signal_group.short_signals, short_operation_points_table);
 
+    let long_operation_point_ids = long_operation_points.iter().map(|p| p.id).collect();
+    let short_operation_point_ids = short_operation_points.iter().map(|p| p.id).collect();
+
     operation_points.extend(long_operation_points.into_iter().cloned());
     operation_points.extend(short_operation_points.into_iter().cloned());
 
     operation_points.sort_by_key(|p| p.timestamp);
-    operation_points
+    OperationPointsGroup {
+        operation_points,
+        long_operation_point_ids,
+        short_operation_point_ids,
+    }
 }

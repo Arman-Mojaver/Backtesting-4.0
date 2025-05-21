@@ -113,6 +113,9 @@ def test_process_strategies(
         short_operation_points_map_obj[dates[index]] for index in short_date_indices_1
     ]
 
+    long_operation_point_ids_1 = [p.id for p in long_operation_points_1]
+    short_operation_point_ids_1 = [p.id for p in short_operation_points_1]
+
     operation_points_1 = sorted(
         [*long_operation_points_1, *short_operation_points_1], key=lambda p: p.timestamp
     )
@@ -138,6 +141,9 @@ def test_process_strategies(
         short_operation_points_map_obj[dates[index]] for index in short_date_indices_2
     ]
 
+    long_operation_point_ids_2 = [p.id for p in long_operation_points_2]
+    short_operation_point_ids_2 = [p.id for p in short_operation_points_2]
+
     operation_points_2 = sorted(
         [*long_operation_points_2, *short_operation_points_2], key=lambda p: p.timestamp
     )
@@ -157,29 +163,35 @@ def test_process_strategies(
     # TODO: Fix or reduce rounding error  # noqa: FIX002, TD002, TD003
     assert (
         abs(
-            content["data"][0]["annual_operation_count"]
+            content["data"][0]["strategy"]["annual_operation_count"]
             - expected_annual_operation_count_1
         )
         <= 0.3
     )
-    assert content["data"][0]["max_draw_down"] == expected_max_draw_down_1
-    assert content["data"][0]["annual_roi"] == expected_annual_roi_1
+    assert content["data"][0]["strategy"]["max_draw_down"] == expected_max_draw_down_1
+    assert content["data"][0]["strategy"]["annual_roi"] == expected_annual_roi_1
     assert (
-        content["data"][0]["money_management_strategy_id"] == money_management_strategy_id
+        content["data"][0]["strategy"]["money_management_strategy_id"]
+        == money_management_strategy_id
     )
-    assert content["data"][0]["indicator_id"] == 21
+    assert content["data"][0]["strategy"]["indicator_id"] == 21
+    assert content["data"][0]["long_operation_point_ids"] == long_operation_point_ids_1
+    assert content["data"][0]["short_operation_point_ids"] == short_operation_point_ids_1
 
     # TODO: Fix or reduce rounding error  # noqa: FIX002, TD002, TD003
     assert (
         abs(
-            content["data"][1]["annual_operation_count"]
+            content["data"][1]["strategy"]["annual_operation_count"]
             - expected_annual_operation_count_2
         )
         <= 0.3
     )
-    assert content["data"][1]["max_draw_down"] == expected_max_draw_down_2
-    assert content["data"][1]["annual_roi"] == expected_annual_roi_2
+    assert content["data"][1]["strategy"]["max_draw_down"] == expected_max_draw_down_2
+    assert content["data"][1]["strategy"]["annual_roi"] == expected_annual_roi_2
     assert (
-        content["data"][1]["money_management_strategy_id"] == money_management_strategy_id
+        content["data"][1]["strategy"]["money_management_strategy_id"]
+        == money_management_strategy_id
     )
-    assert content["data"][1]["indicator_id"] == 22
+    assert content["data"][1]["strategy"]["indicator_id"] == 22
+    assert content["data"][1]["long_operation_point_ids"] == long_operation_point_ids_2
+    assert content["data"][1]["short_operation_point_ids"] == short_operation_point_ids_2
