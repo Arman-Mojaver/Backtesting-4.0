@@ -1,13 +1,14 @@
-use crate::strategies::OperationPoint;
+use crate::strategies::{Indicator, OperationPoint};
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategiesValidatorPayload {
-    long_operation_points: Vec<(OperationPoint)>,
-    short_operation_points: Vec<(OperationPoint)>,
+    long_operation_points: Vec<OperationPoint>,
+    short_operation_points: Vec<OperationPoint>,
     money_management_strategy_id: i32,
+    indicators: Vec<Indicator>,
 }
 
 #[derive(Debug)]
@@ -25,6 +26,7 @@ pub async fn process_strategies_validator(
         &payload.long_operation_points,
         &payload.short_operation_points,
         payload.money_management_strategy_id,
+        &payload.indicators,
     ) {
         Ok(()) => HttpResponse::Ok().json(serde_json::json!({ "data": "OK!" })),
         Err(_) => {
@@ -37,6 +39,7 @@ pub fn get_process_strategies_validator(
     long_operation_points: &Vec<OperationPoint>,
     short_operation_points: &Vec<OperationPoint>,
     money_management_strategy_id: i32,
+    indicators: &Vec<Indicator>,
 ) -> Result<(), ValidationError> {
     validate_not_empty(long_operation_points)?;
     validate_not_empty(short_operation_points)?;
@@ -47,6 +50,7 @@ pub fn get_process_strategies_validator(
         money_management_strategy_id,
     )?;
     validate_matching_timestamps(long_operation_points, short_operation_points)?;
+    validate_same_indicator_type(indicators)?;
 
     Ok(())
 }
@@ -100,6 +104,16 @@ fn validate_matching_timestamps(
 
     if long_timestamps != short_timestamps {
         return Err(ValidationError::TimestampMismatch);
+    }
+
+    Ok(())
+}
+
+fn validate_same_indicator_type(indicators: &Vec<Indicator>) -> Result<(), ValidationError> {
+    let reference = &indicators[0].r#type;
+
+    if indicators.iter().any(|i| &i.r#type != reference) {
+        return Err(ValidationError::InstrumentMismatch);
     }
 
     Ok(())
