@@ -78,10 +78,8 @@ def test_process_strategies(
     end_date = datetime_to_string(datetime.fromtimestamp(dates[-1]))  # noqa: DTZ006
 
     data = {
-        "operation_points": {
-            "long_operation_points": long_operation_points.to_request_format(),
-            "short_operation_points": short_operation_points.to_request_format(),
-        },
+        "long_operation_points": long_operation_points.to_request_format(),
+        "short_operation_points": short_operation_points.to_request_format(),
         "signal_groups": {
             21: signal_group_1.to_request_format(),
             22: signal_group_2.to_request_format(),

@@ -33,10 +33,8 @@ def test_process_strategies_performance(rust_endpoint):
     )
 
     data = {
-        "operation_points": {
-            "long_operation_points": long_operation_points.to_request_format(),
-            "short_operation_points": short_operation_points.to_request_format(),
-        },
+        "long_operation_points": long_operation_points.to_request_format(),
+        "short_operation_points": short_operation_points.to_request_format(),
         "signal_groups": signal_group_factory.to_request_format(),
         "money_management_strategy_id": money_management_strategy_id,
     }

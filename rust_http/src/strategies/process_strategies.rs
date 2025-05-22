@@ -13,19 +13,15 @@ use std::time::Instant;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategiesPayload {
     money_management_strategy_id: i32,
-    operation_points: OperationPoints,
-    signal_groups: HashMap<i32, SignalGroup>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct OperationPoints {
     long_operation_points: Vec<OperationPoint>,
     short_operation_points: Vec<OperationPoint>,
+    signal_groups: HashMap<i32, SignalGroup>,
 }
 
 pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) -> impl Responder {
     let strategy_groups = get_process_strategies(
-        &payload.operation_points,
+        &payload.long_operation_points,
+        &payload.short_operation_points,
         payload.money_management_strategy_id,
         &payload.signal_groups,
     );
@@ -42,7 +38,8 @@ struct ProcessTask {
 }
 
 pub fn get_process_strategies(
-    operation_points: &OperationPoints,
+    long_operation_points: &Vec<OperationPoint>,
+    short_operation_points: &Vec<OperationPoint>,
     money_management_strategy_id: i32,
     signal_groups: &HashMap<i32, SignalGroup>,
 ) -> Vec<StrategyGroup> {
@@ -50,14 +47,10 @@ pub fn get_process_strategies(
     info!("/process_strategies. Starting");
 
     let mut strategy_groups = Vec::new();
-    let long_operation_points = &operation_points.long_operation_points;
     let long_operation_points_table = get_operation_points_table(long_operation_points);
-
-    let short_operation_points = &operation_points.short_operation_points;
     let short_operation_points_table = get_operation_points_table(short_operation_points);
 
-    let timestamps: Vec<i32> = operation_points
-        .long_operation_points
+    let timestamps: Vec<i32> = long_operation_points
         .iter()
         .map(|op| op.timestamp)
         .collect();
