@@ -47,7 +47,7 @@ pub struct OperationPoint {
     timestamp: i32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Strategy {
     annual_roi: f64,
     max_draw_down: f64,
