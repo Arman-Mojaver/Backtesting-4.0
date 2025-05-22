@@ -155,6 +155,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/process_strategies_validator",
         strategies::process_strategies_validator::process_strategies_validator,
     );
+    post_only_route(
+        cfg,
+        "/strategy_profitability",
+        strategies::strategy_profitability::strategy_profitability,
+    )
 }
 
 #[actix_web::main]

@@ -11,6 +11,7 @@ pub mod query_indicators;
 pub mod query_long_operation_points;
 pub mod query_resampled_points;
 pub mod query_short_operation_points;
+pub mod strategy_profitability;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};

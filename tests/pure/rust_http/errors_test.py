@@ -22,6 +22,7 @@ ENDPOINT_PATHS = (
     "query_short_operation_points_by_mms",
     "query_resampled_points_by_instrument",
     "query_indicators_by_type",
+    "strategy_profitability",
 )
 
 
