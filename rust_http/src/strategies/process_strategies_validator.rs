@@ -43,6 +43,7 @@ pub fn get_process_strategies_validator(
 ) -> Result<(), ValidationError> {
     validate_not_empty(long_operation_points)?;
     validate_not_empty(short_operation_points)?;
+    validate_not_empty(indicators)?;
     validate_same_instrument(long_operation_points, short_operation_points)?;
     validate_strategy_id_matches(
         long_operation_points,
@@ -55,7 +56,7 @@ pub fn get_process_strategies_validator(
     Ok(())
 }
 
-fn validate_not_empty(points: &Vec<OperationPoint>) -> Result<(), ValidationError> {
+fn validate_not_empty<T>(points: &Vec<T>) -> Result<(), ValidationError> {
     if points.is_empty() {
         return Err(ValidationError::Empty);
     }

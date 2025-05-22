@@ -22,7 +22,7 @@ from testing_utils.request_body_factory.indicator_factory import (
         "indicators",
     ),
     [
-        (1, [], [], [*generate_rsi_indicators(2)]),
+        # Empty inputs
         (
             1,
             [],
@@ -34,6 +34,12 @@ from testing_utils.request_body_factory.indicator_factory import (
             generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 10),
             [],
             [*generate_rsi_indicators(2)],
+        ),
+        (
+            1,
+            generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            [],
         ),
         # instrument mismatch
         (
