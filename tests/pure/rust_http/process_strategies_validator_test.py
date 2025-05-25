@@ -26,49 +26,49 @@ from testing_utils.request_body_factory.indicator_factory import (
         (
             1,
             [],
-            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_short_operation_points(1, "EURUSD", "2023-11-15", 5),
             [*generate_rsi_indicators(2)],
         ),
         (
             1,
-            generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "EURUSD", "2023-11-15", 5),
             [],
             [*generate_rsi_indicators(2)],
         ),
         (
             1,
-            generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 10),
-            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "EURUSD", "2023-11-15", 5),
+            generate_random_short_operation_points(1, "EURUSD", "2023-11-15", 5),
             [],
         ),
         # instrument mismatch
         (
             1,
-            generate_random_long_operation_points(1, "USDCAD", "2024-01-01", 1)
-            + generate_random_long_operation_points(1, "EURUSD", "2024-01-02", 9),
-            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "USDCAD", "2023-11-15", 1)
+            + generate_random_long_operation_points(1, "EURUSD", "2023-11-16", 4),
+            generate_random_short_operation_points(1, "EURUSD", "2023-11-15", 5),
             [*generate_rsi_indicators(2)],
         ),
         # date mismatch
         (
             1,
-            generate_random_long_operation_points(1, "EURUSD", "2024-01-10", 10),
-            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "EURUSD", "2023-11-15", 5),
+            generate_random_short_operation_points(1, "EURUSD", "2023-12-15", 5),
             [*generate_rsi_indicators(2)],
         ),
         # money management strategy mismatch
         (
             1,
-            generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 1)
-            + generate_random_long_operation_points(2, "EURUSD", "2024-01-02", 9),
-            generate_random_short_operation_points(2, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "EURUSD", "2023-11-15", 1)
+            + generate_random_long_operation_points(2, "EURUSD", "2023-11-16", 4),
+            generate_random_short_operation_points(2, "EURUSD", "2023-11-15", 5),
             [*generate_rsi_indicators(2)],
         ),
         # indicator type mismatch
         (
             1,
-            generate_random_long_operation_points(1, "EURUSD", "2024-01-01", 10),
-            generate_random_short_operation_points(1, "EURUSD", "2024-01-01", 10),
+            generate_random_long_operation_points(1, "EURUSD", "2023-11-15", 5),
+            generate_random_short_operation_points(1, "EURUSD", "2023-11-15", 5),
             [*generate_rsi_indicators(2), *generate_macd_indicators(2)],
         ),
     ],
@@ -102,15 +102,15 @@ def test_success(rust_endpoint):
     long_operation_points = generate_random_long_operation_points(
         money_management_strategy_id,
         "EURUSD",
-        "2024-01-01",
-        10,
+        "2023-11-15",
+        5,
     )
 
     short_operation_points = generate_random_short_operation_points(
         money_management_strategy_id,
         "EURUSD",
-        "2024-01-01",
-        10,
+        "2023-11-15",
+        5,
     )
 
     data = {
