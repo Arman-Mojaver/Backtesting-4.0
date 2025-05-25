@@ -35,11 +35,29 @@ def resampled_point_2(resampled_point_data_2):
 
 
 def test_to_request_format(
-    resampled_point, resampled_point_2, resampled_point_data, resampled_point_data_2
+    resampled_point, resampled_point_2, resampled_point_data, resampled_point_data_2,
 ):
     assert ResampledPointD1List(
         [resampled_point, resampled_point_2]
     ).to_request_format() == [
-        {"id": resampled_point.id, **resampled_point_data},
-        {"id": resampled_point_2.id, **resampled_point_data_2},
+        {
+            "id": resampled_point.id,
+            "instrument": resampled_point_data["instrument"],
+            "open": resampled_point_data["open"],
+            "high": resampled_point_data["high"],
+            "low": resampled_point_data["low"],
+            "close": resampled_point_data["close"],
+            "volume": resampled_point_data["volume"],
+            "timestamp": resampled_point_data["timestamp"],
+        },
+        {
+            "id": resampled_point_2.id,
+            "instrument": resampled_point_data_2["instrument"],
+            "open": resampled_point_data_2["open"],
+            "high": resampled_point_data_2["high"],
+            "low": resampled_point_data_2["low"],
+            "close": resampled_point_data_2["close"],
+            "volume": resampled_point_data_2["volume"],
+            "timestamp": resampled_point_data_2["timestamp"],
+        },
     ]

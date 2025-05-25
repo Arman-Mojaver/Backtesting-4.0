@@ -57,13 +57,11 @@ class ResampledPointD1(Base, CRUDMixin):
     def to_request_format(self) -> dict[str, Any]:
         return {
             "id": self.id,
-            "datetime": str(self.datetime),
             "instrument": self.instrument,
             "open": self.open,
             "high": self.high,
             "low": self.low,
             "close": self.close,
             "volume": self.volume,
-            "high_low_order": HighLowOrder(self.high_low_order).value,
             "timestamp": int(string_to_datetime(str(self.datetime)).timestamp()),
         }

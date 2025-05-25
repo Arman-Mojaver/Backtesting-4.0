@@ -22,5 +22,11 @@ def resampled_point(resampled_point_data):
 def test_to_request_format(resampled_point, resampled_point_data):
     assert resampled_point.to_request_format() == {
         "id": resampled_point.id,
-        **resampled_point_data,
+        "instrument": resampled_point_data["instrument"],
+        "open": resampled_point_data["open"],
+        "high": resampled_point_data["high"],
+        "low": resampled_point_data["low"],
+        "close": resampled_point_data["close"],
+        "volume": resampled_point_data["volume"],
+        "timestamp": resampled_point_data["timestamp"],
     }
