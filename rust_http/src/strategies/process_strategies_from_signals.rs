@@ -11,15 +11,17 @@ use std::thread;
 use std::time::Instant;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ProcessStrategiesPayload {
+pub struct ProcessStrategiesFromSignalsPayload {
     money_management_strategy_id: i32,
     long_operation_points: Vec<OperationPoint>,
     short_operation_points: Vec<OperationPoint>,
     signal_groups: HashMap<i32, SignalGroup>,
 }
 
-pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) -> impl Responder {
-    let strategy_groups = get_process_strategies(
+pub async fn process_strategies_from_signals(
+    payload: web::Json<ProcessStrategiesFromSignalsPayload>,
+) -> impl Responder {
+    let strategy_groups = get_process_strategies_from_signals(
         &payload.long_operation_points,
         &payload.short_operation_points,
         payload.money_management_strategy_id,
@@ -37,14 +39,14 @@ struct ProcessTask {
     indicator_id: i32,
 }
 
-pub fn get_process_strategies(
+pub fn get_process_strategies_from_signals(
     long_operation_points: &Vec<OperationPoint>,
     short_operation_points: &Vec<OperationPoint>,
     money_management_strategy_id: i32,
     signal_groups: &HashMap<i32, SignalGroup>,
 ) -> Vec<StrategyGroup> {
     let start = Instant::now();
-    info!("/process_strategies. Starting");
+    info!("/process_strategies_from_signals. Starting");
 
     let mut strategy_groups = Vec::new();
     let long_operation_points_table = get_operation_points_table(long_operation_points);

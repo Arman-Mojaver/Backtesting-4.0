@@ -42,7 +42,7 @@ def test_process_strategies_performance(rust_endpoint):
     print("Sending request")  # noqa: T201
     start = time.time()
     response = requests.post(
-        url=rust_endpoint("process_strategies"),
+        url=rust_endpoint("process_strategies_from_signals"),
         json=data,
         timeout=30,
     )

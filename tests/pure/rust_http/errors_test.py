@@ -6,7 +6,6 @@ import requests
 from testing_utils.http_utils import parse_response
 
 ENDPOINT_PATHS = (
-    "process_strategies",
     "rsi",
     # Tests
     "annual_operation_count",
@@ -16,7 +15,7 @@ ENDPOINT_PATHS = (
     "operation_points_table",
     "operation_points_filter",
     "process_strategies_validator",
-    "process_strategies",
+    "process_strategies_from_signals",
     "process_strategy",
     "query_long_operation_points_by_mms",
     "query_short_operation_points_by_mms",

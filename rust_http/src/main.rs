@@ -93,8 +93,8 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
     // Production Endpoints
     post_only_route(
         cfg,
-        "/process_strategies",
-        strategies::process_strategies::process_strategies,
+        "/process_strategies_from_signals",
+        strategies::process_strategies_from_signals::process_strategies_from_signals,
     );
     post_only_route(cfg, "/rsi", indicators::rsi::rsi);
 
