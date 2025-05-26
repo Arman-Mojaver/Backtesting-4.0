@@ -4,6 +4,7 @@ pub mod global_roi;
 pub mod max_draw_down;
 pub mod operation_points_filter;
 pub mod operation_points_table;
+pub mod process_strategies;
 pub mod process_strategies_from_signals;
 pub mod process_strategies_validator;
 pub mod process_strategy;
