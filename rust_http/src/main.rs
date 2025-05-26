@@ -101,6 +101,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
     // Test Endpoints
     post_only_route(
         cfg,
+        "/process_strategies_test",
+        strategies::process_strategies_test::process_strategies_test,
+    );
+    post_only_route(
+        cfg,
         "/process_strategies_from_signals_test",
         strategies::process_strategies_from_signals::process_strategies_from_signals,
     );

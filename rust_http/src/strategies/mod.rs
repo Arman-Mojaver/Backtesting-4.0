@@ -6,6 +6,7 @@ pub mod operation_points_filter;
 pub mod operation_points_table;
 pub mod process_strategies;
 pub mod process_strategies_from_signals;
+pub mod process_strategies_test;
 pub mod process_strategies_validator;
 pub mod process_strategy;
 pub mod query_indicators;

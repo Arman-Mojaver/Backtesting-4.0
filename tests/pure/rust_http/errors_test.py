@@ -9,6 +9,7 @@ ENDPOINT_PATHS = (
     "process_strategies",
     "rsi",
     # Tests
+    "process_strategies_test",
     "annual_operation_count_test",
     "annual_roi_from_global_roi_test",
     "global_roi_test",
