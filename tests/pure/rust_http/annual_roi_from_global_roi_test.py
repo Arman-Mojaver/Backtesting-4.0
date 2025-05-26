@@ -17,7 +17,7 @@ def test_calculate_annual_roi(end_date, global_roi, rust_endpoint):
     }
 
     response = requests.post(
-        url=rust_endpoint("annual_roi_from_global_roi"),
+        url=rust_endpoint("annual_roi_from_global_roi_test"),
         json=data,
         timeout=5,
     )

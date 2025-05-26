@@ -101,68 +101,68 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
     // Test Endpoints
     post_only_route(
         cfg,
-        "/process_strategies_from_signals",
+        "/process_strategies_from_signals_test",
         strategies::process_strategies_from_signals::process_strategies_from_signals,
     );
     post_only_route(
         cfg,
-        "/annual_operation_count",
+        "/annual_operation_count_test",
         strategies::annual_operation_count::annual_operation_count,
     );
     post_only_route(
         cfg,
-        "/max_draw_down",
+        "/max_draw_down_test",
         strategies::max_draw_down::max_draw_down,
     );
-    post_only_route(cfg, "/global_roi", strategies::global_roi::global_roi);
+    post_only_route(cfg, "/global_roi_test", strategies::global_roi::global_roi);
     post_only_route(
         cfg,
-        "/annual_roi_from_global_roi",
+        "/annual_roi_from_global_roi_test",
         strategies::annual_roi_from_global_roi::annual_roi_from_global_roi,
     );
     post_only_route(
         cfg,
-        "/operation_points_table",
+        "/operation_points_table_test",
         strategies::operation_points_table::operation_points_table,
     );
     post_only_route(
         cfg,
-        "/operation_points_filter",
+        "/operation_points_filter_test",
         strategies::operation_points_filter::operation_points_filter,
     );
     post_only_route(
         cfg,
-        "/process_strategy",
+        "/process_strategy_test",
         strategies::process_strategy::process_strategy,
     );
     post_only_route(
         cfg,
-        "/query_long_operation_points_by_mms",
+        "/query_long_operation_points_by_mms_test",
         strategies::query_long_operation_points::query_long_operation_points,
     );
     post_only_route(
         cfg,
-        "/query_short_operation_points_by_mms",
+        "/query_short_operation_points_by_mms_test",
         strategies::query_short_operation_points::query_short_operation_points,
     );
     post_only_route(
         cfg,
-        "/query_resampled_points_by_instrument",
+        "/query_resampled_points_by_instrument_test",
         strategies::query_resampled_points::query_resampled_points,
     );
     post_only_route(
         cfg,
-        "/query_indicators_by_type",
+        "/query_indicators_by_type_test",
         strategies::query_indicators::query_indicators,
     );
     post_only_route(
         cfg,
-        "/process_strategies_validator",
+        "/process_strategies_validator_test",
         strategies::process_strategies_validator::process_strategies_validator,
     );
     post_only_route(
         cfg,
-        "/strategy_profitability",
+        "/strategy_profitability_test",
         strategies::strategy_profitability::strategy_profitability,
     )
 }

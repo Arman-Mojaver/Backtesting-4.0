@@ -53,7 +53,7 @@ def test_operation_points_filter_1(rust_endpoint):
     expected_short_ids = [short_ids[1], short_ids[3]]
 
     response = requests.post(
-        url=rust_endpoint("operation_points_filter"),
+        url=rust_endpoint("operation_points_filter_test"),
         json=data,
         timeout=5,
     )
@@ -144,7 +144,7 @@ def test_operation_points_filter_2(rust_endpoint):
     ]
 
     response = requests.post(
-        url=rust_endpoint("operation_points_filter"),
+        url=rust_endpoint("operation_points_filter_test"),
         json=data,
         timeout=5,
     )
@@ -253,7 +253,7 @@ def test_operation_points_filter_3(rust_endpoint):
     ]
 
     response = requests.post(
-        url=rust_endpoint("operation_points_filter"),
+        url=rust_endpoint("operation_points_filter_test"),
         json=data,
         timeout=5,
     )

@@ -10,7 +10,7 @@ def test_empty_table(rust_endpoint, session):
     data = {"money_management_strategy_id": NON_EXISTENT_ID}
 
     response = requests.post(
-        url=rust_endpoint("query_short_operation_points_by_mms"),
+        url=rust_endpoint("query_short_operation_points_by_mms_test"),
         json=data,
         timeout=5,
     )
@@ -24,7 +24,7 @@ def test_table_has_unmatched_items(other_short_operation_points, rust_endpoint, 
     data = {"money_management_strategy_id": NON_EXISTENT_ID}
 
     response = requests.post(
-        url=rust_endpoint("query_short_operation_points_by_mms"),
+        url=rust_endpoint("query_short_operation_points_by_mms_test"),
         json=data,
         timeout=5,
     )
@@ -44,7 +44,7 @@ def test_table_has_only_matched_items(
     data = {"money_management_strategy_id": point_1.money_management_strategy_id}
 
     response = requests.post(
-        url=rust_endpoint("query_short_operation_points_by_mms"),
+        url=rust_endpoint("query_short_operation_points_by_mms_test"),
         json=data,
         timeout=5,
     )
@@ -82,7 +82,7 @@ def test_table_has_matched_and_unmatched_items(
     data = {"money_management_strategy_id": money_management_strategy_2.id}
 
     response = requests.post(
-        url=rust_endpoint("query_short_operation_points_by_mms"),
+        url=rust_endpoint("query_short_operation_points_by_mms_test"),
         json=data,
         timeout=5,
     )

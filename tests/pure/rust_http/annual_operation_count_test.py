@@ -47,7 +47,7 @@ def test_annual_operation_count(end_date, count, expected_result, rust_endpoint)
     }
 
     response = requests.post(
-        url=rust_endpoint("annual_operation_count"),
+        url=rust_endpoint("annual_operation_count_test"),
         json=data,
         timeout=5,
     )

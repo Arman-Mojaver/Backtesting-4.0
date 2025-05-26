@@ -88,7 +88,7 @@ def test_process_strategies(
     }
 
     response = requests.post(
-        url=rust_endpoint("process_strategies_from_signals"),
+        url=rust_endpoint("process_strategies_from_signals_test"),
         json=data,
         timeout=5,
     )

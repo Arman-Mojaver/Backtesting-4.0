@@ -58,7 +58,7 @@ def test_annual_operation_count(
     ]
 
     response = requests.post(
-        url=rust_endpoint("strategy_profitability"),
+        url=rust_endpoint("strategy_profitability_test"),
         json=data,
         timeout=5,
     )
@@ -117,7 +117,7 @@ def test_max_draw_down(
     ]
 
     response = requests.post(
-        url=rust_endpoint("strategy_profitability"),
+        url=rust_endpoint("strategy_profitability_test"),
         json=data,
         timeout=5,
     )
@@ -175,7 +175,7 @@ def test_annual_roi(
     ]
 
     response = requests.post(
-        url=rust_endpoint("strategy_profitability"),
+        url=rust_endpoint("strategy_profitability_test"),
         json=data,
         timeout=5,
     )
@@ -204,7 +204,7 @@ def test_none(rust_endpoint):
     }
 
     response = requests.post(
-        url=rust_endpoint("strategy_profitability"),
+        url=rust_endpoint("strategy_profitability_test"),
         json=data,
         timeout=5,
     )
@@ -233,7 +233,7 @@ def test_all(rust_endpoint):
     }
 
     response = requests.post(
-        url=rust_endpoint("strategy_profitability"),
+        url=rust_endpoint("strategy_profitability_test"),
         json=data,
         timeout=5,
     )

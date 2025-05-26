@@ -70,7 +70,7 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
     }
 
     response = requests.post(
-        url=rust_endpoint("process_strategy"),
+        url=rust_endpoint("process_strategy_test"),
         json=data,
         timeout=5,
     )

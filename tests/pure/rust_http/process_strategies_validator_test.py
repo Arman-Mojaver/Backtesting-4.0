@@ -187,7 +187,7 @@ def test_process_strategies_validator_returns_error(  # noqa: PLR0913
     }
 
     response = requests.post(
-        url=rust_endpoint("process_strategies_validator"),
+        url=rust_endpoint("process_strategies_validator_test"),
         json=data,
         timeout=5,
     )
@@ -229,7 +229,7 @@ def test_success(rust_endpoint):
     }
 
     response = requests.post(
-        url=rust_endpoint("process_strategies_validator"),
+        url=rust_endpoint("process_strategies_validator_test"),
         json=data,
         timeout=5,
     )

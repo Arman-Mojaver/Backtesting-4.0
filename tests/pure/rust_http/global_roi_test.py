@@ -23,7 +23,7 @@ def test_global_roi(point_data, expected_result, rust_endpoint):
     operation_points = factory.operation_points_from_data()
 
     response = requests.post(
-        url=rust_endpoint("global_roi"),
+        url=rust_endpoint("global_roi_test"),
         json={"operation_points": operation_points.to_request_format()},
         timeout=5,
     )

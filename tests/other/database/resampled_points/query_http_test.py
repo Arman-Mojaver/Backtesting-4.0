@@ -9,7 +9,7 @@ def test_empty_table(rust_endpoint, session):
     data = {"instrument": NON_EXISTENT_INSTRUMENT}
 
     response = requests.post(
-        url=rust_endpoint("query_resampled_points_by_instrument"),
+        url=rust_endpoint("query_resampled_points_by_instrument_test"),
         json=data,
         timeout=5,
     )
@@ -23,7 +23,7 @@ def test_table_has_unmatched_items(other_resampled_points_usdcad, rust_endpoint,
     data = {"instrument": NON_EXISTENT_INSTRUMENT}
 
     response = requests.post(
-        url=rust_endpoint("query_resampled_points_by_instrument"),
+        url=rust_endpoint("query_resampled_points_by_instrument_test"),
         json=data,
         timeout=5,
     )
@@ -43,7 +43,7 @@ def test_table_has_only_matched_items(
     data = {"instrument": point_1.instrument}
 
     response = requests.post(
-        url=rust_endpoint("query_resampled_points_by_instrument"),
+        url=rust_endpoint("query_resampled_points_by_instrument_test"),
         json=data,
         timeout=5,
     )
@@ -72,7 +72,7 @@ def test_table_has_matched_and_unmatched_items(
     data = {"instrument": point_1.instrument}
 
     response = requests.post(
-        url=rust_endpoint("query_resampled_points_by_instrument"),
+        url=rust_endpoint("query_resampled_points_by_instrument_test"),
         json=data,
         timeout=5,
     )
