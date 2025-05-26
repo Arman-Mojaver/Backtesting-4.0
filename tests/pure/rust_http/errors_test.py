@@ -7,7 +7,6 @@ from testing_utils.http_utils import parse_response
 
 ENDPOINT_PATHS = (
     "process_strategies",
-    "rsi",
     # Tests
     "process_strategies_test",
     "annual_operation_count_test",
