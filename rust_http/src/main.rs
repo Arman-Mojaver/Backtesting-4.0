@@ -7,8 +7,8 @@ use std::io;
 
 mod config;
 mod db;
-mod indicators;
 mod routes;
+mod signals;
 mod strategies;
 
 fn setup_logger() -> Result<(), fern::InitError> {
@@ -96,7 +96,7 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/process_strategies",
         strategies::process_strategies::process_strategies,
     );
-    post_only_route(cfg, "/rsi", indicators::rsi::rsi);
+    post_only_route(cfg, "/rsi", signals::rsi::rsi);
 
     // Test Endpoints
     post_only_route(
