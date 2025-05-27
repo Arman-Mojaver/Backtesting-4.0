@@ -13,14 +13,22 @@ pub struct OneBuffer {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TwoBuffers {
+    pub upcross_long_buffer: Vec<IndicatorValue>,
+    pub upcross_short_buffer: Vec<IndicatorValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum IndicatorValues {
     One(OneBuffer),
+    Two(TwoBuffers),
 }
 
 impl IndicatorValues {
     pub fn generate_signals(&self) -> SignalGroup {
         match self {
             IndicatorValues::One(buffer) => self.oscillator(buffer),
+            IndicatorValues::Two(buffers) => self.crossover(buffers),
         }
     }
 }
