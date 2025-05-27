@@ -168,7 +168,8 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         cfg,
         "/strategy_profitability_test",
         strategies::strategy_profitability::strategy_profitability,
-    )
+    );
+    post_only_route(cfg, "/oscillator_test", signals::oscillator::oscillator)
 }
 
 #[actix_web::main]

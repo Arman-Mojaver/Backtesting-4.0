@@ -23,6 +23,7 @@ ENDPOINT_PATHS = (
     "query_resampled_points_by_instrument_test",
     "query_indicators_by_type_test",
     "strategy_profitability_test",
+    "oscillator_test",
 )
 
 
