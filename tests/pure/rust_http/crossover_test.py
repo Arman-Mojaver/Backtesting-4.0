@@ -71,15 +71,15 @@ from testing_utils.http_utils import parse_response
             SignalGroup(long_signals=[], short_signals=[]),
         ),
         (
-                [
-                    {"timestamp": 1712777600, "value": -2.0},
-                    {"timestamp": 1712864000, "value": -1.5},
-                ],
-                [
-                    {"timestamp": 1712777600, "value": -1.0},
-                    {"timestamp": 1712864000, "value": -0.5},
-                ],
-                SignalGroup(long_signals=[], short_signals=[]),
+            [
+                {"timestamp": 1712777600, "value": -2.0},
+                {"timestamp": 1712864000, "value": -1.5},
+            ],
+            [
+                {"timestamp": 1712777600, "value": -1.0},
+                {"timestamp": 1712864000, "value": -0.5},
+            ],
+            SignalGroup(long_signals=[], short_signals=[]),
         ),
         (
             [

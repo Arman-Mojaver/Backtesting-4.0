@@ -35,7 +35,10 @@ def resampled_point_2(resampled_point_data_2):
 
 
 def test_to_request_format(
-    resampled_point, resampled_point_2, resampled_point_data, resampled_point_data_2,
+    resampled_point,
+    resampled_point_2,
+    resampled_point_data,
+    resampled_point_data_2,
 ):
     assert ResampledPointD1List(
         [resampled_point, resampled_point_2]
