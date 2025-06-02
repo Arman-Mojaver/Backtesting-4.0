@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def generate_fixtures() -> None:
-    folder_path = Path.cwd().parent / "indicator_data"
+    folder_path = Path.cwd().parent / "indicator_csv_data"
     file_names = [
         f.name for f in folder_path.iterdir() if f.is_file() and f.suffix == ".csv"
     ]

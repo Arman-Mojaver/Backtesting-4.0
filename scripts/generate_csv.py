@@ -7,8 +7,8 @@ from itertools import product
 from pathlib import Path
 
 instruments = ("EURUSD", "USDCAD", "AUDUSD", "AUDCAD")
-indicator_names = ("rsi",)
-buffers = ("b0", "b1")
+indicator_names = ("macd",)
+buffers = ("b0", "b1", "b2", "b3")
 params = ("p1", "q1", "p2", "q2")
 
 
@@ -40,7 +40,7 @@ def main() -> None:
     ):
         file_name = f"{instrument}_{indicator_name}_{buffer}_{param}.csv"
         data = generate_indicator_value_data(100)
-        file_path = Path(str(Path.cwd().parent) + "/indicator_data/" + file_name)
+        file_path = Path(str(Path.cwd().parent) + "/indicator_csv_data/" + file_name)
         create_file(file_path, data)
 
 
