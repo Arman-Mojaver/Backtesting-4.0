@@ -6,20 +6,57 @@ from datetime import datetime, timedelta
 from itertools import product
 from pathlib import Path
 
+from utils.date_utils import string_to_datetime
+
 instruments = ("EURUSD", "USDCAD", "AUDUSD", "AUDCAD")
-indicator_names = ("macd",)
-buffers = ("b0", "b1", "b2", "b3")
-params = ("p1", "q1", "p2", "q2")
+indicator_names = ("rsi",)
+buffers = ("b0",)
+params = ("n1", "n2", "n3", "n4")
+start_date = "2023-09-11"
 
 
-def generate_indicator_value_data(count: int) -> list[tuple[str, float]]:
-    start_date = datetime.today()  # noqa: DTZ002
+def generate_weekdays(
+    start_date: datetime.date,
+    end_date: datetime.date | None = None,
+    count: int | None = None,
+) -> list[datetime.date]:
+    if count and end_date:
+        err = "Pass either 'count' or 'end_date', not both."
+        raise ValueError(err)
+
+    if not (count or end_date):
+        err = "Pass either 'count' or 'end_date'."
+        raise ValueError(err)
+
+    dates = []
+    current_date = start_date
+
+    if count:
+        while len(dates) < count:
+            if current_date.weekday() < 5:  # Exclude weekends  # noqa: PLR2004
+                dates.append(current_date)
+            current_date += timedelta(days=1)
+    else:
+        while current_date <= end_date:
+            if current_date.weekday() < 5:  # Exclude weekends  # noqa: PLR2004
+                dates.append(current_date)
+            current_date += timedelta(days=1)
+
+    return dates
+
+
+def generate_indicator_value_data(
+    count: int,
+    start_date: str | None,
+) -> list[tuple[str, float]]:
+    start_date = string_to_datetime(start_date) if start_date else datetime.today()  # noqa: DTZ002
+    dates = generate_weekdays(start_date=start_date, count=count)
+
     rows = []
-
-    for i in range(count):
-        date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+    for d in dates:
+        date_str = d.strftime("%Y-%m-%d")
         value = round(random.uniform(0, 100), 2)  # noqa: S311
-        rows.append((date, value))
+        rows.append((date_str, value))
 
     return rows
 
@@ -39,7 +76,7 @@ def main() -> None:
         params,
     ):
         file_name = f"{instrument}_{indicator_name}_{buffer}_{param}.csv"
-        data = generate_indicator_value_data(100)
+        data = generate_indicator_value_data(60, start_date)
         file_path = Path(str(Path.cwd().parent) + "/indicator_csv_data/" + file_name)
         create_file(file_path, data)
 
