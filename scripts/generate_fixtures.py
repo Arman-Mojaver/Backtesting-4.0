@@ -134,9 +134,9 @@ def _read_existing_imports_and_data_map(
     if init_path.exists():
         content = init_path.read_text(encoding="utf-8")
         for line in content.splitlines():
-            if line.startswith("import "):
+            if line.startswith(f"from fixtures.indicator_data.{indicator} import "):
                 import_lines.append(line.strip())
-                mod = line.strip().split()[1]
+                mod = line.strip().split()[-1]
                 instrument, params = mod.split("_")
                 try:
                     mod_obj = importlib.import_module(
@@ -160,7 +160,7 @@ def _add_module_import(
     indicator: str,
     module_name: str,
 ) -> None:
-    import_line = f"import {module_name}"
+    import_line = f"from fixtures.indicator_data.{indicator} import {module_name}"
     if import_line not in import_lines:
         import_lines.append(import_line)
         instrument, params = module_name.split("_")
