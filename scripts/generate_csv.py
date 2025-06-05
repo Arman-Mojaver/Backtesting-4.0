@@ -48,23 +48,23 @@ def generate_weekdays(
 def generate_indicator_value_data(
     count: int,
     start_date: str | None,
-) -> list[tuple[str, float]]:
+) -> list[tuple[int, float]]:
     start_date = string_to_datetime(start_date) if start_date else datetime.today()  # noqa: DTZ002
     dates = generate_weekdays(start_date=start_date, count=count)
 
     rows = []
     for d in dates:
-        date_str = d.strftime("%Y-%m-%d")
+        date_str = int(d.timestamp())
         value = round(random.uniform(0, 100), 2)  # noqa: S311
         rows.append((date_str, value))
 
     return rows
 
 
-def create_file(file_path: Path, data: list[tuple[str, float]]) -> None:
+def create_file(file_path: Path, data: list[tuple[int, float]]) -> None:
     with file_path.open(mode="w", newline="") as file:
         writer = csv.writer(file, delimiter=";")
-        writer.writerow(["date", "value"])
+        writer.writerow(["timestamp", "value"])
         writer.writerows(data)
 
 

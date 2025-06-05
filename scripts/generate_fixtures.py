@@ -61,7 +61,7 @@ def load_indicator_values(csv_file: Path) -> list[dict]:
 
         for row in reader:
             indicator_values.append(  # noqa: PERF401
-                {"date": row["date"], "value": float(row["value"])}
+                {"timestamp": int(row["timestamp"]), "value": float(row["value"])}
             )
 
     return indicator_values
@@ -88,7 +88,10 @@ def dump_fixtures(
             _validate_buffer_dates_match(instrument, params, buffers)
             lines.append(f"{buffer} = [")
             for row in data:
-                lines.append(f'    {{"date": "{row["date"]}", "value": {row["value"]}}},')  # noqa: PERF401
+                lines.append(  # noqa: PERF401
+                    f'    {{"timestamp": "{int(row["timestamp"])}", '
+                    f'"value": {row["value"]}}},'
+                )
             lines.append("]\n")
 
         file_path.write_text("\n".join(lines), encoding="utf-8")
@@ -101,7 +104,7 @@ def _validate_buffer_dates_match(
     instrument: str, params: str, buffers: dict[str, list[dict[str, str | float]]]
 ) -> None:
     buffer_dates = {
-        name: [item["date"] for item in data] for name, data in buffers.items()
+        name: [item["timestamp"] for item in data] for name, data in buffers.items()
     }
 
     all_date_lists = list(buffer_dates.values())
