@@ -25,6 +25,7 @@ ENDPOINT_PATHS = (
     "strategy_profitability_test",
     "oscillator_test",
     "crossover_test",
+    "thresholds_test",
     # Indicators
     "rsi_test",
 )

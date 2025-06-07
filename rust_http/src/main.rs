@@ -171,6 +171,7 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
     );
     post_only_route(cfg, "/oscillator_test", signals::oscillator::oscillator);
     post_only_route(cfg, "/crossover_test", signals::crossover::crossover);
+    post_only_route(cfg, "/thresholds_test", signals::thresholds::thresholds);
 
     // Indicators
     post_only_route(cfg, "/rsi_test", signals::indicators::rsi::rsi);
