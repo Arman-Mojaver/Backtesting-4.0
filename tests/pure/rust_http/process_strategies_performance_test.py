@@ -55,27 +55,24 @@ def test_process_strategies_performance(rust_endpoint):
 
     """
     Single threaded, with clones:
-        Request time: 18.65s
         Process time: 8.89s
 
     Single threaded:
-        Request time: 18.8s
         Process time: 8.12s
 
     Single threaded, with FXHasher:
-        Request time: 15.46s
         Process time: 5.21s
 
     Multithreaded, with FXHasher, with clones:
-        Request time: 12.69s
         Process time: 3.71s
 
     Multithreaded, with FXHasher:
-        Request time: 10.77s
         Process time: 1.93s
 
     Multithreaded, with Dual Linear Scan:
-        Request time: 10.74s
         Process time: 1.36s
+
+    Multithreaded, with Dual Linear Scan and Rayon:
+        Process time: 1.30s
 
     """
