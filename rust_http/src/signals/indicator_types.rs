@@ -3,6 +3,7 @@ use crate::strategies::ResampledPointD1;
 use serde_json::Value;
 use std::str::FromStr;
 
+#[derive(Debug, Clone)]
 pub enum IndicatorType {
     RSI,
 }
@@ -25,7 +26,30 @@ impl IndicatorType {
         params: &Value,
     ) -> IndicatorValues {
         match self {
-            IndicatorType::RSI => IndicatorValues::One(self.get_rsi(resampled_points, params)),
+            IndicatorType::RSI => IndicatorValues::OneThreshold(self.get_rsi(
+                resampled_points,
+                params,
+                PriceField::Close,
+            )),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum PriceField {
+    Open,
+    High,
+    Low,
+    Close,
+}
+
+impl PriceField {
+    pub fn select(&self, point: &ResampledPointD1) -> f64 {
+        match self {
+            PriceField::Open => point.open,
+            PriceField::High => point.high,
+            PriceField::Low => point.low,
+            PriceField::Close => point.close,
         }
     }
 }

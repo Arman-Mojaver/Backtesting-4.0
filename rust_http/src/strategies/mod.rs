@@ -116,14 +116,14 @@ impl OperationPointRepo {
 
 #[derive(Debug, FromRow, Serialize, Deserialize, Clone)]
 pub struct ResampledPointD1 {
-    id: i32,
-    instrument: String,
-    open: f64,
-    high: f64,
-    low: f64,
-    close: f64,
-    volume: i32,
-    timestamp: i32,
+    pub id: i32,
+    pub instrument: String,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: i32,
+    pub timestamp: i32,
 }
 
 pub struct ResampledPointD1Repo;
@@ -149,11 +149,11 @@ impl ResampledPointD1Repo {
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow, Clone)]
 pub struct Indicator {
-    id: i32,
+    pub id: i32,
     #[serde(rename = "type")]
-    r#type: String,
-    parameters: Json<Value>,
-    identifier: String,
+    pub r#type: String,
+    pub parameters: Json<Value>,
+    pub identifier: String,
 }
 
 pub struct IndicatorRepo;

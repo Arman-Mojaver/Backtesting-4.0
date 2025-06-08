@@ -28,6 +28,8 @@ lint.ignore = [
 
     "ISC001",  # Conflicts with ruff formatter
 
+    "N999",    # Invalid module name
+
     "RET503",  # Missing explicit `return` at the end of function able to return non-`None` value
 
     "S105",    # Possible hardcoded password assigned to argument

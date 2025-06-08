@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from fixtures.indicator_data.rsi import rsi_map
+
 
 def get_indicator_data(
     indicator: str,
@@ -9,7 +11,7 @@ def get_indicator_data(
     params: str,
     buffer: str,
 ) -> list[dict[str, Any]]:
-    indicator_map = {}
+    indicator_map = {"rsi": rsi_map}
 
     try:
         return indicator_map[indicator][instrument][params][buffer]
