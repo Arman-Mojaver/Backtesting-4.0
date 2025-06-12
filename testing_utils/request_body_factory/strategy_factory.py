@@ -9,6 +9,7 @@ def generate_strategies_data(
 ) -> list[dict]:
     return [
         {
+            "instrument": "EURUSD",
             "money_management_strategy_id": 300 + i,
             "indicator_id": 9000 + i,
             "annual_operation_count": annual_operation_count,

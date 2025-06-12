@@ -31,9 +31,9 @@ from utils.date_utils import datetime_to_string
     ],
 )
 def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_endpoint):
-    money_management_strategy_id, indicator_id = 1, 20
+    instrument, money_management_strategy_id, indicator_id = "EURUSD", 1, 20
     operation_points_factory = OperationPointsFactory(
-        instrument="EURUSD",
+        instrument=instrument,
         mm_strategy_id=money_management_strategy_id,
         start_date="2024-01-01",
         end_date=end_date,
@@ -60,6 +60,7 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
     end_date = datetime_to_string(datetime.fromtimestamp(dates[-1]))  # noqa: DTZ006
 
     data = {
+        "instrument": instrument,
         "long_operation_points_table": long_operation_points_table,
         "short_operation_points_table": short_operation_points_table,
         "signal_group": signal_group.to_request_format(),
@@ -113,17 +114,19 @@ def test_process_strategy(end_date, long_date_indices, short_date_indices, rust_
     # TODO: Fix or reduce rounding error  # noqa: FIX002, TD002, TD003
     assert (
         abs(
-            content["data"]["strategy"]["annual_operation_count"]
+            content.get("data", {})["strategy"]["annual_operation_count"]
             - expected_annual_operation_count
         )
         <= 0.3
     )
-    assert content["data"]["strategy"]["max_draw_down"] == expected_max_draw_down
-    assert content["data"]["strategy"]["annual_roi"] == expected_annual_roi
+    assert content.get("data", {})["strategy"]["max_draw_down"] == expected_max_draw_down
+    assert content.get("data", {})["strategy"]["annual_roi"] == expected_annual_roi
     assert (
-        content["data"]["strategy"]["money_management_strategy_id"]
+        content.get("data", {})["strategy"]["money_management_strategy_id"]
         == money_management_strategy_id
     )
-    assert content["data"]["strategy"]["indicator_id"] == indicator_id
-    assert content["data"]["long_operation_point_ids"] == long_operation_point_ids
-    assert content["data"]["short_operation_point_ids"] == short_operation_point_ids
+    assert content.get("data", {})["strategy"]["indicator_id"] == indicator_id
+    assert content.get("data", {})["long_operation_point_ids"] == long_operation_point_ids
+    assert (
+        content.get("data", {})["short_operation_point_ids"] == short_operation_point_ids
+    )

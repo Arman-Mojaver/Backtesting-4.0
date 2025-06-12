@@ -10,6 +10,7 @@ use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategyPayload {
+    instrument: String,
     long_operation_points_table: Vec<(i32, OperationPoint)>,
     short_operation_points_table: Vec<(i32, OperationPoint)>,
     signal_group: SignalGroup,
@@ -42,6 +43,7 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
         .collect();
 
     let strategy_group = get_process_strategy(
+        payload.instrument,
         &long_table,
         &short_table,
         &payload.signal_group,
@@ -55,6 +57,7 @@ pub async fn process_strategy(payload: web::Json<ProcessStrategyPayload>) -> imp
 }
 
 pub fn get_process_strategy(
+    instrument: String,
     long_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     short_operation_points_table: &Vec<(i32, Arc<OperationPoint>)>,
     signal_group: &SignalGroup,
@@ -82,6 +85,7 @@ pub fn get_process_strategy(
     );
 
     let strategy = Strategy {
+        instrument,
         annual_roi,
         max_draw_down,
         annual_operation_count,

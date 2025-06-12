@@ -10,6 +10,7 @@ def generate_random_strategy_data() -> dict[str, Any]:
     annual_operation_count = random.randint(10, 20)  # noqa: S311
 
     return {
+        "instrument": "EURUSD",
         "annual_roi": annual_roi,
         "max_draw_down": max_draw_down,
         "annual_operation_count": annual_operation_count,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Float, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, Query, object_session, relationship
 
 from database import Base, CRUDMixin, session
@@ -30,6 +30,7 @@ class StrategyQuery(Query):
 class Strategy(Base, CRUDMixin):
     __tablename__ = "strategy"
     __repr_fields__ = (
+        "instrument",
         "annual_roi",
         "max_draw_down",
         "annual_operation_count",
@@ -57,6 +58,7 @@ class Strategy(Base, CRUDMixin):
     query: StrategyQuery = session.query_property(query_cls=StrategyQuery)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    instrument = Column(String, nullable=False)
     annual_roi = Column(Float, nullable=False)
     max_draw_down = Column(Float, nullable=False)
     annual_operation_count = Column(Float, nullable=False)

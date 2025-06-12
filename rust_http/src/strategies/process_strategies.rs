@@ -53,6 +53,7 @@ pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) ->
     info!("Process time (signal_groups): {:?}", total_elapsed);
 
     let strategy_groups = get_process_strategies_from_signals(
+        payload.instrument.clone(),
         &long_operation_points,
         &short_operation_points,
         payload.money_management_strategy_id,

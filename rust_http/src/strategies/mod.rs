@@ -51,6 +51,7 @@ pub struct OperationPoint {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Strategy {
+    instrument: String,
     annual_roi: f64,
     max_draw_down: f64,
     annual_operation_count: f64,
