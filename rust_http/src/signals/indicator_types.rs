@@ -35,6 +35,7 @@ impl IndicatorType {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum PriceField {
     Open,

@@ -54,7 +54,7 @@ pub fn get_process_strategies_from_signals(
     let mut sorted_ids: Vec<i32> = signal_groups.keys().copied().collect();
     sorted_ids.sort_unstable();
 
-    let mut strategy_groups: Vec<StrategyGroup> = sorted_ids
+    let strategy_groups: Vec<StrategyGroup> = sorted_ids
         .into_par_iter()
         .map(|indicator_id| {
             let signal_group = signal_groups.get(&indicator_id).unwrap();
