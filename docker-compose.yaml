@@ -37,6 +37,21 @@ services:
     container_name: db-development
     image: postgres:16.1
     restart: unless-stopped
+
+    command: >
+      postgres
+      -c shared_buffers=2GB
+      -c wal_buffers=64MB
+      -c synchronous_commit=off
+      -c full_page_writes=off
+      -c fsync=off
+      -c wal_level=minimal
+      -c max_wal_senders=0
+      -c autovacuum=off
+      -c checkpoint_timeout=30min
+      -c max_wal_size=4GB
+      -c bgwriter_lru_maxpages=0
+
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -57,6 +72,21 @@ services:
     container_name: db-production
     image: postgres:16.1
     restart: unless-stopped
+
+    command: >
+      postgres
+      -c shared_buffers=2GB
+      -c wal_buffers=64MB
+      -c synchronous_commit=off
+      -c full_page_writes=off
+      -c fsync=off
+      -c wal_level=minimal
+      -c max_wal_senders=0
+      -c autovacuum=off
+      -c checkpoint_timeout=30min
+      -c max_wal_size=4GB
+      -c bgwriter_lru_maxpages=0
+
     environment:
       - POSTGRES_DB=db-production
       - POSTGRES_USER=postgres
