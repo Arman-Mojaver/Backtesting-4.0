@@ -20,7 +20,7 @@ pub struct ProcessStrategyPayload {
     indicator_id: i32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StrategyGroup {
     pub strategy: Strategy,
     pub long_operation_point_ids: Vec<i32>,
