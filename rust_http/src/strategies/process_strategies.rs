@@ -7,13 +7,15 @@ use crate::strategies::query_indicators::get_query_indicators;
 use crate::strategies::query_long_operation_points::get_query_long_operation_points;
 use crate::strategies::query_resampled_points::get_query_resampled_points;
 use crate::strategies::query_short_operation_points::get_query_short_operation_points;
-use crate::strategies::{Indicator, OperationPoint, ResampledPointD1, SignalGroup};
+use crate::strategies::{Indicator, OperationPoint, ResampledPointD1, SignalGroup, Strategy};
 use actix_web::{web, HttpResponse, Responder};
 use log::info;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::str::FromStr;
+use std::sync::Arc;
 use std::time::Instant;
+use rayon::prelude::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessStrategiesPayload {
@@ -47,7 +49,7 @@ pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) ->
         Err(e) => panic!("Validation failed: {:?}", e),
     }
 
-    let signal_groups = get_signal_groups(resampled_points, &indicators);
+    let signal_groups = get_signal_groups(resampled_points, indicators);
 
     let total_elapsed = start.elapsed();
     info!("Process time (signal_groups): {:?}", total_elapsed);
@@ -63,22 +65,41 @@ pub async fn process_strategies(payload: web::Json<ProcessStrategiesPayload>) ->
     let total_elapsed2 = start.elapsed();
     info!("Process time (/process_strategies): {:?}", total_elapsed2);
 
-    HttpResponse::Ok().json(serde_json::json!({ "data": strategy_groups }))
+    HttpResponse::Ok().json(serde_json::json!({ "message": "Done!" }))
+}
+
+
+fn compute_signal(
+    idx: usize,
+    resampled_arc: &Arc<Vec<ResampledPointD1>>,
+    indicators_arc: &Arc<Vec<Indicator>>,
+) -> (i32, SignalGroup) {
+    let indicator = &indicators_arc[idx];
+    let indicator_type: IndicatorType =
+        IndicatorType::from_str(&indicator.r#type).unwrap();
+
+    let indicator_values = indicator_type.generate_indicator_values(
+        &resampled_arc,
+        &indicator.parameters,
+    );
+    let signal_group = indicator_values.generate_signals();
+
+    (indicator.id, signal_group)
 }
 
 fn get_signal_groups(
     resampled_points: Vec<ResampledPointD1>,
-    indicators: &Vec<Indicator>,
+    indicators: Vec<Indicator>,
 ) -> HashMap<i32, SignalGroup> {
-    let mut signal_groups: HashMap<i32, SignalGroup> = HashMap::with_capacity(indicators.len());
-    for indicator in indicators {
-        let indicator_type: IndicatorType = IndicatorType::from_str(&indicator.r#type).unwrap();
-        let indicator_values =
-            indicator_type.generate_indicator_values(&resampled_points, &indicator.parameters);
-        let signal_group = indicator_values.generate_signals();
-        signal_groups.insert(indicator.id, signal_group);
-    }
-    signal_groups
+    let resampled_arc  = Arc::new(resampled_points);
+    let indicators_arc = Arc::new(indicators);
+
+    let pairs: Vec<(i32, SignalGroup)> = (0..indicators_arc.len())
+        .into_par_iter()
+        .map(|i| compute_signal(i, &resampled_arc, &indicators_arc))
+        .collect();
+
+    pairs.into_iter().collect()
 }
 
 pub fn get_process_strategies(
