@@ -39,6 +39,18 @@ def indicator_data_3():
 
 
 @pytest.fixture
+def indicator_data_4():
+    return {
+        "type": "macd",
+        "parameters": {
+            "slow": {"type": "sma", "n": 14, "price_target": "close"},
+            "fast": {"type": "ema", "n": 7, "price_target": "close"},
+        },
+        "identifier": "macd.sma-14-close,ema-7-close",
+    }
+
+
+@pytest.fixture
 def indicator(indicator_data):
     return Indicator(id=10, **indicator_data)
 
@@ -51,6 +63,11 @@ def indicator_2(indicator_data_2):
 @pytest.fixture
 def indicator_3(indicator_data_3):
     return Indicator(id=12, **indicator_data_3)
+
+
+@pytest.fixture
+def indicator_4(indicator_data_4):
+    return Indicator(id=13, **indicator_data_4)
 
 
 @pytest.fixture
@@ -71,26 +88,26 @@ def money_management_strategy_3(money_management_strategy_data_3):
 
 
 @pytest.fixture
-def strategy_1(indicator, money_management_strategy, session):
+def strategy_1(indicator_3, money_management_strategy_3, session):
     strategy_data = generate_random_strategy_data()
     strategy = Strategy(**strategy_data)
-    strategy.money_management_strategy_id = money_management_strategy.id
-    strategy.indicator_id = indicator.id
+    strategy.money_management_strategy_id = money_management_strategy_3.id
+    strategy.indicator_id = indicator_3.id
 
-    session.add_all([indicator, money_management_strategy])
+    session.add_all([indicator_3, money_management_strategy_3])
     session.commit()
 
     return strategy
 
 
 @pytest.fixture
-def strategy_2(indicator_2, money_management_strategy, session):
+def strategy_2(indicator_4, money_management_strategy_3, session):
     strategy_data = generate_random_strategy_data()
     strategy = Strategy(**strategy_data)
-    strategy.money_management_strategy_id = money_management_strategy.id
-    strategy.indicator_id = indicator_2.id
+    strategy.money_management_strategy_id = money_management_strategy_3.id
+    strategy.indicator_id = indicator_4.id
 
-    session.add_all([indicator_2, money_management_strategy])
+    session.add_all([indicator_4, money_management_strategy_3])
     session.commit()
 
     return strategy

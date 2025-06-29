@@ -4,7 +4,7 @@ use crate::strategies::process_strategy::StrategyGroup;
 use crate::strategies::Strategy;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use sqlx::{Executor, Pool, Postgres, Row, Transaction};
+use sqlx::{Pool, Postgres, Row, Transaction};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CommitStrategyGroupsPayload {
@@ -56,6 +56,34 @@ pub async fn get_commit_strategy_groups(
 
         let strategy_id: i32 = row.get("id");
         inserted_ids.push(strategy_id);
+
+        for lop_id in &sg.long_operation_point_ids {
+            sqlx::query(
+                r#"
+                INSERT INTO long_operation_points_strategies
+                  (long_operation_point_id, strategy_id)
+                VALUES ($1, $2)
+                "#,
+            )
+            .bind(lop_id)
+            .bind(strategy_id)
+            .execute(&mut *tx)
+            .await?;
+        }
+
+        for sop_id in &sg.short_operation_point_ids {
+            sqlx::query(
+                r#"
+                INSERT INTO short_operation_points_strategies
+                  (short_operation_point_id, strategy_id)
+                VALUES ($1, $2)
+                "#,
+            )
+            .bind(sop_id)
+            .bind(strategy_id)
+            .execute(&mut *tx)
+            .await?;
+        }
     }
 
     tx.commit().await?;

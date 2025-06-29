@@ -7,7 +7,7 @@ from database import Base, CRUDMixin
 
 class LongOperationPointStrategy(Base, CRUDMixin):
     __tablename__ = "long_operation_points_strategies"
-    __repr_fields__ = ("long_operation_point_id", "strategy_id")
+    __repr_fields__ = ("id", "long_operation_point_id", "strategy_id")
 
     __table_args__ = (
         Index(
@@ -16,7 +16,7 @@ class LongOperationPointStrategy(Base, CRUDMixin):
         ),
     )
 
-    serialize_rules = ("-long_operation_point_id", "-strategy_id")
+    serialize_rules = ("-id",)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     long_operation_point_id = Column(
