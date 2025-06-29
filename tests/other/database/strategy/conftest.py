@@ -71,6 +71,32 @@ def money_management_strategy_3(money_management_strategy_data_3):
 
 
 @pytest.fixture
+def strategy_1(indicator, money_management_strategy, session):
+    strategy_data = generate_random_strategy_data()
+    strategy = Strategy(**strategy_data)
+    strategy.money_management_strategy_id = money_management_strategy.id
+    strategy.indicator_id = indicator.id
+
+    session.add_all([indicator, money_management_strategy])
+    session.commit()
+
+    return strategy
+
+
+@pytest.fixture
+def strategy_2(indicator_2, money_management_strategy, session):
+    strategy_data = generate_random_strategy_data()
+    strategy = Strategy(**strategy_data)
+    strategy.money_management_strategy_id = money_management_strategy.id
+    strategy.indicator_id = indicator_2.id
+
+    session.add_all([indicator_2, money_management_strategy])
+    session.commit()
+
+    return strategy
+
+
+@pytest.fixture
 def strategies_data():
     return [generate_random_strategy_data() for _ in range(1)]
 

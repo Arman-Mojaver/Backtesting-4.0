@@ -47,9 +47,7 @@ class Strategy(Base, CRUDMixin):
 
     serialize_rules = (
         "-id",
-        "-money_management_strategy_id",
         "-money_management_strategy",
-        "-indicator_id",
         "-indicator",
         "-long_operation_points",
         "-short_operation_points",
