@@ -1,12 +1,12 @@
-use std::time::Instant;
 use crate::config::DbConfig;
 use crate::db::init_pool;
 use crate::strategies::process_strategy::StrategyGroup;
-use crate::strategies::Strategy;
 use actix_web::{web, HttpResponse, Responder};
+use futures::{stream, StreamExt};
 use log::info;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Postgres, Row, Transaction};
+use std::time::Instant;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CommitStrategyGroupsPayload {
@@ -36,66 +36,74 @@ pub async fn commit_strategy_groups(
     response
 }
 
-pub async fn get_commit_strategy_groups(
+async fn get_commit_strategy_groups(
     db_pool: &Pool<Postgres>,
     strategy_groups: &[StrategyGroup],
 ) -> Result<Vec<i32>, sqlx::Error> {
-    let mut tx: Transaction<'_, Postgres> = db_pool.begin().await?;
-    let mut inserted_ids = Vec::with_capacity(strategy_groups.len());
+    const CONCURRENCY: usize = 16;
 
-    for sg in strategy_groups {
-        let s: &Strategy = &sg.strategy;
+    let tasks = stream::iter(strategy_groups.iter().enumerate())
+        .map(|(idx, sg)| {
+            let pool = db_pool.clone();
+            async move {
+                let row = sqlx::query(
+                    r#"
+                    INSERT INTO strategy
+                      (instrument, annual_roi, max_draw_down, annual_operation_count,
+                       money_management_strategy_id, indicator_id)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    RETURNING id
+                    "#,
+                )
+                .bind(&sg.strategy.instrument)
+                .bind(sg.strategy.annual_roi)
+                .bind(sg.strategy.max_draw_down)
+                .bind(sg.strategy.annual_operation_count)
+                .bind(sg.strategy.money_management_strategy_id)
+                .bind(sg.strategy.indicator_id)
+                .fetch_one(&pool)
+                .await?;
+                let strategy_id: i32 = row.get("id");
 
-        let row = sqlx::query(
-            r#"
-            INSERT INTO strategy
-              (instrument, annual_roi, max_draw_down, annual_operation_count,
-               money_management_strategy_id, indicator_id)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id
-            "#,
-        )
-        .bind(&s.instrument)
-        .bind(s.annual_roi)
-        .bind(s.max_draw_down)
-        .bind(s.annual_operation_count)
-        .bind(s.money_management_strategy_id)
-        .bind(s.indicator_id)
-        .fetch_one(&mut *tx)
-        .await?;
+                if !sg.long_operation_point_ids.is_empty() {
+                    sqlx::query(
+                        r#"
+                        INSERT INTO long_operation_points_strategies
+                          (long_operation_point_id, strategy_id)
+                        SELECT UNNEST($1::int[]), $2
+                        "#,
+                    )
+                    .bind(&sg.long_operation_point_ids)
+                    .bind(strategy_id)
+                    .execute(&pool)
+                    .await?;
+                }
 
-        let strategy_id: i32 = row.get("id");
-        inserted_ids.push(strategy_id);
+                if !sg.short_operation_point_ids.is_empty() {
+                    sqlx::query(
+                        r#"
+                        INSERT INTO short_operation_points_strategies
+                          (short_operation_point_id, strategy_id)
+                        SELECT UNNEST($1::int[]), $2
+                        "#,
+                    )
+                    .bind(&sg.short_operation_point_ids)
+                    .bind(strategy_id)
+                    .execute(&pool)
+                    .await?;
+                }
 
-        for lop_id in &sg.long_operation_point_ids {
-            sqlx::query(
-                r#"
-                INSERT INTO long_operation_points_strategies
-                  (long_operation_point_id, strategy_id)
-                VALUES ($1, $2)
-                "#,
-            )
-            .bind(lop_id)
-            .bind(strategy_id)
-            .execute(&mut *tx)
-            .await?;
-        }
+                Ok::<_, sqlx::Error>((idx, strategy_id))
+            }
+        })
+        .buffer_unordered(CONCURRENCY);
 
-        for sop_id in &sg.short_operation_point_ids {
-            sqlx::query(
-                r#"
-                INSERT INTO short_operation_points_strategies
-                  (short_operation_point_id, strategy_id)
-                VALUES ($1, $2)
-                "#,
-            )
-            .bind(sop_id)
-            .bind(strategy_id)
-            .execute(&mut *tx)
-            .await?;
-        }
+    let mut ids = vec![0; strategy_groups.len()];
+    futures::pin_mut!(tasks);
+    while let Some(res) = tasks.next().await {
+        let (idx, id) = res?;
+        ids[idx] = id;
     }
 
-    tx.commit().await?;
-    Ok(inserted_ids)
+    Ok(ids)
 }

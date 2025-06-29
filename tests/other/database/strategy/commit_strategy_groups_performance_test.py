@@ -7,8 +7,10 @@ from sqlalchemy import delete
 from database.models import (
     Indicator,
     LongOperationPoint,
+    LongOperationPointStrategy,
     MoneyManagementStrategy,
     ShortOperationPoint,
+    ShortOperationPointStrategy,
     Strategy,
 )
 from testing_utils.request_body_factory.indicator_factory import generate_rsi_indicators
@@ -30,6 +32,8 @@ def _clean_table(session):
     session.execute(delete(Strategy))
     session.execute(delete(LongOperationPoint))
     session.execute(delete(ShortOperationPoint))
+    session.execute(delete(LongOperationPointStrategy))
+    session.execute(delete(ShortOperationPointStrategy))
     session.execute(delete(MoneyManagementStrategy))
     session.execute(delete(Indicator))
     session.commit()
@@ -114,4 +118,7 @@ def test_commit_strategy_groups_performance(
     """
         Single threaded, for loops:
             Process time: 21.12s
+
+        Multithreaded:
+            Process time: 0.901 s
     """
