@@ -7,7 +7,7 @@ from typing import Any
 def generate_random_strategy_data() -> dict[str, Any]:
     annual_roi = round(random.uniform(-0.2, 0.5) * 100, 2)  # noqa: S311
     max_draw_down = round(random.uniform(0.05, 0.4) * 100, 2)  # noqa: S311
-    annual_operation_count = random.randint(10, 20)  # noqa: S311
+    annual_operation_count = round(random.uniform(10.0, 20.0), 2)  # noqa: S311
 
     return {
         "instrument": "EURUSD",
