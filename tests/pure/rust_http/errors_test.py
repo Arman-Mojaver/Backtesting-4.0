@@ -26,6 +26,7 @@ ENDPOINT_PATHS = (
     "oscillator_test",
     "crossover_test",
     "thresholds_test",
+    "commit_strategy_groups_test",
     # Indicators
     "rsi_test",
 )

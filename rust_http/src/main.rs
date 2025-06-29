@@ -169,6 +169,11 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
         "/strategy_profitability_test",
         strategies::strategy_profitability::strategy_profitability,
     );
+    post_only_route(
+        cfg,
+        "/commit_strategy_groups_test",
+        strategies::commit_strategy_groups::commit_strategy_groups,
+    );
     post_only_route(cfg, "/oscillator_test", signals::oscillator::oscillator);
     post_only_route(cfg, "/crossover_test", signals::crossover::crossover);
     post_only_route(cfg, "/thresholds_test", signals::thresholds::thresholds);
