@@ -1,8 +1,10 @@
+use std::time::Instant;
 use crate::config::DbConfig;
 use crate::db::init_pool;
 use crate::strategies::process_strategy::StrategyGroup;
 use crate::strategies::Strategy;
 use actix_web::{web, HttpResponse, Responder};
+use log::info;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Postgres, Row, Transaction};
 
@@ -17,13 +19,21 @@ pub async fn commit_strategy_groups(
     let db_config = DbConfig::testing();
     let db_pool = init_pool(db_config).await.expect("DB pool init failed");
 
-    match get_commit_strategy_groups(&db_pool, &payload.strategy_groups).await {
-        Ok(strategy_ids) => HttpResponse::Ok().json(serde_json::json!({ "data": strategy_ids })),
+    let start = Instant::now();
+    info!("/commit_strategy_groups. Starting");
+
+    let response = match get_commit_strategy_groups(&db_pool, &payload.strategy_groups).await {
+        Ok(ids) => HttpResponse::Ok().json(serde_json::json!({ "data": ids })),
         Err(e) => {
             log::error!("Failed to commit strategy groups: {:?}", e);
             HttpResponse::InternalServerError().finish()
         }
-    }
+    };
+
+    let elapsed = start.elapsed();
+    info!("Finished /commit_strategy_groups in {:?}", elapsed);
+
+    response
 }
 
 pub async fn get_commit_strategy_groups(

@@ -178,7 +178,7 @@ def test_two_strategy_one_long_one_short_each(  # noqa: PLR0913
                 "strategy": strategy_2.to_dict(),
                 "long_operation_point_ids": [long_operation_point_2.id],
                 "short_operation_point_ids": [short_operation_point_2.id],
-            }
+            },
         ]
     }
 
@@ -203,7 +203,7 @@ def test_two_strategy_one_long_one_short_each(  # noqa: PLR0913
             LongOperationPointStrategy(
                 long_operation_point_id=long_operation_point_2.id,
                 strategy_id=Strategy.query.all()[1].id,
-            )
+            ),
         ]
     )
     assert set_of_tuples(
@@ -217,7 +217,7 @@ def test_two_strategy_one_long_one_short_each(  # noqa: PLR0913
             ShortOperationPointStrategy(
                 short_operation_point_id=short_operation_point_2.id,
                 strategy_id=Strategy.query.all()[1].id,
-            )
+            ),
         ]
     )
 
@@ -250,7 +250,7 @@ def test_one_strategy_mixed_operation_points_count(  # noqa: PLR0913
                     short_operation_point_1.id,
                     short_operation_point_2.id,
                 ],
-            }
+            },
         ]
     }
 
@@ -282,7 +282,7 @@ def test_one_strategy_mixed_operation_points_count(  # noqa: PLR0913
             LongOperationPointStrategy(
                 long_operation_point_id=long_operation_point_2.id,
                 strategy_id=strategy_2.id,
-            )
+            ),
         ]
     )
     assert set_of_tuples(
@@ -300,6 +300,6 @@ def test_one_strategy_mixed_operation_points_count(  # noqa: PLR0913
             ShortOperationPointStrategy(
                 short_operation_point_id=short_operation_point_2.id,
                 strategy_id=strategy_2.id,
-            )
+            ),
         ]
     )
